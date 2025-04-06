@@ -22,13 +22,27 @@ nav ul li a {
     padding: 0rem 1.25rem;
     height: 39px;
     line-height: 40px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.1s ease-in-out;
     display: inline-block;
+    width: 100%;
     -webkit-app-region: no-drag;
+    font-size: 15.5px;
+}
+
+#MainLINKS {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 40px;
+}
+
+nav ul li a:hover {
+    background-color: #3f3f3f;
 }
 
 #CurrentPage {
     background-color: #161616;
+    height: 40px;
 }
 
 #GotoHomePage {
@@ -36,6 +50,10 @@ nav ul li a {
     height: 40px;
     position: relative;
     border-right: var(--border);
+}
+
+#GotoHomePage a:hover {
+    background-color: var(--color-primary) !important;
 }
 
 #GotoHomePage span {
@@ -69,11 +87,29 @@ nav ul li a {
 #KeepONtop {
     position: absolute;
     right: 90px;
-    width: 45px;
+    width: 46px;
+    height: 39px;
+    border-left: var(--border);
+}
+
+#KeepONtop:focus {
+    background-color: var(--color-primary);
 }
 
 #KeepONtop:hover,
 #Settings:hover,
 #GotoHomePage:hover {
     background-color: #3f3f3f;
+}
+
+/* Navbar Responsive */
+
+@media (max-width: 640px) {
+    #MainLINKS {
+        display: none;
+    }
+
+    #Settings {
+        display: none;
+    }
 }

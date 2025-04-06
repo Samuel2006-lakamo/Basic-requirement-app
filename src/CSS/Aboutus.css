@@ -1,5 +1,73 @@
+:where(li, a) {
+    text-decoration: none;
+    list-style: none;
+}
+
 #GotoHomePage {
     background-color: var(--color-primary);
-    height: 39px;
-    line-height: 39px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.menu {
+    width: 280px;
+    height: calc(100vh - 40px);
+    background-color: #191919;
+    border-right: var(--border);
+    overflow: hidden;
+}
+
+.menuText {
+    padding: 0rem 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.menuText svg {
+    width: 150px;
+    height: auto;
+    display: block;
+}
+
+.menuLinks li {
+    width: 100%;
+    height: 44px;
+    align-content: center;
+}
+
+.menuLinks li a {
+    padding: 0rem 1rem;
+    color: #e3e3e3;
+    height: 44px;
+    line-height: 44px;
+    width: 100%;
+    display: block;
+    font-weight: 450;
+}
+
+.menuLinks li a svg {
+    transform: translateY(5.5px);
+    margin-right: 0.5rem;
+}
+
+.menuLinks li:hover {
+    background-color: #222;
+}
+
+#Current {
+    background-color: var(--ColorHighlight);
+}
+
+#Current a {
+    color: #000;
+}
+
+#Current a svg {
+    fill: #000;
+}
+
+.menu hr {
+    --HRborder: solid 1px #2f2f2f;
+    border: var(--HRborder);
+    margin-top: 0.5rem;
 }

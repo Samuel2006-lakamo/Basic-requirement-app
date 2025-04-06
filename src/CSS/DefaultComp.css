@@ -13,8 +13,9 @@
     --ResetPadding: 0;
     --ResetMargin: 0;
     --ResetBoxSizing: border-box;
-    --color-primary: #161616;
+    --color-primary: #191919;
     --border: 1px solid #3f3f3f;
+    --ColorHighlight: #a9dc76;
 }
 
 /* body[data-theme="light"] {
@@ -30,7 +31,7 @@
 
 html {
     color-scheme: dark light;
-    --background-color: rgba(12, 12, 12, 0.85);
+    --background-color: rgba(17, 17, 17, 0.85);
 }
 
 
