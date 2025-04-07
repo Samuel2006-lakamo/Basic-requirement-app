@@ -3,6 +3,11 @@
     list-style: none;
 }
 
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
 #GotoHomePage {
     background-color: var(--color-primary);
     height: 40px;
@@ -12,9 +17,11 @@
 .menu {
     width: 280px;
     height: calc(100vh - 40px);
-    background-color: #191919;
+    background-color: var(--color-primary);
     border-right: var(--border);
     overflow: hidden;
+    position: fixed;
+    margin-top: 40px;
 }
 
 .menuText {
@@ -24,22 +31,32 @@
 }
 
 .menuText svg {
-    width: 150px;
+    width: 120px;
     height: auto;
     display: block;
 }
 
 .menuLinks li {
     width: 100%;
-    height: 44px;
+    height: 40px;
     align-content: center;
+    background-image: linear-gradient(#222, #222);
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    background-position-x: right;
+    transition: background-size 300ms;
+}
+
+.menuLinks li:hover {
+    background-size: 100% 100%;
+    background-position-x: left;
 }
 
 .menuLinks li a {
     padding: 0rem 1rem;
     color: #e3e3e3;
-    height: 44px;
-    line-height: 44px;
+    height: 40px;
+    line-height: 40px;
     width: 100%;
     display: block;
     font-weight: 450;
@@ -50,12 +67,13 @@
     margin-right: 0.5rem;
 }
 
-.menuLinks li:hover {
-    background-color: #222;
-}
-
 #Current {
     background-color: var(--ColorHighlight);
+}
+
+#Current:hover {
+    background-size: 0% 100%;
+    background-position-x: left;
 }
 
 #Current a {
@@ -70,4 +88,113 @@
     --HRborder: solid 1px #2f2f2f;
     border: var(--HRborder);
     margin-top: 0.5rem;
+}
+
+.bottomCradit {
+    bottom: 25px;
+    position: absolute;
+    left: 1rem;
+}
+
+.content {
+    width: calc(100vw - 280px);
+    position: absolute;
+    right: 0;
+    height: calc(100vh - 40px);
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.Textintro {
+    height: calc(100vh - 40px);
+    align-content: center;
+}
+
+.TextIntroIMAGE {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Textintro img {
+    display: block;
+    width: 60px;
+}
+
+.Textintro h1 {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.55rem;
+    pointer-events: none;
+    user-select: none;
+    font-size: 34px;
+    font-weight: 400;
+    font-family: "Host Grotesk", "Segoe UI", sans-serif;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.TextintroBTN {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.55rem;
+}
+
+.TextintroBTN button {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.75rem;
+    --TimeButtons: #222;
+    background-color: var(--TimeButtons);
+    width: fit-content;
+    display: inline-block;
+    text-align: center;
+    border: none;
+    font-size: 14px;
+    /* Define hover Effect */
+    background-image: linear-gradient(#3f3f3f, #3f3f3f);
+    background-repeat: no-repeat;
+    background-size: 100% 0%;
+    background-position-y: top;
+    transition: background-size 200ms;
+}
+
+.TextintroBTN button:hover {
+    background-color: #2f2f2f;
+}
+
+.TextintroBTN button:focus,
+.TextintroBTN button:active {
+    background-size: 100% 100%;
+    background-position-y: bottom;
+}
+
+#MainLINKS {
+    transition: cubic-bezier(0.215, 0.610, 0.355, 1) 0.3s;
+    opacity: 0;
+    display: none;
+    transform: translateX(-500px);
+}
+
+/* When clicked getstarted 1 this will show */
+
+.contentGuide2 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.GuideText {
+    width: 428px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#scrambled-text {
+    display: inline-block;
+    font-size: 20px;
+    line-height: 1.5;
 }

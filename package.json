@@ -2,7 +2,7 @@
   "name": "programtodolist",
   "productName": "programtodolist",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Essential app all in one for app that you need",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",

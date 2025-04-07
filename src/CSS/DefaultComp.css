@@ -13,9 +13,10 @@
     --ResetPadding: 0;
     --ResetMargin: 0;
     --ResetBoxSizing: border-box;
-    --color-primary: #191919;
+    --color-primary: #0c0c0c;
     --border: 1px solid #3f3f3f;
-    --ColorHighlight: #a9dc76;
+    --ColorHighlight: #b2e77c;
+    --TitlebarColor: #141414;
 }
 
 /* body[data-theme="light"] {
@@ -31,7 +32,7 @@
 
 html {
     color-scheme: dark light;
-    --background-color: rgba(17, 17, 17, 0.85);
+    --background-color: #101010;
 }
 
 

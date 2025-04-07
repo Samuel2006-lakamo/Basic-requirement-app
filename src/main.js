@@ -10,7 +10,7 @@ if (require('electron-squirrel-startup')) {
 
 let mainWindow;
 let isAlwaysOnTop = false;
-const DEFINE_WINDOWSIZE = { width: 1280, height: 850 };
+const DEFINE_WINDOWSIZE = { width: 820, height: 905 };
 const DEFINE_MINWINSIZE = { width: 640, height: 480 };
 const DEFINE_MINWIDTHSIZE = { width: 720, height: 480 };
 const DEFINE_ALWAYSONTOP = { width: 340, height: 570 };
@@ -26,7 +26,7 @@ const createWindow = () => {
     titleBarStyle: 'hidden',
     frame: false,
     titleBarOverlay: {
-      color: '#222',
+      color: '#141414',
       symbolColor: '#FFFFFF',
       height: 39
     },
