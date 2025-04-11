@@ -183,38 +183,38 @@ ipcMain.on('Keepontop', (event, message) => {
 });
 
 // Update drag & drop window creation
-ipcMain.on('create-new-window', (event, position) => {
-  const newWindow = new BrowserWindow({
-    width: DEFINE_MINWINSIZE.width,
-    height: DEFINE_MINWINSIZE.height,
-    icon: getThemeIcon(),
-    x: position.x,
-    y: position.y,
-    autoHideMenuBar: true,
-    fullscreenable: false,
-    fullscreen: false,
-    maximizable: false,
-    backgroundMaterial: 'acrylic',
-    vibrancy: 'fullscreen-ui',
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#141414',
-      symbolColor: '#FFFFFF',
-      height: 39
-    },
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
-      autoHideMenuBar: true,
-      backgroundThrottling: true,
-    },
-  });
+// ipcMain.on('create-new-window', (event, position) => {
+//   const newWindow = new BrowserWindow({
+//     width: DEFINE_MINWINSIZE.width,
+//     height: DEFINE_MINWINSIZE.height,
+//     icon: getThemeIcon(),
+//     x: position.x,
+//     y: position.y,
+//     autoHideMenuBar: true,
+//     fullscreenable: false,
+//     fullscreen: false,
+//     maximizable: false,
+//     backgroundMaterial: 'acrylic',
+//     vibrancy: 'fullscreen-ui',
+//     titleBarStyle: 'hidden',
+//     titleBarOverlay: {
+//       color: '#141414',
+//       symbolColor: '#FFFFFF',
+//       height: 39
+//     },
+//     webPreferences: {
+//       preload: path.join(__dirname, 'preload.js'),
+//       nodeIntegration: true,
+//       contextIsolation: false,
+//       autoHideMenuBar: true,
+//       backgroundThrottling: true,
+//     },
+//   });
 
-  newWindow.loadFile('./src/Time.html');
-  newWindow.setMenuBarVisibility(false);
+//   newWindow.loadFile('./src/Time.html');
+//   newWindow.setMenuBarVisibility(false);
 
-  newWindow.on('closed', () => {
-    newWindow.destroy();
-  });
-});
+//   newWindow.on('closed', () => {
+//     newWindow.destroy();
+//   });
+// });
