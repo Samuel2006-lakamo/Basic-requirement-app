@@ -28,6 +28,7 @@
     padding: var(--ResetPadding);
     margin: var(--ResetMargin);
     box-sizing: var(--ResetBoxSizing);
+    user-select: none;
 }
 
 html {

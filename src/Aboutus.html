@@ -63,65 +63,71 @@
         </div>
     </div>
 
+    <!-- For want to debug a getstarted -->
+    <!-- <button id="clearStorageBTN" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 0.5rem 1rem; background-color: #222; border: none; border-radius: 0.75rem;">
+        RESET GET STARTED 
+    </button> -->
+
     <div class="content">
-        <div class="Textintro" id="content">
-            <div class="TextIntroIMAGE">
-                <img src="./AppsLogo.svg" alt="" draggable="false">
+        <div id="getStartedContent">
+            <div class="Textintro" id="content">
+                <div class="TextIntroIMAGE">
+                    <img src="./AppsLogo.svg" alt="" draggable="false">
+                </div>
+                <h1>Get started with <br>Essential app</h1>
+                <div class="TextintroBTN">
+                    <button id="getStartedBTN">Continue</button>
+                </div>
             </div>
-            <h1>Get started with <br>Essential app</h1>
-            <div class="TextintroBTN">
-                <button id="getStartedBTN">Continue</button>
-            </div>
-        </div>
 
-        <div class="contentGuide2" id="contentGuide2">
-            <div class="GuideText">
-                <div id="scrambled-text"></div>
+            <div class="contentGuide2" id="contentGuide2">
+                <div class="GuideText">
+                    <div id="scrambled-text"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="wrapperButtonConti" id="ScrambledBTN">
-            <div class="ButtonGonext">
-                <div class="button-container">
-                    <button class="send-button js-send-button">
-                    </button>
+            <div class="wrapperButtonConti" id="ScrambledBTN">
+                <div class="ButtonGonext">
+                    <div class="button-container">
+                        <button class="send-button js-send-button">
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <!-- Create card app here -->
-        <div class="app-cards">
+        <div class="app-cards" id="APPcards">
             <div class="card">
                 <div class="card-icon todolist">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path d="M4 19v-2h2v2H4zm6 0v-2h10v2H10zm-6-4v-2h2v2H4zm6 0v-2h10v2H10zm-6-4V9h2v2H4zm6 0V9h10v2H10zm-6-4V5h2v2H4zm6 0V5h10v2H10z"/>
+                        <path
+                            d="M4 19v-2h2v2H4zm6 0v-2h10v2H10zm-6-4v-2h2v2H4zm6 0v-2h10v2H10zm-6-4V9h2v2H4zm6 0V9h10v2H10zm-6-4V5h2v2H4zm6 0V5h10v2H10z" />
                     </svg>
                 </div>
                 <h3>Todo List</h3>
                 <p>Organize your tasks efficiently with our intuitive todo list manager</p>
             </div>
-            
             <div class="card">
                 <div class="card-icon timer">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path d="M12 20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2s-2 .9-2 2v12c0 1.1.9 2 2 2zm-6 0c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2s-2 .9-2 2v4c0 1.1.9 2 2 2zM18 20c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2s-2 .9-2 2v8c0 1.1.9 2 2 2z"/>
+                        <path
+                            d="M12 20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2s-2 .9-2 2v12c0 1.1.9 2 2 2zm-6 0c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2s-2 .9-2 2v4c0 1.1.9 2 2 2zM18 20c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2s-2 .9-2 2v8c0 1.1.9 2 2 2z" />
                     </svg>
                 </div>
                 <h3>Timer</h3>
                 <p>Track your time with precision using our customizable timer</p>
             </div>
-
             <div class="card" id="ScrollPosition">
                 <div class="card-icon calculator">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/>
+                        <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z" />
                     </svg>
                 </div>
                 <h3>Calculator</h3>
                 <p>Perform calculations quickly with our simple yet powerful calculator</p>
             </div>
         </div>
-
     </div>
     <script src="./frontendJS/PUBLICscripts.js"></script>
     <script src="renderer.js"></script>

@@ -1,7 +1,7 @@
 /* Direct to not scroll first */
 
 html {
-    overflow-y: hidden !important;
+    overflow-y: hidden;
 }
 
 :where(li, a) {

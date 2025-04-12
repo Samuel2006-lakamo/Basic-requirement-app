@@ -4,13 +4,44 @@ const UI = {
         content: document.getElementById("content"),
         MenuBar: document.getElementById("MainLINKS"),
         content2: document.getElementById("contentGuide2"),
-        ScrambledBTN: document.getElementById('ScrambledBTN')
+        ScrambledBTN: document.getElementById('ScrambledBTN'),
+        APPcards: document.getElementById("APPcards"),
+        // Wrapper Getstarted
+        getStartedContent: document.getElementById("getStartedContent"),
+        clearStorageBTN: document.getElementById('clearStorageBTN'),
     },
     opacity: {
         out: 0,
         in: 1
+    },
+    APPcards: {
+        unShow: "none",
+        toTop: "2rem"
     }
 };
+
+const APPcardsSTYLE = () => {
+    // Direct for element but it fine will no error
+    // But if the element does not have this error, it will show
+    try {
+        if (!UI.elements.content || !UI.elements.APPcards) {
+            console.error(
+                'Required elements not found:',
+                'Try to reinstall to fix it',
+                {
+                    content: UI.elements.content,
+                    APPcards: UI.elements.APPcards
+                }
+            );
+            return;
+        }
+        UI.elements.content.style.display = UI.APPcards.unShow;
+        UI.elements.APPcards.style.marginTop = UI.APPcards.toTop;
+        console.log('APPcardsSTYLE applied');
+    } catch (error) {
+        console.error('Error in APPcardsSTYLE:', error);
+    }
+}
 
 // Utility function at the start of the file after UI object
 function rafTimeout(callback, delay) {
@@ -18,7 +49,7 @@ function rafTimeout(callback, delay) {
     function timeoutLoop(timestamp) {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
-        
+
         if (elapsed < delay) {
             requestAnimationFrame(timeoutLoop);
         } else {
@@ -28,10 +59,22 @@ function rafTimeout(callback, delay) {
     requestAnimationFrame(timeoutLoop);
 }
 
+// Check localStorage and apply styles with verification
 if (localStorage.getItem('hasSeenContent')) {
-    usingGETSTARTED(); // Show get started once
+    console.log('Content seen before');
+    UI.elements.getStartedContent.style.display = "none";
+    APPcardsSTYLE();
 } else {
+    console.log('First visit');
     usingGETSTARTED();
+}
+
+// For who want to debug
+if (UI.elements.clearStorageBTN) {
+    UI.elements.clearStorageBTN.addEventListener('click', function () {
+        localStorage.removeItem('hasSeenContent');
+        window.location.reload();
+    });
 }
 
 function usingGETSTARTED() {
@@ -107,6 +150,9 @@ function usingGETSTARTED() {
                     block: "start"
                 });
             }
+            // UI.elements.content.style.display = UI.APPcards.unShow;
+            // UI.elements.APPcards.style.marginTop = UI.APPcards.toTop;
+            APPcardsSTYLE();
         }
 
         ScrambledBTN_Toggle();
