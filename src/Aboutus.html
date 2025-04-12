@@ -64,9 +64,10 @@
     </div>
 
     <!-- For want to debug a getstarted -->
-    <!-- <button id="clearStorageBTN" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 0.5rem 1rem; background-color: #222; border: none; border-radius: 0.75rem;">
-        RESET GET STARTED 
-    </button> -->
+    <button id="clearStorageBTN"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 0.5rem 1rem; background-color: #222; border: none; border-radius: 0.75rem;">
+        RESET GET STARTED
+    </button>
 
     <div class="content">
         <div id="getStartedContent">
@@ -82,52 +83,61 @@
 
             <div class="contentGuide2" id="contentGuide2">
                 <div class="GuideText">
-                    <div id="scrambled-text"></div>
+                    <div id="scrambled-text" style="margin-bottom: 45px;"></div>
                 </div>
-            </div>
-
-            <div class="wrapperButtonConti" id="ScrambledBTN">
-                <div class="ButtonGonext">
-                    <div class="button-container">
-                        <button class="send-button js-send-button">
-                        </button>
+                <div class="wrapperButtonConti" id="ScrambledBTN">
+                    <div class="ButtonGonext">
+                        <div class="button-container">
+                            <button class="send-button js-send-button"></button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- Create card app here -->
         <div class="app-cards" id="APPcards">
-            <div class="card">
-                <div class="card-icon todolist">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path
-                            d="M4 19v-2h2v2H4zm6 0v-2h10v2H10zm-6-4v-2h2v2H4zm6 0v-2h10v2H10zm-6-4V9h2v2H4zm6 0V9h10v2H10zm-6-4V5h2v2H4zm6 0V5h10v2H10z" />
-                    </svg>
-                </div>
-                <h3>Todo List</h3>
-                <p>Organize your tasks efficiently with our intuitive todo list manager</p>
+            <div id="TextCards">
+                <h1>Recommendations Apps</h1>
             </div>
-            <div class="card">
-                <div class="card-icon timer">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path
-                            d="M12 20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2s-2 .9-2 2v12c0 1.1.9 2 2 2zm-6 0c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2s-2 .9-2 2v4c0 1.1.9 2 2 2zM18 20c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2s-2 .9-2 2v8c0 1.1.9 2 2 2z" />
-                    </svg>
+            <!-- To apply link use data-href="index.html" -->
+            <div class="AppcardsContent">
+                <div class="card">
+                    <div class="card-icon todolist">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#FFF">
+                            <path
+                                d="M356-207.5v-75h475v75H356Zm0-235.5v-75h475v75H356Zm0-234.5v-75h475v75H356ZM204.89-169q-31.39 0-53.64-22.36Q129-213.71 129-245.11q0-31.39 22.36-53.64Q173.71-321 205.11-321q31.39 0 53.64 22.36Q281-276.29 281-244.89q0 31.39-22.36 53.64Q236.29-169 204.89-169Zm0-235.5q-31.39 0-53.64-22.36Q129-449.21 129-480.61q0-31.39 22.36-53.64 22.35-22.25 53.75-22.25 31.39 0 53.64 22.36Q281-511.79 281-480.39q0 31.39-22.36 53.64-22.35 22.25-53.75 22.25Zm0-234.5q-31.39 0-53.64-22.36Q129-683.71 129-715.11q0-31.39 22.36-53.64Q173.71-791 205.11-791q31.39 0 53.64 22.36Q281-746.29 281-714.89q0 31.39-22.36 53.64Q236.29-639 204.89-639Z" />
+                        </svg>
+                    </div>
+                    <h3>Todo List</h3>
+                    <p>Organize your tasks efficiently with our intuitive todo list manager</p>
                 </div>
-                <h3>Timer</h3>
-                <p>Track your time with precision using our customizable timer</p>
-            </div>
-            <div class="card" id="ScrollPosition">
-                <div class="card-icon calculator">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor">
-                        <path
-                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z" />
-                    </svg>
+                <div class="card">
+                    <div class="card-icon timer">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#FFF">
+                            <path
+                                d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z" />
+                        </svg>
+                    </div>
+                    <h3>Clock</h3>
+                    <p>Track your time with precision using our customizable timer</p>
                 </div>
-                <h3>Calculator</h3>
-                <p>Perform calculations quickly with our simple yet powerful calculator</p>
+                <div class="card" id="ScrollPosition">
+                    <div class="card-icon calculator">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#FFF">
+                            <path
+                                d="M400-240v-80h62l105-120-105-120h-66l-64 344q-8 45-37 70.5T221-120q-45 0-73-24t-28-64q0-32 17-51.5t43-19.5q25 0 42.5 17t17.5 41q0 5-.5 9t-1.5 9q5-1 8.5-5.5T252-221l62-339H200v-80h129l21-114q7-38 37.5-62t72.5-24q44 0 72 26t28 65q0 30-17 49.5T500-680q-25 0-42.5-17T440-739q0-5 .5-9t1.5-9q-6 2-9 6t-5 12l-17 99h189v80h-32l52 59 52-59h-32v-80h200v80h-62L673-440l105 120h62v80H640v-80h32l-52-60-52 60h32v80H400Z" />
+                        </svg>
+                    </div>
+                    <h3>Calculator</h3>
+                    <p>Perform calculations quickly with our simple yet powerful calculator</p>
+                </div>
             </div>
         </div>
+
     </div>
     <script src="./frontendJS/PUBLICscripts.js"></script>
     <script src="renderer.js"></script>

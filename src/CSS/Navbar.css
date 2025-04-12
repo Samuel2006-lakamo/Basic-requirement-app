@@ -3,7 +3,9 @@ nav {
     height: 40px;
     background-color: var(--TitlebarColor);
     -webkit-app-region: drag;
-    z-index: 5;
+    z-index: 999;
+    pointer-events: auto;
+    /* Do not make zindex more than */
     position: fixed;
 }
 
@@ -14,6 +16,13 @@ nav ul {
     list-style-type: none;
     height: 40px;
     border-bottom: var(--border);
+    position: relative;
+    z-index: 1000;
+}
+
+nav ul li {
+    position: relative;
+    z-index: 1001;
 }
 
 nav ul li a {
@@ -27,6 +36,9 @@ nav ul li a {
     width: 100%;
     -webkit-app-region: no-drag;
     font-size: 15.5px;
+    pointer-events: all;
+    position: relative;
+    z-index: 1002;
 }
 
 /* click animation */
@@ -69,6 +81,7 @@ nav ul li a:active {
 
 nav ul li a:hover {
     background-color: #3f3f3f;
+    pointer-events: all;
 }
 
 #CurrentPage {

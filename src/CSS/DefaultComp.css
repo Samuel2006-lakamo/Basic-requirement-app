@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+/* Inter tight: for text fonts */
+@import url('https://fonts.googleapis.com/css2?family=Hind:wght@300&family=IBM+Plex+Sans+Thai:wght@300&family=Inter+Tight:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+/* Date font for other lang that complatible with intertight */
+
+:where(li, a) {
+    text-decoration: none;
+    list-style: none;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
 
 .material-symbols-outlined {
     font-variation-settings:
@@ -17,9 +31,10 @@
     --border: 1px solid #3f3f3f;
     --ColorHighlight: #b2e77c;
     --TitlebarColor: #141414;
+    --CardMainColor: #141414;
 }
 
-/* body[data-theme="light"] {
+/* body[data-theme="light"] {b
     --background-color: rgba(248, 248, 248, 0.800);
 } */
 

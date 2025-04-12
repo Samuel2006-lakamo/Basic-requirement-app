@@ -6,8 +6,7 @@ const UI = {
         content2: document.getElementById("contentGuide2"),
         ScrambledBTN: document.getElementById('ScrambledBTN'),
         APPcards: document.getElementById("APPcards"),
-        // Wrapper Getstarted
-        getStartedContent: document.getElementById("getStartedContent"),
+        getStartedContent: document.getElementById("getStartedContent"), // Wrapper Getstarted
         clearStorageBTN: document.getElementById('clearStorageBTN'),
     },
     opacity: {
@@ -37,6 +36,10 @@ const APPcardsSTYLE = () => {
         }
         UI.elements.content.style.display = UI.APPcards.unShow;
         UI.elements.APPcards.style.marginTop = UI.APPcards.toTop;
+        // Menubar
+        UI.elements.MenuBar.style.display = "flex";
+        UI.elements.MenuBar.style.transform = "translateX(0px)";
+        UI.elements.MenuBar.style.opacity = UI.opacity.in;
         console.log('APPcardsSTYLE applied');
     } catch (error) {
         console.error('Error in APPcardsSTYLE:', error);
@@ -194,4 +197,38 @@ const targetText = "Introducing the one app that truly has it all,\nTailored spe
 
 document.querySelector('.js-send-button').addEventListener('click', function () {
     this.classList.toggle('send-button--pressed');
+});
+
+// Add ripple effect to cards
+document.querySelectorAll('.card').forEach(card => {
+    let ripple = null;
+    let isPressed = false;
+
+    // Handle mouseleave cleanup outside AfterRipple
+    card.addEventListener('mouseleave', function() {
+        if (ripple) {
+            isPressed = false;
+            ripple.remove();
+        }
+    });
+
+    card.addEventListener('mousedown', function(e) {
+        isPressed = true;
+        ripple = document.createElement('div');
+        ripple.className = 'ripple ripple-quick';
+        ripple.style.left = `${e.clientX - this.getBoundingClientRect().left}px`;
+        ripple.style.top = `${e.clientY - this.getBoundingClientRect().top}px`;
+        this.appendChild(ripple);
+    });
+
+    card.addEventListener('mouseup', function() {
+        if (ripple) {
+            isPressed = false;
+            const href = this.getAttribute('data-href');
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+                if (href) window.location.href = href;
+            });
+        }
+    });
 });
