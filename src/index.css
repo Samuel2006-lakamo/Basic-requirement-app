@@ -165,3 +165,75 @@
         display: none;
     }
 }
+
+.todolist{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.todolistContent{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #1a1a1a;
+    padding: 100px 100px;
+    border-radius: 10px;
+}
+
+#inputBox{
+    border: none;
+    outline: none;
+    background: #e3e3e3;
+    width: 100%;
+    padding: 10px 25px;
+    color: #282828;
+    border-radius: 5px;
+    font-family: "Manrope", sans-serif;
+}
+
+.todolistData{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+#submitbtn{
+    background-color: #b2e77c;
+    color: #282828;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "Manrope", sans-serif;
+}
+
+.greetingText{
+    color: #ffffff;
+    font-size: 2.5rem;
+    max-width: 60%;
+    letter-spacing: 1.2px;
+    text-align: center;
+    font-family: "Manrope", sans-serif;
+}
+
+.todolistaddedContent{
+    font-size: 1.2rem;
+    list-style-type: none;
+}
+
+.addedTasks{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    text-align: left;
+}

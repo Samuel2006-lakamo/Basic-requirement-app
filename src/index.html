@@ -88,7 +88,24 @@
       <div class="lang-option" data-lang="hi-IN">हिंदी</div>
       <div class="lang-option" data-lang="zh-CN">中文</div>
     </div>
-    <!-- ...rest of content... -->
+    <section class="todolist">
+      <div class="todolistContent">
+        <h2 class="greetingText">Howdy User! What do you want to add today?</h2>
+        <div class="todolistData">
+        <input type="text" id="inputBox" placeholder="Add a new task..." />
+        <button id="submitbtn">Add</button>
+      </div>
+      <div class="addedTasks">
+        <ul class="todolistaddedContent">
+          <li class="todolistaddedContentItem" id="todolistaddedContentItem1">Task 1</li>
+          <li class="todolistaddedContentItem" id="todolistaddedContentItem2">Task 2</li>
+          <li class="todolistaddedContentItem" id="todolistaddedContentItem3">Task 3</li>
+          <li class="todolistaddedContentItem" id="todolistaddedContentItem4">Task 4</li>
+          <li class="todolistaddedContentItem" id="todolistaddedContentItem5">Task 5</li>
+          </ul>
+        </div>
+      </div>   
+    </section>
   </div>
 
   <script src="renderer.js"></script>
