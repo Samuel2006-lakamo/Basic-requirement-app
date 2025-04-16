@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, globalShortcut, Menu, screen, nativeTheme } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
+const v8 = require('v8');
 
 require('dotenv').config();
 
@@ -9,19 +10,72 @@ const token = process.env.GITHUB_TOKEN;
 console.log(`GitHub Token: ${token}`);
 
 // Better performance
-app.commandLine.appendSwitch('enable-features', 'Metal');
+app.commandLine.appendSwitch('enable-features', 'Metal,NetworkServiceInProcess');
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors,MediaRouter');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blacklist');
+app.commandLine.appendSwitch('enable-hardware-overlays', 'single-fullscreen');
+app.commandLine.appendSwitch('force_high_performance_gpu');
+
+// Memory management
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+
+if (process.platform === 'win32') {
+  app.commandLine.appendSwitch('high-dpi-support', '1');
+  app.commandLine.appendSwitch('force-device-scale-factor', '1');
+}
+
+// Optimize V8
+v8.setFlagsFromString('--max_old_space_size=4096');
+v8.setFlagsFromString('--optimize_for_size');
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// Platform-specific configurations without screen-dependent values
+const PLATFORM_CONFIG = {
+  darwin: {
+    window: {
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 17.5, y: 12 }
+    }
+  },
+  win32: {
+    window: {
+      titleBarStyle: 'hidden'
+    }
+  }
+};
+
+// Base window configurations
+const BASE_WINDOW_CONFIG = {
+  common: {
+    backgroundMaterial: 'acrylic',
+    vibrancy: 'fullscreen-ui',
+    frame: false,
+    titleBarOverlay: {
+      color: '#141414',
+      symbolColor: '#FFFFFF',
+      height: 39
+    },
+    fullscreenable: false,
+    fullscreen: false,
+    maximizable: false,
+    webPreferences: {
+      backgroundThrottling: false,
+      enablePreferredSizeMode: true,
+      spellcheck: false,
+      enableBlinkFeatures: 'CompositorThreading',
+      v8CacheOptions: 'code',
+    }
+  }
+};
+
+let WINDOW_CONFIG;
 let mainWindow;
 let isAlwaysOnTop = false;
-const DEFINE_WINDOWSIZE = { width: 820, height: 905 };
-const DEFINE_MINWINSIZE = { width: 640, height: 480 };
-const DEFINE_MINWIDTHSIZE = { width: 720, height: 480 };
-const DEFINE_ALWAYSONTOP = { width: 340, height: 570 };
-
 let centerX, centerY;
 
 // Add this helper function after the initial constants
@@ -32,32 +86,37 @@ const getThemeIcon = () => {
 };
 
 const createWindow = async () => {
+  // Enable process reuse for better performance
+  app.allowRendererProcessReuse = true;
+
   mainWindow = new BrowserWindow({
-    width: DEFINE_WINDOWSIZE.width,
-    height: DEFINE_WINDOWSIZE.height,
+    ...WINDOW_CONFIG.common,
+    ...WINDOW_CONFIG.default,
     icon: getThemeIcon(),
-    backgroundMaterial: 'acrylic',
-    vibrancy: 'fullscreen-ui',
-    titleBarStyle: 'hidden',
-    frame: false,
-    titleBarOverlay: {
-      color: '#141414',
-      symbolColor: '#FFFFFF',
-      height: 39
-    },
-    minWidth: DEFINE_MINWIDTHSIZE.width,
-    minHeight: DEFINE_MINWIDTHSIZE.height,
-    fullscreenable: false,
-    fullscreen: false,
-    maximizable: false,
+    minWidth: WINDOW_CONFIG.min.width,
+    minHeight: WINDOW_CONFIG.min.height,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
       autoHideMenuBar: true,
-      backgroundThrottling: true,
-    },
+      backgroundThrottling: false,
+      enablePreferredSizeMode: true,
+      spellcheck: false,
+      enableBlinkFeatures: 'CompositorThreading',
+      v8CacheOptions: 'code',
+      nodeIntegrationInWorker: true,
+      webgl: true
+    }
   });
+
+  // Optimize window performance
+  mainWindow.webContents.setZoomFactor(1);
+  mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
+
+  if (process.platform === 'win32') {
+    mainWindow.setTouchBar(null);
+  }
 
   try {
     const fullPath = path.join(__dirname, 'Aboutus.html');
@@ -71,8 +130,6 @@ const createWindow = async () => {
   }
 
   mainWindow.setMenuBarVisibility(false);
-
-  // Add icon error handling
   mainWindow.on('page-title-updated', () => {
     try {
       mainWindow.setIcon(getThemeIcon());
@@ -87,9 +144,47 @@ const createWindow = async () => {
 };
 
 app.whenReady().then(() => {
+  const calculateOptimalWindowSize = () => {
+    const display = screen.getPrimaryDisplay();
+    const { width: screenWidth, height: screenHeight } = display.workAreaSize;
+    const aspectRatio = 16 / 9;
+
+    // Base size for 1280x720 screen
+    const baseWidth = 820;
+    const baseHeight = 905;
+    // Calculate scale factor based on screen width
+    const scaleFactor = Math.min(screenWidth / 1280, screenHeight / 720);
+    // Calculate dimensions ensuring they don't exceed 70% of screen
+    let width = Math.min(baseWidth, Math.floor(screenWidth * 0.7));
+    let height = Math.min(baseHeight, Math.floor(screenHeight * 0.7));
+    // Ensure dimensions are divisible by 8 for better GPU rendering
+    width = Math.floor(width / 8) * 8;
+    height = Math.floor(height / 8) * 8;
+    // Ensure minimum size
+    width = Math.max(width, 640);
+    height = Math.max(height, 480);
+    return { width, height };
+  };
+
+  // Initialize window config with screen-dependent values
+  const optimal = calculateOptimalWindowSize();
+  WINDOW_CONFIG = {
+    ...BASE_WINDOW_CONFIG,
+    min: {
+      width: Math.floor(optimal.width * 0.6),
+      height: Math.floor(optimal.height * 0.6)
+    },
+    default: {
+      ...PLATFORM_CONFIG[process.platform]?.window || PLATFORM_CONFIG.win32.window,
+      ...optimal
+    },
+    alwaysOnTop: { width: 340, height: 570 }
+  };
+
+  // Calculate center position
   const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-  centerX = Math.floor((screenWidth - DEFINE_WINDOWSIZE.width) / 2); // Calculate center X
-  centerY = Math.floor((screenHeight - DEFINE_WINDOWSIZE.height) / 2); // Calculate center Y
+  centerX = Math.floor((screenWidth - WINDOW_CONFIG.default.width) / 2);
+  centerY = Math.floor((screenHeight - WINDOW_CONFIG.default.height) / 2);
 
   createWindow();
   app.on('activate', () => {
@@ -115,32 +210,26 @@ app.whenReady().then(() => {
   // Update shortcut window creation
   globalShortcut.register('Control+Shift+N', () => {
     const newWindow = new BrowserWindow({
-      width: DEFINE_WINDOWSIZE.width,
-      height: DEFINE_WINDOWSIZE.height,
+      ...WINDOW_CONFIG.common,
+      ...WINDOW_CONFIG.default,
       icon: getThemeIcon(),
       x: centerX,
       y: centerY,
-      minWidth: DEFINE_MINWIDTHSIZE.width,
-      minHeight: DEFINE_MINWIDTHSIZE.height,
-      fullscreenable: false,
-      fullscreen: false,
-      maximizable: false,
-      backgroundMaterial: 'acrylic',
-      vibrancy: 'fullscreen-ui',
-      titleBarStyle: 'hidden',
-      frame: false,
-      titleBarOverlay: {
-        color: '#141414',
-        symbolColor: '#FFFFFF',
-        height: 39
-      },
+      minWidth: WINDOW_CONFIG.min.width,
+      minHeight: WINDOW_CONFIG.min.height,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: true,
         contextIsolation: false,
         autoHideMenuBar: true,
-        backgroundThrottling: true,
-      },
+        backgroundThrottling: false,
+        enablePreferredSizeMode: true,
+        spellcheck: false,
+        enableBlinkFeatures: 'CompositorThreading',
+        v8CacheOptions: 'code',
+        nodeIntegrationInWorker: true,
+        webgl: true
+      }
     });
 
     newWindow.loadFile(path.join(__dirname, 'Aboutus.html'));
@@ -168,8 +257,8 @@ ipcMain.on('Keepontop', (event, message) => {
     focusedWindow.setResizable(!isAlwaysOnTop);
 
     const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-    const xBottomPostion = Math.floor((screenWidth - (isAlwaysOnTop ? DEFINE_ALWAYSONTOP.width : DEFINE_WINDOWSIZE.width)) / 2);
-    const yBottomPostion = screenHeight - (isAlwaysOnTop ? DEFINE_ALWAYSONTOP.height : DEFINE_WINDOWSIZE.height);
+    const xBottomPostion = Math.floor((screenWidth - (isAlwaysOnTop ? WINDOW_CONFIG.alwaysOnTop.width : WINDOW_CONFIG.default.width)) / 2);
+    const yBottomPostion = screenHeight - (isAlwaysOnTop ? WINDOW_CONFIG.alwaysOnTop.height : WINDOW_CONFIG.default.height);
 
     const newIcon = getThemeIcon();
 
@@ -177,15 +266,15 @@ ipcMain.on('Keepontop', (event, message) => {
 
     if (isAlwaysOnTop) {
       focusedWindow.setBounds({
-        width: DEFINE_ALWAYSONTOP.width,
-        height: DEFINE_ALWAYSONTOP.height,
+        width: WINDOW_CONFIG.alwaysOnTop.width,
+        height: WINDOW_CONFIG.alwaysOnTop.height,
         x: xBottomPostion, // For bottom y center x
         y: yBottomPostion
       });
     } else {
       focusedWindow.setBounds({
-        width: DEFINE_WINDOWSIZE.width,
-        height: DEFINE_WINDOWSIZE.height,
+        width: WINDOW_CONFIG.default.width,
+        height: WINDOW_CONFIG.default.height,
         x: centerX,
         y: centerY
       });
@@ -271,18 +360,14 @@ ipcMain.on('show-context-menu', (event, pos) => {
   `).catch(console.error);
 });
 
-ipcMain.on('navigate', async (event, url) => {
+ipcMain.on('navigate', (event, url) => {
   const win = BrowserWindow.getFocusedWindow();
   if (win) {
-    try {
-      const fullPath = path.join(__dirname, url);
-      if (fs.existsSync(fullPath)) {
-        await win.loadFile(fullPath);
-      } else {
-        await win.loadFile(path.join(__dirname, 'error.html'));
-      }
-    } catch (err) {
-      console.error('Failed to navigate:', err);
+    const fullPath = path.join(__dirname, url);
+    if (fs.existsSync(fullPath)) {
+      win.loadFile(fullPath);
+    } else {
+      win.loadFile(path.join(__dirname, 'error.html'));
     }
   }
 });
