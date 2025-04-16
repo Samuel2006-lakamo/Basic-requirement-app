@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>404 - You're Lost Bruh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./CSS/DefaultComp.css">
+    <style>
+        * {
+            font-family: 'Inter Tight', 'IBM Plex Sans Thai', 'Hind', 'Noto Sans SC', sans-serif !important;
+            font-weight: 300;
+        }
+
+        body {
+            margin: 0;
+            background-color: #141414;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0px 12px 17px rgba(0, 0, 0, 0.15),
+                0px 2px 20px rgba(0, 0, 0, 0.07);
+            border: solid 1px #313131;
+            max-width: 550px;
+            animation: floatUp 0.5s ease-out;
+            -webkit-app-region: no-drag;
+        }
+
+        @keyframes floatUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #fff;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+        }
+
+        p {
+            font-size: 1.15rem;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+        }
+
+        .roast {
+            background: rgba(255, 109, 109, 0.055);
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #f8e8e8;
+            margin-bottom: 2rem;
+            border: 1px solid #FF6D6D;
+            text-wrap: balance;
+        }
+
+        button {
+            background: #b2e77c;
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.3rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 1rem;
+            line-height: 1.1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            filter: brightness(80%);
+        }
+
+        #CenterTitlebar {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 40px;
+            border-bottom: solid 1px #222;
+            top: 0;
+            -webkit-app-region: drag;
+        }
+
+        #CenterTitlebar h2 {
+            line-height: 40px;
+            margin-left: 1rem;
+            font-size: 16px;
+        }
+
+        .Text {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .Text a {
+            transform: translate(10px, 0px);
+            -webkit-app-region: no-drag;
+            line-height: 0;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .Text a:hover {
+            background-color: #313131;
+        }
+
+        @media screen and (max-height: 640px) {
+            p {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="CenterTitlebar">
+        <div class="Text">
+            <a href="Aboutus.html"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                    width="24px" fill="#e3e3e3">
+                    <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+                </svg></a>
+            <h2>Path is undefined</h2>
+            <h2></h2>
+        </div>
+    </div>
+    <div class="card">
+        <h1>Path is undefined</h1>
+        <p>What the hell is this page you’re trying to open?<br>
+        I swear I can’t find that shit anywhere.
+        </p>
+        <div class="roast">
+            This is an Electron App, not Minecraft! Don't think you can noclip to a non-existent path!<br><br>
+            If you think this is a secret page, let me tell you...<br>
+            <strong>"The secret is in your mind, not in the path 🧠"</strong><br><br>
+            Or if you want, you can head straight to The Backrooms...<br>
+            <em>Level 0 is waiting for you 🟨📦</em>
+        </div>
+        <button onclick="goHome()">Retrun to home page</button>
+    </div>
+
+    <audio id="roastSound" autoplay>
+        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_e1b13b6f1a.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        function goHome() {
+            window.location.href = "Aboutus.html";
+        }
+        setTimeout(() => {
+            document.title = "Noclip player...";
+        }, 1500);
+    </script>
+</body>
+
+</html>
