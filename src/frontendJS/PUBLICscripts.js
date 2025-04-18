@@ -1,3 +1,13 @@
+// Progress loaded
+document.addEventListener("DOMContentLoaded", () => {
+  NProgress.start();
+});
+
+// Unset if it done to load
+window.addEventListener("load", () => {
+  NProgress.done();
+});
+
 // Initilaze Toggle always on top
 
 let isClickedAlwaysOnTop = false;

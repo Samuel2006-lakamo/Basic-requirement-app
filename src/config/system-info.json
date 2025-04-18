@@ -1,0 +1,51 @@
+{
+  "runtimes": {
+    "electron": {
+      "name": "Electron",
+      "features": ["native-api", "desktop-integration", "system-access"],
+      "ui": {
+        "titlebar": true,
+        "window-controls": true,
+        "drag-region": true
+      }
+    },
+    "web": {
+      "name": "Web Browser",
+      "features": ["web-api", "browser-storage", "web-workers"],
+      "ui": {
+        "titlebar": false,
+        "window-controls": false,
+        "drag-region": false
+      }
+    }
+  },
+  "platforms": {
+    "win32": {
+      "name": "Windows",
+      "controls": "right",
+      "titlebar": "windows-style",
+      "shortcuts": {
+        "reload": "Ctrl+R",
+        "newWindow": "Ctrl+N"
+      }
+    },
+    "darwin": {
+      "name": "macOS",
+      "controls": "left",
+      "titlebar": "mac-style",
+      "shortcuts": {
+        "reload": "Cmd+R",
+        "newWindow": "Cmd+N"
+      }
+    },
+    "linux": {
+      "name": "Linux",
+      "controls": "custom",
+      "titlebar": "linux-style",
+      "shortcuts": {
+        "reload": "Ctrl+R",
+        "newWindow": "Ctrl+N"
+      }
+    }
+  }
+}

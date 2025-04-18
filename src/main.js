@@ -9,6 +9,10 @@ require('dotenv').config();
 const token = process.env.GITHUB_TOKEN;
 console.log(`GitHub Token: ${token}`);
 
+// Add after other requires
+const menuTranslations = require('./locales/menu.js');
+let currentLocale = 'en-US'; // Default locale
+
 // Performance Optimization
 app.commandLine.appendSwitch('enable-features', 'Metal,NetworkServiceInProcess,ParallelDownloading,BackForwardCache');
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors,MediaRouter,SpareRendererForSitePerProcess');
@@ -55,12 +59,12 @@ const PLATFORM_CONFIG = {
   darwin: {
     window: {
       titleBarStyle: 'hiddenInset',
-      trafficLightPosition: { x: 17.5, y: 12 }
+      trafficLightPosition: { x: 17.5, y: 12 },
     }
   },
   win32: {
     window: {
-      titleBarStyle: 'hidden'
+      titleBarStyle: 'hidden',
     }
   }
 };
@@ -89,6 +93,32 @@ const BASE_WINDOW_CONFIG = {
   }
 };
 
+// Config Page
+
+const Essential_links = {
+  home: 'index.html',
+  todolist: 'Todolist.html',
+  clock: 'Time.html',
+  notes: 'Notes.html',
+  paint: 'Paint.html',
+  settings: 'Settings.html',
+  Error: {
+    ErrorPage: 'error.html'
+  }
+};
+
+// Add after Essential_links object
+const validateMenuLink = (href) => {
+  return Object.values(Essential_links).some(link => {
+    if (typeof link === 'string') {
+      return link === href;
+    } else if (typeof link === 'object') {
+      return Object.values(link).includes(href);
+    }
+    return false;
+  });
+};
+
 let WINDOW_CONFIG;
 let mainWindow;
 let isAlwaysOnTop = false;
@@ -111,7 +141,7 @@ const handleError = async (win, error, context = '') => {
         context: context
       });
       if (context !== 'error-page-load') {
-        await win.loadFile(path.join(__dirname, 'error.html'));
+        await win.loadFile(path.join(__dirname, Essential_links.Error.ErrorPage));
       }
     } catch (e) {
       console.error('Error handler failed:', e);
@@ -147,6 +177,50 @@ const loadFileWithCheck = async (window, filePath, context) => {
   }
 };
 
+// safeLoad for check url that be false
+const safeLoad = async (win, filePath) => {
+  try {
+    const fullPath = path.join(__dirname, filePath);
+    if (fs.existsSync(fullPath)) {
+      await win.loadFile(fullPath);
+      return true;
+    } else {
+      console.warn(`ESNTL: ${filePath} not found`);
+      await win.loadFile(path.join(__dirname, Essential_links.Error.ErrorPage));
+      return false;
+    }
+  } catch (err) {
+    console.error('ESNTL Error: Safeload error:', err);
+    await win.loadFile(path.join(__dirname, Essential_links.Error.ErrorPage));
+    return false;
+  }
+};
+
+// Load system config and initialize system info
+const systemConfig = require('./config/system-info.json');
+const systemInfo = {
+  runtime: {
+    type: 'electron',
+    ...systemConfig.runtimes['electron']
+  },
+  platform: {
+    type: process.platform,
+    ...systemConfig.platforms[process.platform]
+  },
+  // details: {
+  //   arch: process.arch,
+  //   version: process.getSystemVersion?.() || 'unknown',
+  //   electron: process.versions.electron,
+  //   chrome: process.versions.chrome,
+  //   node: process.versions.node,
+  //   timestamp: Date.now(),
+  //   appVersion: app.getVersion()
+  // }
+};
+
+// Log system info once
+console.log('[System Info]', JSON.stringify(systemInfo, null, 2));
+
 // Optimize startup
 app.whenReady().then(async () => {
   try {
@@ -160,7 +234,7 @@ app.whenReady().then(async () => {
       try {
         require('resource-usage').setrlimit('nofile', 100000);
       } catch (e) {
-        console.error('Failed to set resource limit:', e);
+        console.error('ESNTL: Failed to set resource limit:', e);
       }
     }
 
@@ -256,16 +330,29 @@ app.whenReady().then(async () => {
           }
         });
 
-        await loadFileWithCheck(newWindow, 'index.html', 'new-window-shortcut');
+        await loadFileWithCheck(newWindow, Essential_links.home, 'new-window-shortcut');
         return newWindow;
       } catch (err) {
         await handleError(null, err, 'shortcut-window-creation');
       }
     });
-
   } catch (err) {
-    console.error('App initialization error:', err);
+    console.error('ESNTL: initialization error:', err);
   }
+
+  // Mac menubar
+  if (process.platform !== 'darwin') {
+    Menu.setApplicationMenu(null); // Disable menubar Windows, Linux
+  } else {
+    // From mac menubar will be top left
+    const menuTemplate = Object.entries(links).map(([label, relativePath]) => ({
+      label: label.charAt(0).toUpperCase() + label.slice(1),
+      click: () => win.loadFile(path.join(__dirname, relativePath))
+    }));
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+  }
+
 });
 
 app.on('window-all-closed', () => {
@@ -297,14 +384,20 @@ const createWindow = async () => {
       }
     });
 
+    // Send system info after window is ready
+    mainWindow.webContents.on('did-finish-load', () => {
+      mainWindow.webContents.send('system-info', systemInfo);
+    });
+
     // Optimize window performance
     mainWindow.webContents.setZoomFactor(1);
     mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
     mainWindow.webContents.setBackgroundThrottling(false);
 
-    await loadFileWithCheck(mainWindow, 'index.html', 'main-window-creation');
+    // Create windows here
+    await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation');
 
-    // Event listeners with error handling
+    // Listeners for error handling
     mainWindow.on('page-title-updated', async () => {
       try {
         await mainWindow.setIcon(getThemeIcon());
@@ -362,6 +455,12 @@ ipcMain.on('Keepontop', async (event, message) => {
 
 // RightClick Menu toggle & Include CSS
 
+// Add IPC handler for language change
+ipcMain.on('change-language', (event, locale) => {
+  currentLocale = locale;
+});
+
+// Update show-context-menu handler
 ipcMain.handle('show-context-menu', async (event, pos) => {
   const win = BrowserWindow.getFocusedWindow();
   if (!win) return;
@@ -369,17 +468,33 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
   try {
     const cssPath = path.join(__dirname, 'CSS', 'contextMenu.css');
     const cssContent = await fs.promises.readFile(cssPath, 'utf8');
+    const translations = menuTranslations[currentLocale] || menuTranslations['en-US'];
 
-    const menuItems = [
-      { label: 'Go to Home Page', href: './index.html', icon: 'home' },
-      { label: 'Open To-Do List', href: './Todolist.html', icon: 'list' },
-      { label: 'View Clock', href: './Time.html', icon: 'schedule' },
-      { label: 'Open Notes', href: './Notes.html', icon: 'note' },
-      { label: 'Launch Paint App', href: './Paint.html', icon: 'brush' }
+    let menuItems = [
+      { label: translations.home, href: Essential_links.home, icon: 'home' },
+      { label: translations.todolist, href: Essential_links.todolist, icon: 'list' },
+      { label: translations.clock, href: Essential_links.clock, icon: 'schedule' },
+      { label: translations.notes, href: Essential_links.notes, icon: 'note' },
+      { label: translations.paint, href: Essential_links.paint, icon: 'brush' },
+      { label: translations.settings, href: Essential_links.settings, icon: 'Settings' }
     ];
 
+    // If data is corrupted
+    menuItems = menuItems.filter(item => {
+      const isValid = validateMenuLink(item.href);
+      if (!isValid) {
+        console.warn(`"${item.href}" Not found try to reinstall this app`);
+      }
+      return isValid;
+    });
+
+    if (menuItems.length === 0) {
+      await handleError(win, new Error('Did you using crack version of our app?'), 'context-menu');
+      return;
+    }
+
     const menuHTML = `
-      <div class="custom-context-menu" id="customContextMenu" style="left: ${pos.x}px; top: ${pos.y}px;">
+      <div class="custom-context-menu" id="customContextMenu" data-lang="${currentLocale}" style="left: ${pos.x}px; top: ${pos.y}px;">
         ${menuItems.map(item => `
           <div class="menu-item" data-href="${item.href}">
             <span class="material-symbols-outlined">${item.icon}</span>
@@ -391,6 +506,15 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
 
     await win.webContents.executeJavaScript(`
       (function() {
+        // Add font stylesheet if not present
+        if (!document.getElementById('contextMenuFonts')) {
+          const fontLink = document.createElement('link');
+          fontLink.id = 'contextMenuFonts';
+          fontLink.rel = 'stylesheet';
+          fontLink.href = 'https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&family=Noto+Sans+Thai:wght@400;500&display=swap';
+          document.head.appendChild(fontLink);
+        }
+
         // Remove existing menu if any
         const existingMenu = document.getElementById('customContextMenu');
         if (existingMenu) existingMenu.remove();
@@ -412,14 +536,17 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
         // Add show animation
         requestAnimationFrame(() => menu.classList.add('show'));
 
-        // Handle menu item clicks
+        // Handle menu item clicks with safeLoad
         menu.addEventListener('click', (e) => {
           const menuItem = e.target.closest('.menu-item');
           if (menuItem) {
             const href = menuItem.dataset.href;
             menu.classList.remove('show');
             setTimeout(() => {
-              if (href) window.location.href = href;
+              if (href) {
+                // Use IPC to trigger safeLoad
+                window.electronAPI.safeNavigate(href);
+              }
               menu.remove();
             }, 150);
           }
@@ -443,12 +570,24 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
   }
 });
 
+// Add new IPC handler for safe navigation
+ipcMain.handle('safe-navigate', async (event, url) => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (!win) return;
+
+  await safeLoad(win, url);
+});
+
+// Update existing navigation handler
 ipcMain.on('navigate', async (event, url) => {
   const win = BrowserWindow.getFocusedWindow();
   if (!win) return;
 
   try {
-    await loadFileWithCheck(win, url, 'navigation');
+    const success = await safeLoad(win, url);
+    if (!success) {
+      await handleError(win, new Error(`Failed to load: ${url}`), 'navigation');
+    }
   } catch (err) {
     await handleError(win, err, 'navigation');
   }
@@ -464,4 +603,3 @@ ipcMain.on('show-error', async (event, message) => {
     }
   }
 });
-

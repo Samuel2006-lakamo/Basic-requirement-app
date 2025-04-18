@@ -3,12 +3,12 @@
 
 .custom-context-menu {
     position: fixed;
-    background: #1a1a1a;
+    background: #181818;
     backdrop-filter: blur(8px);
     /* --RCborder: solid 1px #292929; */
     /* border: var(--RCborder); */
     border-radius: 6px;
-    padding: 6px 0rem;
+    padding: 8px 0rem;
     min-width: 180px;
     box-shadow: 0px 24px 38px rgba(0, 0, 0, 0.4),
         0px 9px 46px rgba(0, 0, 0, 0.2);
@@ -17,6 +17,7 @@
     transform: scale(0.95);
     transform-origin: top left;
     transition: all 0.15s ease-out;
+    font-family: 'Inter Tight', 'IBM Plex Sans Thai', sans-serif;
 }
 
 .custom-context-menu.show {
@@ -27,16 +28,17 @@
 .menu-item {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 8px 16px;
     color: #e3e3e3;
     cursor: pointer;
     transition: background-color 0.2s;
     font-weight: 300;
-    font-family: 'Inter Tight', 'IBM Plex Sans Thai', 'Hind', 'Noto Sans SC', sans-serif;
+    font-family: inherit;
 }
 
 .menu-item:hover {
     background-color: #313131;
+    color: #fff;
 }
 
 .menu-item .material-symbols-outlined {
@@ -47,10 +49,78 @@
 
 .menu-label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 300;
+    font-family: inherit;
+    letter-spacing: 0.3px;
 }
 
-.menu-item:active {
+/* .menu-item:active {
     background-color: rgba(255, 255, 255, 0.15);
     transform: scale(0.98);
+} */
+
+.menu-item:focus,
+.menu-item:active {
+    animation: btn-color 0.1s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
+    background-size: 0% 100%;
+}
+
+@keyframes btn-color {
+    0% {
+        background-color: #0c0c0c;
+    }
+
+    20% {
+        background-color: #313131;
+    }
+
+    40% {
+        background-color: #0c0c0c;
+    }
+
+    60% {
+        background-color: #313131;
+    }
+
+    100% {
+        background-color: #0c0c0c;
+    }
+}
+
+/* Font faces for different languages */
+[data-lang="th-TH"] .menu-label {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0;
+    /* Trim font to center */
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(1px);
+}
+
+[data-lang="en-US"] .menu-label {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+}
+
+[data-lang="hi-IN"] .menu-label {
+    font-family: 'Hind', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    /* Trim font to center */
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(1px);
+}
+
+[data-lang="zh-CN"] .menu-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.3px;
 }

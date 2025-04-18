@@ -10,22 +10,31 @@
     <link rel="stylesheet" href="./CSS/index.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="../node_modules/nprogress/nprogress.css">
+    <script src="../node_modules/nprogress/nprogress.js" defer></script>
+    <script>
+        // Runtime detection for early styling
+        (function () {
+            const runtime = window.electronAPI ? 'electron' : 'web';
+            document.documentElement.setAttribute('data-runtime', runtime);
+        })();
+    </script>
 </head>
 
 <body>
     <nav>
         <ul>
-            <li id="GotoHomePage"><a href="Aboutus.html">
+            <li id="GotoHomePage"><a href="index.html">
                     <span class="material-symbols-outlined">home</span>
                 </a></li>
-            <li id="KeepONtop"><a href="javascript:void(0)">
+            <li id="KeepONtop" class="electron-only"><a href="javascript:void(0)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                         fill="#e3e3e3">
                         <path
                             d="M204-129q-30.94 0-52.97-22.03Q129-173.06 129-204v-552q0-30.94 22.03-52.97Q173.06-831 204-831h273v75H204v552h552v-273h75v273q0 30.94-22.03 52.97Q786.94-129 756-129H204Zm185.5-208L337-389.5 703.5-756H552v-75h279v279h-75v-151.5L389.5-337Z" />
                     </svg>
                 </a></li>
-            <div id="MainLINKS">
+            <div id="MainLINKS" class="electron-only">
                 <li><a href="Todolist.html" id="draggable" draggable="true">Todo list</a></li>
                 <li><a href="Time.html" id="draggable" draggable="false">Clock</a></li>
                 <li><a href="" draggable="false">Calculator</a></li>
@@ -43,7 +52,7 @@
                     fill="white" />
             </svg>
         </div>
-        <div class="menuLinks">
+        <div class="menuLinks electron-only">
             <li id="Current"><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
                         viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path
@@ -55,9 +64,22 @@
                             d="M165-170q-30.94 0-52.97-22.03Q90-214.06 90-245v-470q0-30.94 22.03-52.97Q134.06-790 165-790h240l75 75h315q30.94 0 52.97 22.03Q870-670.94 870-640v395q0 30.94-22.03 52.97Q825.94-170 795-170H165Zm0-75h630v-395H449l-75-75H165v470Zm0 0v-470 470Z" />
                     </svg>All page</a></li>
         </div>
+        <!-- Making menulink for web -->
+        <div class="menuLinks web-only">
+            <li id="Current"><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                        viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path
+                            d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                    </svg>About this app?</a></li>
+            <li><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                        viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path
+                            d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+                    </svg>Download</a></li>
+        </div>
         <hr>
 
-        <div class="bottomCradit">
+        <div class="bottomCradit web-only">
             <p>Made by Peakk</p>
             <span>Open source project</span>
         </div>
@@ -70,70 +92,72 @@
     </button> -->
 
     <div class="content">
-        <div id="getStartedContent">
-            <div class="Textintro" id="content">
-                <div class="TextIntroIMAGE">
-                    <img src="./assets/AppsLogo.svg" alt="" draggable="false">
-                </div>
-                <h1>Get started with <br>Essential app</h1>
-                <div class="TextintroBTN">
-                    <button id="getStartedBTN">Continue</button>
-                </div>
-            </div>
 
-            <div class="contentGuide2" id="contentGuide2">
-                <div class="GuideText">
-                    <div id="scrambled-text" style="margin-bottom: 45px;"></div>
+        <div class="electron-only">
+            <div id="getStartedContent">
+                <div class="Textintro" id="content">
+                    <div class="TextIntroIMAGE">
+                        <img src="./assets/AppsLogo.svg" alt="" draggable="false">
+                    </div>
+                    <h1>Get started with <br>Essential app</h1>
+                    <div class="TextintroBTN">
+                        <button id="getStartedBTN">Continue</button>
+                    </div>
                 </div>
-                <div class="wrapperButtonConti" id="ScrambledBTN">
-                    <div class="ButtonGonext">
-                        <div class="button-container">
-                            <button class="send-button js-send-button"></button>
+
+                <div class="contentGuide2" id="contentGuide2">
+                    <div class="GuideText">
+                        <div id="scrambled-text" style="margin-bottom: 45px;"></div>
+                    </div>
+                    <div class="wrapperButtonConti" id="ScrambledBTN">
+                        <div class="ButtonGonext">
+                            <div class="button-container">
+                                <button class="send-button js-send-button"></button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Create card app here -->
-        <div class="app-cards" id="APPcards">
-            <div id="TextCards">
-                <h1>Recommendations Apps</h1>
-            </div>
-            <!-- To apply link use data-href="" -->
-            <div class="AppcardsContent">
-                <div class="card">
-                    <div class="card-icon todolist">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFF">
-                            <path
-                                d="M356-207.5v-75h475v75H356Zm0-235.5v-75h475v75H356Zm0-234.5v-75h475v75H356ZM204.89-169q-31.39 0-53.64-22.36Q129-213.71 129-245.11q0-31.39 22.36-53.64Q173.71-321 205.11-321q31.39 0 53.64 22.36Q281-276.29 281-244.89q0 31.39-22.36 53.64Q236.29-169 204.89-169Zm0-235.5q-31.39 0-53.64-22.36Q129-449.21 129-480.61q0-31.39 22.36-53.64 22.35-22.25 53.75-22.25 31.39 0 53.64 22.36Q281-511.79 281-480.39q0 31.39-22.36 53.64-22.35 22.25-53.75 22.25Zm0-234.5q-31.39 0-53.64-22.36Q129-683.71 129-715.11q0-31.39 22.36-53.64Q173.71-791 205.11-791q31.39 0 53.64 22.36Q281-746.29 281-714.89q0 31.39-22.36 53.64Q236.29-639 204.89-639Z" />
-                        </svg>
-                    </div>
-                    <h3>Todo List</h3>
-                    <p>Organize your tasks efficiently with our intuitive todo list manager</p>
+            <!-- Create card app here -->
+            <div class="app-cards" id="APPcards">
+                <div id="TextCards">
+                    <h1>Recommendations Apps</h1>
                 </div>
-                <div class="card">
-                    <div class="card-icon timer">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFF">
-                            <path
-                                d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z" />
-                        </svg>
+                <!-- To apply link use data-href="" -->
+                <div class="AppcardsContent">
+                    <div class="card">
+                        <div class="card-icon todolist">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                fill="#FFF">
+                                <path
+                                    d="M356-207.5v-75h475v75H356Zm0-235.5v-75h475v75H356Zm0-234.5v-75h475v75H356ZM204.89-169q-31.39 0-53.64-22.36Q129-213.71 129-245.11q0-31.39 22.36-53.64Q173.71-321 205.11-321q31.39 0 53.64 22.36Q281-276.29 281-244.89q0 31.39-22.36 53.64Q236.29-169 204.89-169Zm0-235.5q-31.39 0-53.64-22.36Q129-449.21 129-480.61q0-31.39 22.36-53.64 22.35-22.25 53.75-22.25 31.39 0 53.64 22.36Q281-511.79 281-480.39q0 31.39-22.36 53.64-22.35 22.25-53.75 22.25Zm0-234.5q-31.39 0-53.64-22.36Q129-683.71 129-715.11q0-31.39 22.36-53.64Q173.71-791 205.11-791q31.39 0 53.64 22.36Q281-746.29 281-714.89q0 31.39-22.36 53.64Q236.29-639 204.89-639Z" />
+                            </svg>
+                        </div>
+                        <h3>Todo List</h3>
+                        <p>Organize your tasks efficiently with our intuitive todo list manager</p>
                     </div>
-                    <h3>Clock</h3>
-                    <p>Track your time with precision using our customizable timer</p>
-                </div>
-                <div class="card" id="ScrollPosition">
-                    <div class="card-icon calculator">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                            fill="#FFF">
-                            <path
-                                d="M400-240v-80h62l105-120-105-120h-66l-64 344q-8 45-37 70.5T221-120q-45 0-73-24t-28-64q0-32 17-51.5t43-19.5q25 0 42.5 17t17.5 41q0 5-.5 9t-1.5 9q5-1 8.5-5.5T252-221l62-339H200v-80h129l21-114q7-38 37.5-62t72.5-24q44 0 72 26t28 65q0 30-17 49.5T500-680q-25 0-42.5-17T440-739q0-5 .5-9t1.5-9q-6 2-9 6t-5 12l-17 99h189v80h-32l52 59 52-59h-32v-80h200v80h-62L673-440l105 120h62v80H640v-80h32l-52-60-52 60h32v80H400Z" />
-                        </svg>
+                    <div class="card">
+                        <div class="card-icon timer">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                fill="#FFF">
+                                <path
+                                    d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z" />
+                            </svg>
+                        </div>
+                        <h3>Clock</h3>
+                        <p>Track your time with precision using our customizable timer</p>
                     </div>
-                    <h3>Calculator</h3>
-                    <p>Perform calculations quickly with our simple yet powerful calculator</p>
+                    <div class="card" id="ScrollPosition">
+                        <div class="card-icon calculator">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                fill="#FFF">
+                                <path
+                                    d="M400-240v-80h62l105-120-105-120h-66l-64 344q-8 45-37 70.5T221-120q-45 0-73-24t-28-64q0-32 17-51.5t43-19.5q25 0 42.5 17t17.5 41q0 5-.5 9t-1.5 9q5-1 8.5-5.5T252-221l62-339H200v-80h129l21-114q7-38 37.5-62t72.5-24q44 0 72 26t28 65q0 30-17 49.5T500-680q-25 0-42.5-17T440-739q0-5 .5-9t1.5-9q-6 2-9 6t-5 12l-17 99h189v80h-32l52 59 52-59h-32v-80h200v80h-62L673-440l105 120h62v80H640v-80h32l-52-60-52 60h32v80H400Z" />
+                            </svg>
+                        </div>
+                        <h3>Calculator</h3>
+                        <p>Perform calculations quickly with our simple yet powerful calculator</p>
+                    </div>
                 </div>
             </div>
         </div>
