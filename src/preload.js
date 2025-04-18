@@ -1,11 +1,23 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    ipcRenderer.send('show-context-menu', { x: e.x, y: e.y });
-});
+contextBridge.exposeInMainWorld(
+    'electronAPI', {
+        showContextMenu: (position) => ipcRenderer.invoke('show-context-menu', position),
+        navigate: (url) => ipcRenderer.send('navigate', url),
+        keepOnTop: () => ipcRenderer.send('Keepontop'),
+        onNavigate: (callback) => {
+            ipcRenderer.on('navigate-to', (_, url) => callback(url));
+            return () => {
+                ipcRenderer.removeListener('navigate-to', callback);
+            };
+        }
+    }
+);
 
-contextBridge.exposeInMainWorld('electron', {
-    navigateTo: (url) => ipcRenderer.send('navigate', url)
-});
+// Secure the window object
+delete window.module;
+delete window.require;
+delete window.exports;
+delete window.Buffer;
+delete window.process;
 

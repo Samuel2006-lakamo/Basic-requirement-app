@@ -1,68 +1,10 @@
 <div class="custom-menu" id="customMenu">
-    <div class="custom-menu-item" data-action="todolist" data-href="./Aboutus.html">Go to Home Page</div>
-    <div class="custom-menu-item" data-action="todolist" data-href="./index.html">Open To-Do List</div>
+    <div class="custom-menu-item" data-action="todolist" data-href="./index.html">Go to Home Page</div>
+    <div class="custom-menu-item" data-action="todolist" data-href="./Todolist.html">Open To-Do List</div>
     <div class="custom-menu-item" data-action="clock" data-href="./Time.html">View Clock</div>
     <div class="custom-menu-item" data-action="notes" data-href="./Notes.html">Open Notes</div>
     <div class="custom-menu-item" data-action="paint" data-href="./Paint.html">Launch Paint App</div>
 </div>
-
-<style>
-    .custom-menu {
-        position: fixed;
-        background: #1a1a1a;
-        border-radius: 6px;
-        box-shadow: 0px 24px 38px rgba(0, 0, 0, 0.4),
-            0px 9px 46px rgba(0, 0, 0, 0.2);
-        min-width: 180px;
-        padding: 6px 0;
-        z-index: 9999;
-        user-select: none;
-        pointer-events: none;
-        transition: left 0.1s ease-out, top 0.1s ease-out;
-    }
-
-    .custom-menu-item {
-        padding: 8px 20px;
-        cursor: pointer;
-        color: #e3e3e3;
-        font-family: 'Inter Tight', sans-serif;
-        font-size: 14px;
-        transition: background-color 0.15s ease;
-        pointer-events: auto;
-        font-size: 16px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .custom-menu-item:hover,
-    .custom-menu-item.active {
-        background-color: #313131;
-    }
-
-    .ripple {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        animation: rippleEffect 0.5s ease-out forwards;
-    }
-
-    @keyframes rippleEffect {
-        0% {
-            width: 0;
-            height: 0;
-            opacity: 0.5;
-        }
-
-        100% {
-            width: 200px;
-            height: 200px;
-            opacity: 0;
-        }
-    }
-</style>
-
 <script>
     document.querySelectorAll('.custom-menu-item').forEach(item => {
         item.addEventListener('mousedown', function(e) {
