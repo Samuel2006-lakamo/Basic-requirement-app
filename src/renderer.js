@@ -27,3 +27,77 @@ window.addEventListener('dragend', (event) => {
 document.getElementById('KeepONtop').addEventListener('click', () => {
     ipcRenderer.send('Keepontop', 'Hello from the button!');
 });
+
+// Runtime & OS Detection
+const detectEnvironment = () => {
+    const isElectron = window.electronAPI !== undefined;
+    const runtime = isElectron ? 'electron' : 'web';
+    
+    // Get OS info
+    let os = 'unknown';
+    if (isElectron) {
+        const osInfo = window.electronAPI.getOSInfo();
+        os = osInfo.platform;
+        console.log('[Electron Runtime]', osInfo);
+    } else {
+        os = navigator.platform.toLowerCase();
+        if (os.includes('win')) os = 'win32';
+        else if (os.includes('mac')) os = 'darwin';
+        else if (os.includes('linux')) os = 'linux';
+        console.log('[Web Runtime] Platform:', os);
+    }
+
+    // Apply to document
+    document.documentElement.setAttribute('data-runtime', runtime);
+    document.documentElement.setAttribute('data-os', os);
+    
+    // Add runtime-specific listeners
+    if (isElectron) {
+        setupElectronFeatures();
+    } else {
+        setupWebFeatures();
+    }
+};
+
+const setupElectronFeatures = () => {
+    // Electron-specific features
+    document.getElementById('KeepONtop')?.addEventListener('click', () => {
+        window.electronAPI.keepOnTop();
+    });
+
+    window.electronAPI.onOSInfo((info) => {
+        console.log('[Electron] OS Info:', info);
+    });
+};
+
+const setupWebFeatures = () => {
+    // Web-specific features
+    const electronElements = document.querySelectorAll('.electron-only');
+    electronElements.forEach(el => el.style.display = 'none');
+    
+    // Replace electron features with web alternatives
+    document.getElementById('KeepONtop')?.remove();
+};
+
+// System info handler
+window.electronAPI.onSystemInfo((info) => {
+    console.group('System Information');
+    console.log('Runtime:', info.runtime.name);
+    console.log('Platform:', info.platform.name);
+    console.log('Details:', info.details);
+    console.groupEnd();
+
+    // Apply system-specific classes
+    document.documentElement.setAttribute('data-runtime', info.runtime.type);
+    document.documentElement.setAttribute('data-os', info.platform.type);
+    
+    // Apply platform-specific UI adjustments
+    if (info.platform.controls === 'left') {
+        document.body.classList.add('controls-left');
+    } else if (info.platform.controls === 'right') {
+        document.body.classList.add('controls-right');
+    }
+});
+
+// Initialize environment detection
+document.addEventListener('DOMContentLoaded', detectEnvironment);

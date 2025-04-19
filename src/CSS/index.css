@@ -535,3 +535,33 @@ html {
         transform: translateY(0);
     }
 }
+
+/* Test to define platform */
+
+[data-runtime="electron"] {
+    --titlebar-drag: -webkit-app-region: drag;
+    --titlebar-no-drag: -webkit-app-region: no-drag;
+    --window-controls: block;
+}
+
+[data-runtime="web"] {
+    --titlebar-drag: none;
+    --titlebar-no-drag: none;
+    --window-controls: none;
+}
+
+[data-runtime="electron"][data-os="darwin"] nav {
+    padding-left: var(--window-controls-width);
+}
+
+[data-runtime="electron"][data-os="win32"] nav {
+    padding-right: var(--window-controls-width);
+}
+
+[data-runtime="web"] .electron-only {
+    display: none !important;
+}
+
+[data-runtime="electron"] .web-only {
+    display: none !important;
+}

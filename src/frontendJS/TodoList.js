@@ -40,9 +40,15 @@ document.addEventListener('click', closeDropdown);
 // Handle language selection
 langDropdown.addEventListener('click', (e) => {
     if (e.target.classList.contains('lang-option')) {
-        dateConfig.locale = e.target.dataset.lang;
+        const selectedLang = e.target.dataset.lang;
+        dateConfig.locale = selectedLang;
         updateDate();
         closeDropdown();
+        
+        // Sync language with context menu
+        if (window.electronAPI) {
+            window.electronAPI.changeLanguage(selectedLang);
+        }
     }
 });
 
