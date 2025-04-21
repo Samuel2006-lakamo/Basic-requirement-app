@@ -2,7 +2,7 @@
 
 Hey folks, check out this repo!
 
-<img src="https://drive.google.com/uc?export=view&id=1m-IzPqiIsF5RbBsNiVmcb5mIvQUabJSZ" alt="Thumb logo" width="700">
+<img src="https://drive.google.com/uc?id=1iYd1xMj6fUBwMRak97nDXviTODyDQDry" alt="Thumb logo" width="100%">
 
 ---
 
