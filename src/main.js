@@ -3,29 +3,29 @@ const path = require('node:path');
 const fs = require('fs');
 const v8 = require('v8');
 
+const Essential = {
+  name: "Essential App",
+}
+
 require('dotenv').config();
 
-// Using Environment Variable
-const token = process.env.GITHUB_TOKEN;
-console.log(`GitHub Token: ${token}`);
+// Using Environment Variable > DISABLE_GITHUB_TOKEN
+// const token = process.env.GITHUB_TOKEN;
+// console.log(`GitHub Token: ${token}`);
 
 // Add after other requires
 const menuTranslations = require('./locales/menu.js');
 let currentLocale = 'en-US'; // Default locale
 
 // Performance Optimization
-app.commandLine.appendSwitch('enable-features', 'Metal,NetworkServiceInProcess,ParallelDownloading,BackForwardCache');
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors,MediaRouter,SpareRendererForSitePerProcess');
-app.commandLine.appendSwitch('enable-gpu-rasterization');
-app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('enable-features', 'Metal,NetworkServiceInProcess,ParallelDownloading');
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors,MediaRouter');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
-app.commandLine.appendSwitch('enable-gpu-memory-buffer-compositor-resources');
-app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
-app.commandLine.appendSwitch('force_high_performance_gpu');
-app.commandLine.appendSwitch('enable-hardware-overlays', 'single-fullscreen');
-app.commandLine.appendSwitch('enable-oop-rasterization');
-app.commandLine.appendSwitch('enable-raw-draw');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('use-gl', 'desktop');
+app.commandLine.appendSwitch('enable-accelerated-mjpeg-decode');
+app.commandLine.appendSwitch('enable-accelerated-video');
+app.commandLine.appendSwitch('disable-gpu-driver-bug-workarounds');
 
 // CPU & Memory Optimization
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096 --optimize-for-size --max-inlined-source-size=1000');
@@ -39,6 +39,11 @@ if (process.platform === 'win32') {
   exec(`wmic process where name="electron.exe" CALL setpriority "high priority"`);
   app.commandLine.appendSwitch('high-dpi-support', '1');
   app.commandLine.appendSwitch('force-device-scale-factor', '1');
+}
+
+// Protocol handling for Windows
+if (process.platform === 'win32') {
+  app.setAsDefaultProtocolClient('essential');
 }
 
 // Pre-warm optimization
@@ -75,6 +80,7 @@ const BASE_WINDOW_CONFIG = {
     backgroundMaterial: 'acrylic',
     vibrancy: 'fullscreen-ui',
     frame: false,
+    title: Essential.name,
     titleBarOverlay: {
       color: '#141414',
       symbolColor: '#FFFFFF',
@@ -162,24 +168,16 @@ const createWindowWithPromise = (config) => {
   });
 };
 
-// File Loading Promise Wrapper
-const loadFileWithCheck = async (window, filePath, context) => {
-  try {
-    const fullPath = path.join(__dirname, filePath);
-    if (fs.existsSync(fullPath)) {
-      await window.loadFile(fullPath);
-      return true;
-    }
-    throw new Error(`File not found: ${filePath}`);
-  } catch (err) {
-    await handleError(window, err, context);
-    return false;
-  }
-};
-
-// safeLoad for check url that be false
+// Enhanced safeLoad with protocol handling
 const safeLoad = async (win, filePath) => {
   try {
+    // Handle external URLs
+    if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+      await win.loadURL(filePath);
+      return true;
+    }
+
+    // Handle internal file paths
     const fullPath = path.join(__dirname, filePath);
     if (fs.existsSync(fullPath)) {
       await win.loadFile(fullPath);
@@ -196,8 +194,39 @@ const safeLoad = async (win, filePath) => {
   }
 };
 
+// Handle deep linking
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+
+    // Handle protocol urls
+    const url = commandLine.pop();
+    if (url && url.startsWith('essential://')) {
+      const path = url.replace('essential://', '');
+      safeLoad(mainWindow, path);
+    }
+  }
+});
+
+// File Loading Promise Wrapper
+const loadFileWithCheck = async (window, filePath, context) => {
+  try {
+    const fullPath = path.join(__dirname, filePath);
+    if (fs.existsSync(fullPath)) {
+      await window.loadFile(fullPath);
+      return true;
+    }
+    throw new Error(`File not found: ${filePath}`);
+  } catch (err) {
+    await handleError(window, err, context);
+    return false;
+  }
+};
+
 // Load system config and initialize system info
 const systemConfig = require('./config/system-info.json');
+const { title } = require('node:process');
 const systemInfo = {
   runtime: {
     type: 'electron',
@@ -220,6 +249,31 @@ const systemInfo = {
 
 // Log system info once
 console.log('[System Info]', JSON.stringify(systemInfo, null, 2));
+
+// GPU error handling
+app.on('gpu-process-crashed', async (event, killed) => {
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    await handleError(
+      focusedWindow,
+      new Error('GPU process crashed. Falling back to software rendering.'),
+      'gpu-crash'
+    );
+
+    // Disable GPU features and reload
+    app.disableHardwareAcceleration();
+    focusedWindow.reload();
+  }
+});
+
+// Add global promise rejection handler
+process.on('unhandledRejection', async (reason, promise) => {
+  console.error('Unhandled Promise Rejection:', reason);
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    await handleError(focusedWindow, reason, 'unhandled-rejection');
+  }
+});
 
 // Optimize startup
 app.whenReady().then(async () => {
@@ -344,15 +398,41 @@ app.whenReady().then(async () => {
   if (process.platform !== 'darwin') {
     Menu.setApplicationMenu(null); // Disable menubar Windows, Linux
   } else {
-    // From mac menubar will be top left
-    const menuTemplate = Object.entries(links).map(([label, relativePath]) => ({
-      label: label.charAt(0).toUpperCase() + label.slice(1),
-      click: () => win.loadFile(path.join(__dirname, relativePath))
-    }));
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
+    // Define links from Essential_links for Mac menubar
+    const macMenuLinks = {
+      home: Essential_links.home,
+      todolist: Essential_links.todolist,
+      clock: Essential_links.clock,
+      notes: Essential_links.notes,
+      paint: Essential_links.paint,
+      settings: Essential_links.settings
+    };
+
+    try {
+      const menuTemplate = Object.entries(macMenuLinks).map(([label, relativePath]) => ({
+        label: label.charAt(0).toUpperCase() + label.slice(1),
+        click: async () => {
+          const win = BrowserWindow.getFocusedWindow();
+          if (win) {
+            await safeLoad(win, relativePath).catch(async (err) => {
+              await handleError(win, err, 'mac-menu-navigation');
+            });
+          }
+        }
+      }));
+      const menu = Menu.buildFromTemplate(menuTemplate);
+      Menu.setApplicationMenu(menu);
+    } catch (err) {
+      console.error('Failed to create Mac menu:', err);
+      Menu.setApplicationMenu(null);
+    }
   }
 
+  // mainWindow.webContents.openDevTools();
+
+  // Define name of this app
+  mainWindow.setTitle("Essential App");
+  process.title = "Essential App";
 });
 
 app.on('window-all-closed', () => {
@@ -365,7 +445,7 @@ app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
 
-// Optimize window creation
+// Update window creation with better error handling
 const createWindow = async () => {
   try {
     mainWindow = await createWindowWithPromise({
@@ -382,6 +462,35 @@ const createWindow = async () => {
         webSecurity: true,
         enableRemoteModule: false
       }
+    }).catch(async (err) => {
+      await handleError(null, err, 'window-creation');
+      throw err;
+    });
+
+    // Add error handler for navigation
+    mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
+      await handleError(mainWindow, new Error(`Navigation failed: ${errorDescription}`), 'page-load');
+    });
+
+    // Add window move handling
+    // Fix Error: 2025-04-18 14:51:59.590 Electron[25627:535694] Warning: Window move completed without beginning
+    let isMoving = false;
+    mainWindow.on('will-move', () => {
+      isMoving = true;
+    });
+    mainWindow.on('moved', () => {
+      isMoving = false;
+    });
+    mainWindow.on('move', () => {
+      if (!isMoving) {
+        mainWindow.webContents.send('window-move-started');
+      }
+    });
+    // Add position save on move end
+    mainWindow.on('moved', () => {
+      const bounds = mainWindow.getBounds();
+      centerX = bounds.x;
+      centerY = bounds.y;
     });
 
     // Send system info after window is ready
@@ -395,7 +504,11 @@ const createWindow = async () => {
     mainWindow.webContents.setBackgroundThrottling(false);
 
     // Create windows here
-    await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation');
+    await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation')
+      .catch(async (err) => {
+        await handleError(mainWindow, err, 'initial-load');
+        throw err;
+      });
 
     // Listeners for error handling
     mainWindow.on('page-title-updated', async () => {
@@ -412,6 +525,7 @@ const createWindow = async () => {
 
   } catch (err) {
     await handleError(null, err, 'window-creation');
+    throw err;
   }
 };
 
@@ -578,18 +692,34 @@ ipcMain.handle('safe-navigate', async (event, url) => {
   await safeLoad(win, url);
 });
 
-// Update existing navigation handler
-ipcMain.on('navigate', async (event, url) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return;
-
+// Handle URLs in existing windows
+ipcMain.handle('open-external-link', async (event, url) => {
   try {
-    const success = await safeLoad(win, url);
+    const { shell } = require('electron');
+    await shell.openExternal(url);
+    return true;
+  } catch (err) {
+    await handleError(BrowserWindow.getFocusedWindow(), err, 'external-link');
+    return false;
+  }
+});
+
+// Update IPC handlers with proper error handling
+ipcMain.on('navigate', async (event, url) => {
+  try {
+    const win = BrowserWindow.getFocusedWindow();
+    if (!win) throw new Error('No active window');
+
+    const success = await safeLoad(win, url).catch(async (err) => {
+      await handleError(win, err, 'navigation');
+      throw err;
+    });
+
     if (!success) {
-      await handleError(win, new Error(`Failed to load: ${url}`), 'navigation');
+      throw new Error(`Failed to load: ${url}`);
     }
   } catch (err) {
-    await handleError(win, err, 'navigation');
+    await handleError(BrowserWindow.getFocusedWindow(), err, 'navigation');
   }
 });
 

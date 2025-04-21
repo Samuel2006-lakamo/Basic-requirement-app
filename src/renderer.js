@@ -99,5 +99,12 @@ window.electronAPI.onSystemInfo((info) => {
     }
 });
 
+// OS Detection for CSS
+document.addEventListener('DOMContentLoaded', () => {
+    const platform = window.runtimeInfo?.os || 'unknown';
+    document.documentElement.setAttribute('data-os', platform);
+    document.body.classList.add(`os-${platform === 'darwin' ? 'mac' : platform === 'win32' ? 'windows' : 'linux'}`);
+});
+
 // Initialize environment detection
 document.addEventListener('DOMContentLoaded', detectEnvironment);

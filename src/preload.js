@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld(
     },
     changeLanguage: (locale) => ipcRenderer.send('change-language', locale),
     safeNavigate: (url) => ipcRenderer.invoke('safe-navigate', url),
+    openExternal: (url) => ipcRenderer.invoke('open-external-link', url),
     systemInfo: {
         platform: process.platform,
         runtime: 'electron'

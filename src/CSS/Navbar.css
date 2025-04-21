@@ -162,7 +162,18 @@ nav ul li a:hover {
     }
 }
 
-/* .os-mac {
+/* OS Specific Styles */
+[data-os="darwin"] #GotoHomePage {
+    margin-left: 5.5rem;
+    border-left: var(--border);
+}
+
+[data-os="darwin"] #KeepONtop {
+    right: 0;
+}
+
+/* Window Controls Width for different OS */
+.os-mac {
     --window-controls-width: 72px;
     --titlebar-height: 28px;
 }
@@ -177,10 +188,15 @@ nav ul li a:hover {
     --titlebar-height: 32px;
 }
 
+[data-os="win32"] .titlebar {
+    padding-right: var(--window-controls-width);
+}
+
+[data-os="linux"] .titlebar {
+    padding-right: var(--window-controls-width);
+}
+
+/* Apply macOS specific padding */
 [data-os="darwin"] .titlebar {
     padding-left: var(--window-controls-width);
 }
-
-[data-os="win32"] .titlebar {
-    padding-right: var(--window-controls-width);
-} */

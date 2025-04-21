@@ -12,6 +12,15 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="../node_modules/nprogress/nprogress.css">
     <script src="../node_modules/nprogress/nprogress.js" defer></script>
+    <script>
+        // Runtime detection
+        (function () {
+            const runtime = window.electronAPI ? 'electron' : 'web';
+            document.documentElement.setAttribute('data-runtime', runtime);
+        })();
+        document.documentElement.setAttribute('data-os', window.runtimeInfo.os);
+        document.body.classList.add(`os-${window.runtimeInfo.os === 'darwin' ? 'mac' : window.runtimeInfo.os === 'win32' ? 'windows' : 'linux'}`);
+    </script>
 </head>
 
 <body>

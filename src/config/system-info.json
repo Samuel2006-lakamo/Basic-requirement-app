@@ -26,7 +26,7 @@
       "titlebar": "windows-style",
       "shortcuts": {
         "reload": "Ctrl+R",
-        "newWindow": "Ctrl+N"
+        "newWindow": "Ctrl+Shift+N"
       }
     },
     "darwin": {
@@ -35,7 +35,7 @@
       "titlebar": "mac-style",
       "shortcuts": {
         "reload": "Cmd+R",
-        "newWindow": "Cmd+N"
+        "newWindow": "Cmd+Shift+N"
       }
     },
     "linux": {
@@ -44,7 +44,7 @@
       "titlebar": "linux-style",
       "shortcuts": {
         "reload": "Ctrl+R",
-        "newWindow": "Ctrl+N"
+        "newWindow": "Ctrl+Shift+N"
       }
     }
   }
