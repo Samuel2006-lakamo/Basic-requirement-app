@@ -2,13 +2,13 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld(
     'electronAPI', {
-    showContextMenu: (position) => ipcRenderer.invoke('show-context-menu', position),
+    showContextMenu: (pos) => ipcRenderer.invoke('show-context-menu', pos),
     navigate: (url) => ipcRenderer.send('navigate', url),
     keepOnTop: () => ipcRenderer.send('Keepontop'),
     onNavigate: (callback) => {
-        ipcRenderer.on('navigate-to', (_, url) => callback(url));
+        ipcRenderer.on('navigate', (_, url) => callback(url));
         return () => {
-            ipcRenderer.removeListener('navigate-to', callback);
+            ipcRenderer.removeListener('navigate', callback);
         };
     },
     changeLanguage: (locale) => ipcRenderer.send('change-language', locale),
@@ -36,7 +36,8 @@ contextBridge.exposeInMainWorld(
         return () => {
             ipcRenderer.removeListener('system-info', callback);
         };
-    }
+    },
+    createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url)
 }
 );
 

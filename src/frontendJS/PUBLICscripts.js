@@ -8,18 +8,16 @@ window.addEventListener("load", () => {
   NProgress.done();
 });
 
-// Initilaze Toggle always on top
-
+// Fix Always on top initialization
 let isClickedAlwaysOnTop = false;
-isClickedAlwaysOnTop = !isClickedAlwaysOnTop;
 
-document.getElementById('KeepONtop').addEventListener('click', () => {
-  if (isClickedAlwaysOnTop) {
-    document.getElementById('KeepONtop').style.backgroundColor = 'var(--color-primary)';
-  } else {
-    document.getElementById('KeepONtop').style.backgroundColor = 'transparent';
+document.getElementById('KeepONtop')?.addEventListener('click', () => {
+  if (window.electronAPI) {
+    window.electronAPI.keepOnTop();
+    isClickedAlwaysOnTop = !isClickedAlwaysOnTop;
+    document.getElementById('KeepONtop').style.backgroundColor = 
+      isClickedAlwaysOnTop ? 'var(--color-primary)' : 'transparent';
   }
-  isClickedAlwaysOnTop = !isClickedAlwaysOnTop;
 });
 
 // Rightclick ipc send to main process
@@ -43,3 +41,47 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('API Not Available');
   }
 });
+
+// Set default new windows as bug set to featured.
+
+// Shift+click
+document.querySelectorAll('#MainLINKS .requestShiftkeyHolder').forEach(link => {
+  link.addEventListener('click', (e) => {
+    if ((e.shiftKey) && link.getAttribute('href') !== '#') {
+      e.preventDefault();
+      if (window.electronAPI) {
+        window.electronAPI.createFunctionShiftkeyHolder(link.getAttribute('href'));
+      }
+    }
+  });
+});
+
+// Ctrl+click
+document.querySelectorAll('#MainLINKS a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    if ((e.ctrlKey) && link.getAttribute('href') !== '#') {
+      e.preventDefault();
+      if (window.electronAPI) {
+        window.electronAPI.createNewWindow(link.getAttribute('href'));
+      }
+    }
+  });
+});
+
+// Separate handlers for CurrentPage and GotoHomePage
+const currentPageHandler = e => {
+  if (!e.ctrlKey && !e.shiftKey) return;
+  e.preventDefault();
+  const currentUrl = location.pathname.split('/').pop();
+  window.electronAPI?.createNewWindow(currentUrl);
+};
+
+const homePageHandler = e => {
+  if (!e.ctrlKey && !e.shiftKey) return;
+  e.preventDefault();
+  window.electronAPI?.createNewWindow('index.html');
+};
+
+// Add event listeners
+document.getElementById('CurrentPage')?.addEventListener('click', currentPageHandler);
+document.getElementById('GotoHomePage')?.addEventListener('click', homePageHandler);

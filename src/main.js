@@ -99,6 +99,32 @@ const BASE_WINDOW_CONFIG = {
   }
 };
 
+const PreferencesWindows = {
+  DefinePreload: {
+    preload: path.join(__dirname, 'preload.js'),
+    nodeIntegration: false,
+    contextIsolation: true,
+    sandbox: true,
+    webSecurity: true,
+    enableRemoteModule: false,
+  },
+  defineNewWindowsPreload: {
+    preload: path.join(__dirname, 'preload.js'),
+    nodeIntegration: false,
+    contextIsolation: true,
+    sandbox: true, // VERY IMPORTANT IF NEW WINDOWS USE THIS COMMAND!!!
+    autoHideMenuBar: true,
+    backgroundThrottling: false,
+    enablePreferredSizeMode: true,
+    spellcheck: false,
+    enableBlinkFeatures: 'CompositorThreading',
+    v8CacheOptions: 'code',
+    webgl: true,
+    experimentalFeatures: true,
+    hardwareAcceleration: true
+  }
+}
+
 // Config Page
 
 const Essential_links = {
@@ -260,7 +286,7 @@ app.on('gpu-process-crashed', async (event, killed) => {
       'gpu-crash'
     );
 
-    // Disable GPU features and reload
+    // Disable GPU features & reload
     app.disableHardwareAcceleration();
     focusedWindow.reload();
   }
@@ -275,7 +301,7 @@ process.on('unhandledRejection', async (reason, promise) => {
   }
 });
 
-// Optimize startup
+// Startup windows
 app.whenReady().then(async () => {
   try {
     await preWarmApp();
@@ -367,23 +393,19 @@ app.whenReady().then(async () => {
           minWidth: WINDOW_CONFIG.min.width,
           minHeight: WINDOW_CONFIG.min.height,
           webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: true,
-            contextIsolation: false,
-            autoHideMenuBar: true,
-            backgroundThrottling: false,
-            enablePreferredSizeMode: true,
-            spellcheck: false,
-            enableBlinkFeatures: 'CompositorThreading',
-            v8CacheOptions: 'code',
-            nodeIntegrationInWorker: true,
-            webgl: true,
-            enableWebSQL: false,
-            experimentalFeatures: true,
-            hardwareAcceleration: true
+            ...PreferencesWindows.defineNewWindowsPreload,
           }
         });
 
+        // Set runtime
+        newWindow.webContents.once('dom-ready', () => {
+          newWindow.webContents.executeJavaScript(`
+            document.documentElement.setAttribute('data-runtime', 'electron');
+            document.documentElement.setAttribute('data-os', '${process.platform}');
+          `);
+        });
+
+        // Ensure it's properly initialized
         await loadFileWithCheck(newWindow, Essential_links.home, 'new-window-shortcut');
         return newWindow;
       } catch (err) {
@@ -455,12 +477,7 @@ const createWindow = async () => {
       minWidth: WINDOW_CONFIG.min.width,
       minHeight: WINDOW_CONFIG.min.height,
       webPreferences: {
-        preload: path.join(__dirname, 'preload.js'),
-        nodeIntegration: false,
-        contextIsolation: true,
-        sandbox: true,
-        webSecurity: true,
-        enableRemoteModule: false
+        ...PreferencesWindows.DefinePreload
       }
     }).catch(async (err) => {
       await handleError(null, err, 'window-creation');
@@ -529,39 +546,51 @@ const createWindow = async () => {
   }
 };
 
-// On top window
+// On top window - fixed implementation for using static value 💀
 ipcMain.on('Keepontop', async (event, message) => {
   try {
     const focusedWindow = BrowserWindow.getFocusedWindow();
-    if (!focusedWindow) throw new Error('No window focused');
+    if (!focusedWindow) return;
 
     isAlwaysOnTop = !isAlwaysOnTop;
-    await Promise.all([
-      focusedWindow.setAlwaysOnTop(isAlwaysOnTop),
-      focusedWindow.setVisibleOnAllWorkspaces(isAlwaysOnTop),
-      focusedWindow.setResizable(!isAlwaysOnTop),
-      focusedWindow.setIcon(getThemeIcon())
-    ]);
-
+    
+    // Get screen dimensions
     const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-    const xBottomPostion = Math.floor((screenWidth - (isAlwaysOnTop ? WINDOW_CONFIG.alwaysOnTop.width : WINDOW_CONFIG.default.width)) / 2);
-    const yBottomPostion = screenHeight - (isAlwaysOnTop ? WINDOW_CONFIG.alwaysOnTop.height : WINDOW_CONFIG.default.height);
-
+    
+    // Fixed dimensions for always on top mode
+    const alwaysOnTopWidth = 340;  // Fixed width
+    const alwaysOnTopHeight = 570; // Fixed height
+    
     if (isAlwaysOnTop) {
-      focusedWindow.setBounds({
-        width: WINDOW_CONFIG.alwaysOnTop.width,
-        height: WINDOW_CONFIG.alwaysOnTop.height,
-        x: xBottomPostion,
-        y: yBottomPostion
-      });
+      // Calculate center-bottom position
+      const x = Math.floor((screenWidth - alwaysOnTopWidth) / 2);
+      const y = screenHeight - alwaysOnTopHeight - 10; // 10px from bottom
+      
+      await Promise.all([
+        focusedWindow.setAlwaysOnTop(true),
+        focusedWindow.setResizable(false),
+        focusedWindow.setBounds({
+          width: alwaysOnTopWidth,
+          height: alwaysOnTopHeight,
+          x: x,
+          y: y
+        })
+      ]);
     } else {
-      focusedWindow.setBounds({
-        width: WINDOW_CONFIG.default.width,
-        height: WINDOW_CONFIG.default.height,
-        x: centerX,
-        y: centerY
-      });
+      await Promise.all([
+        focusedWindow.setAlwaysOnTop(false),
+        focusedWindow.setResizable(true),
+        focusedWindow.setBounds({
+          width: WINDOW_CONFIG.default.width,
+          height: WINDOW_CONFIG.default.height,
+          x: centerX,
+          y: centerY
+        })
+      ]);
     }
+
+    event.reply('always-on-top-changed', isAlwaysOnTop);
+    
   } catch (err) {
     await handleError(BrowserWindow.getFocusedWindow(), err, 'keep-on-top');
   }
@@ -731,5 +760,30 @@ ipcMain.on('show-error', async (event, message) => {
     } catch (err) {
       await handleError(win, err, 'error-notification');
     }
+  }
+});
+
+// User click links to new windows on titlebar
+// Ctrl + Click
+ipcMain.handle('create-new-window', async (event, path) => {
+  try {
+    const newWindow = await createWindowWithPromise({
+      ...WINDOW_CONFIG.common,
+      ...WINDOW_CONFIG.default,
+      icon: getThemeIcon(),
+      x: centerX + 30,
+      y: centerY + 30,
+      minWidth: WINDOW_CONFIG.min.width,
+      minHeight: WINDOW_CONFIG.min.height,
+      webPreferences: {
+        ...PreferencesWindows.defineNewWindowsPreload,
+      }
+    });
+
+    await loadFileWithCheck(newWindow, path, 'ctrl-click-new-window');
+    return true;
+  } catch (err) {
+    await handleError(null, err, 'ctrl-click-window-creation');
+    return false;
   }
 });

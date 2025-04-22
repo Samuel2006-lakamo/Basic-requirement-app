@@ -402,28 +402,6 @@ html {
     }
 }
 
-@media screen and (max-width: 340px) {
-    body {
-        --background-color: rgba(12, 12, 12, 0);
-        background-color: var(--background-color);
-    }
-
-    .menu {
-        transform: translateX(-300px);
-        display: none;
-    }
-
-    .content {
-        width: 100vw !important;
-        position: static !important;
-        overflow: hidden !important;
-    }
-
-    nav {
-        top: 0;
-    }
-}
-
 /* App Cards */
 .app-cards {
     margin-top: 17rem;
@@ -564,4 +542,61 @@ html {
 
 [data-runtime="electron"] .web-only {
     display: none !important;
+}
+
+@media screen and (max-width: 340px) {
+    body {
+        background-color: #0c0c0c;
+    }
+
+    .menu {
+        transform: translateX(-300px);
+        display: none;
+    }
+
+    .content {
+        width: 100vw !important;
+        position: static !important;
+        overflow: hidden !important;
+    }
+
+    nav {
+        top: 0;
+    }
+
+    #MainLINKS {
+        display: none !important;
+    }
+
+    .app-cards {
+        transform: translateY(-60px);
+    }
+
+    #TextCards h1 {
+        display: none;
+    }
+
+    .card h3 {
+        font-size: 18px;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+
+    .card-icon svg {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+    }
+
+    .card p {
+        font-size: 14px;
+    }
 }
