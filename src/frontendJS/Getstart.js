@@ -66,9 +66,11 @@ function rafTimeout(callback, delay) {
 if (localStorage.getItem('hasSeenContent')) {
     console.log('Content seen before');
     UI.elements.getStartedContent.style.display = "none";
+    document.documentElement.style.removeProperty('overflow-y');
     APPcardsSTYLE();
 } else {
     console.log('First visit');
+    document.documentElement.style.setProperty('overflow-y', 'hidden');
     usingGETSTARTED();
 }
 
@@ -140,21 +142,22 @@ function usingGETSTARTED() {
         }
 
         function APPcard_Toggle() {
-            document.querySelector('html').style.overflowY = "auto";
+            // Remove direct style manipulation
+            document.documentElement.style.removeProperty('overflow-y');
+            
             const appCards = document.querySelector('.app-cards');
             if (appCards) {
                 appCards.style.display = 'grid';
                 appCards.style.opacity = UI.opacity.in;
+                
+                // Smooth scroll with delay for animation
+                setTimeout(() => {
+                    appCards.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }, 100);
             }
-            const CardElement = document.querySelector('.app-cards');
-            if (CardElement) {
-                CardElement.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-            }
-            // UI.elements.content.style.display = UI.APPcards.unShow;
-            // UI.elements.APPcards.style.marginTop = UI.APPcards.toTop;
             APPcardsSTYLE();
         }
 

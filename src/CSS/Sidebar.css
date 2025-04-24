@@ -1,3 +1,8 @@
+:root {
+    --menu-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --overlay-bg: rgba(0, 0, 0, 0.4);
+}
+
 .menu {
     width: 280px;
     height: calc(100vh - 40px);
@@ -8,6 +13,10 @@
     margin-top: 40px;
     z-index: 10;
     pointer-events: all;
+    transition: transform var(--menu-transition), opacity var(--menu-transition);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .menuText {
@@ -130,3 +139,16 @@
     margin-top: 40px;
     z-index: 5;
 }
+
+@media (max-width: 640px) {
+    .menu {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    .content {
+        width: 100vw;
+    }
+}
+
+/* transition: opacity var(--menu-transition), visibility var(--menu-transition); */

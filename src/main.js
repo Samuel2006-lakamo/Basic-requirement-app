@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain, globalShortcut, Menu, screen, nativeTheme }
 const path = require('node:path');
 const fs = require('fs');
 const v8 = require('v8');
+const os = require('os');
+const { performance } = require('perf_hooks');
 
 const Essential = {
   name: "Essential App",
@@ -17,7 +19,26 @@ require('dotenv').config();
 const menuTranslations = require('./locales/menu.js');
 let currentLocale = 'en-US'; // Default locale
 
-// Performance Optimization
+// Config object 
+const PERFORMANCE_CONFIG = {
+  startup: {
+    scheduler: 'performance',
+    cpuUsageLimit: 85,
+    preloadTimeout: 1500,
+    gcInterval: 30000
+  },
+  memory: {
+    minFreeMemMB: 256,
+    maxHeapSize: Math.min(os.totalmem() * 0.8, 8192 * 1024 * 1024),
+    initialHeapSize: 512 * 1024 * 1024
+  },
+  gpu: {
+    minVRAM: 256,
+    preferHardware: true,
+    vsync: false
+  }
+};
+
 app.commandLine.appendSwitch('enable-features', 'Metal,NetworkServiceInProcess,ParallelDownloading');
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors,MediaRouter');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -27,11 +48,122 @@ app.commandLine.appendSwitch('enable-accelerated-mjpeg-decode');
 app.commandLine.appendSwitch('enable-accelerated-video');
 app.commandLine.appendSwitch('disable-gpu-driver-bug-workarounds');
 
+// Enhanced Performance Optimization for Electron 35.2.1
+app.commandLine.appendSwitch('enable-features', 'CanvasOptimizedRenderer,PreloadMediaEngagement,ThreadedScrolling,PaintHolding,LazyFrameLoading,BackForwardCache');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('enable-drdc');
+app.commandLine.appendSwitch('force-gpu-mem-available-mb', '1024');
+app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+app.commandLine.appendSwitch('enable-hardware-overlays', 'single-fullscreen,single-video,single-on-top-video');
+app.commandLine.appendSwitch('enable-gpu-memory-buffer-compositor');
+app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
+app.commandLine.appendSwitch('enable-oop-rasterization');
+app.commandLine.appendSwitch('enable-raw-draw');
+app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('disable-frame-rate-limit');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+
 // CPU & Memory Optimization
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096 --optimize-for-size --max-inlined-source-size=1000');
 v8.setFlagsFromString('--max_old_space_size=4096');
 v8.setFlagsFromString('--optimize_for_size');
 v8.setFlagsFromString('--max_inlined_source_size=1000');
+
+const memoryManager = {
+  checkMemory: () => {
+    const usedMemory = process.memoryUsage();
+    const maxMemory = v8.getHeapStatistics().heap_size_limit;
+    const memoryUsagePercent = (usedMemory.heapUsed / maxMemory) * 100;
+
+    if (memoryUsagePercent > 75) {
+      global.gc && global.gc(); // Force garbage collection if available
+      v8.setFlagsFromString('--max_old_space_size=4096');
+      app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=4096');
+    }
+  },
+  
+  optimizeMemory: () => {
+    v8.setFlagsFromString('--optimize_for_size');
+    v8.setFlagsFromString('--max_old_space_size=4096');
+    v8.setFlagsFromString('--initial_old_space_size=4096');
+    v8.setFlagsFromString('--max_semi_space_size=256');
+  }
+};
+
+const enhancedMemoryManager = {
+  ...memoryManager,
+  getMemoryInfo: () => {
+    const free = os.freemem();
+    const total = os.totalmem();
+    return {
+      free,
+      total,
+      usage: ((total - free) / total) * 100
+    };
+  },
+  
+  optimizeHeap: () => {
+    if (global.gc) {
+      performance.mark('gc-start');
+      global.gc();
+      performance.mark('gc-end');
+      performance.measure('Garbage Collection', 'gc-start', 'gc-end');
+    }
+    
+    v8.setFlagsFromString('--max_old_space_size=' + Math.floor(PERFORMANCE_CONFIG.memory.maxHeapSize / (1024 * 1024)));
+    v8.setFlagsFromString('--initial_old_space_size=' + Math.floor(PERFORMANCE_CONFIG.memory.initialHeapSize / (1024 * 1024)));
+  },
+
+  monitorMemory: () => {
+    const memInfo = enhancedMemoryManager.getMemoryInfo();
+    if (memInfo.free < PERFORMANCE_CONFIG.memory.minFreeMemMB * 1024 * 1024) {
+      enhancedMemoryManager.optimizeHeap();
+    }
+  }
+};
+
+// Using heap mem usage
+setInterval(enhancedMemoryManager.monitorMemory, PERFORMANCE_CONFIG.startup.gcInterval);
+enhancedMemoryManager.optimizeHeap();
+
+const fpsManager = {
+  HIGH_FPS: 60,
+  LOW_FPS: 15,
+  
+  setFPS: (win, fps) => {
+    if (!win || win.isDestroyed()) return;
+    
+    // Set FPS limit through webPreferences
+    win.webContents.setFrameRate(fps);
+    
+    // Additional optimization for unfocused windows
+    if (fps === fpsManager.LOW_FPS) {
+      win.webContents.setBackgroundThrottling(true);
+      app.commandLine.appendSwitch('force-renderer-accessibility', false);
+    } else {
+      win.webContents.setBackgroundThrottling(false);
+      app.commandLine.appendSwitch('force-renderer-accessibility', true);
+    }
+  },
+
+  applyToAllWindows: (fps) => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      fpsManager.setFPS(win, fps);
+    });
+  }
+};
+
+const setupWindowFPSHandlers = (win) => {
+  if (!win) return;
+
+  win.on('focus', () => {
+    fpsManager.setFPS(win, fpsManager.HIGH_FPS);
+  });
+
+  win.on('blur', () => {
+    fpsManager.setFPS(win, fpsManager.LOW_FPS);
+  });
+};
 
 // Process Priority (Windows)
 if (process.platform === 'win32') {
@@ -46,13 +178,35 @@ if (process.platform === 'win32') {
   app.setAsDefaultProtocolClient('essential');
 }
 
-// Pre-warm optimization
-const preWarmApp = () => {
-  const tempWindow = new BrowserWindow({ show: false });
-  tempWindow.loadURL('about:blank');
-  tempWindow.once('ready-to-show', () => {
-    tempWindow.close();
+// preWarmApp
+const preWarmApp = async () => {
+  performance.mark('prewarm-start');
+  
+  const criticalAssets = [
+    Essential_links.home,
+    'preload.js',
+    'CSS/style.css',
+    'assets/icons/EssentialAPPIcons.png'
+  ];
+
+  const preloadPromises = criticalAssets.map(asset => {
+    const fullPath = path.join(__dirname, asset);
+    return fs.promises.readFile(fullPath).catch(() => null);
   });
+
+  try {
+    await Promise.race([
+      Promise.all(preloadPromises),
+      new Promise((_, reject) => 
+        setTimeout(() => reject('Preload timeout'), PERFORMANCE_CONFIG.startup.preloadTimeout)
+      )
+    ]);
+  } catch (e) {
+    console.warn('Preload partially completed:', e);
+  }
+
+  performance.mark('prewarm-end');
+  performance.measure('App Prewarm', 'prewarm-start', 'prewarm-end');
 };
 
 if (require('electron-squirrel-startup')) {
@@ -93,8 +247,20 @@ const BASE_WINDOW_CONFIG = {
       backgroundThrottling: false,
       enablePreferredSizeMode: true,
       spellcheck: false,
-      enableBlinkFeatures: 'CompositorThreading',
-      v8CacheOptions: 'code',
+      enableBlinkFeatures: 'CompositorThreading,LazyFrameLoading,CanvasOptimizedRenderer,FastPath,GpuRasterization',
+      v8CacheOptions: 'bypassHeatCheck',
+      offscreen: false,
+      enableWebSQL: false,
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webgl: true,
+      accelerator: 'gpu',
+      paintWhenInitiallyHidden: false,
+      experimentalFeatures: true,
+      zoomFactor: 1.0,
+      scrollBounce: true,
+      defaultFontSize: 16
     }
   }
 };
@@ -155,6 +321,27 @@ let WINDOW_CONFIG;
 let mainWindow;
 let isAlwaysOnTop = false;
 let centerX, centerY;
+let focusedWindow = null; // Add global focusedWindow
+
+// Update getFocusedWindow utility
+const getFocusedWindow = () => {
+  focusedWindow = BrowserWindow.getFocusedWindow();
+  return focusedWindow;
+};
+
+// Add window focus tracking
+app.on('browser-window-focus', (_, window) => {
+  focusedWindow = window;
+});
+
+app.on('browser-window-blur', () => {
+  setTimeout(() => {
+    focusedWindow = getFocusedWindow();
+    if (!focusedWindow) {
+      enhancedMemoryManager.monitorMemory();
+    }
+  }, 5000);
+});
 
 // Add this helper function after the initial constants
 const getThemeIcon = () => {
@@ -278,7 +465,6 @@ console.log('[System Info]', JSON.stringify(systemInfo, null, 2));
 
 // GPU error handling
 app.on('gpu-process-crashed', async (event, killed) => {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
     await handleError(
       focusedWindow,
@@ -295,7 +481,6 @@ app.on('gpu-process-crashed', async (event, killed) => {
 // Add global promise rejection handler
 process.on('unhandledRejection', async (reason, promise) => {
   console.error('Unhandled Promise Rejection:', reason);
-  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
     await handleError(focusedWindow, reason, 'unhandled-rejection');
   }
@@ -303,6 +488,8 @@ process.on('unhandledRejection', async (reason, promise) => {
 
 // Startup windows
 app.whenReady().then(async () => {
+  performance.mark('app-start');
+  
   try {
     await preWarmApp();
 
@@ -383,6 +570,8 @@ app.whenReady().then(async () => {
 
     // Update shortcut window creation
     globalShortcut.register('Control+Shift+N', async () => {
+      if (!focusedWindow) return; // If focused window
+      
       try {
         const newWindow = await createWindowWithPromise({
           ...WINDOW_CONFIG.common,
@@ -396,6 +585,10 @@ app.whenReady().then(async () => {
             ...PreferencesWindows.defineNewWindowsPreload,
           }
         });
+
+        // Add FPS management to new window
+        setupWindowFPSHandlers(newWindow);
+        fpsManager.setFPS(newWindow, fpsManager.HIGH_FPS);
 
         // Set runtime
         newWindow.webContents.once('dom-ready', () => {
@@ -412,6 +605,29 @@ app.whenReady().then(async () => {
         await handleError(null, err, 'shortcut-window-creation');
       }
     });
+
+    // Process Optimization For Electron 35.2.1
+    if (process.platform === 'win32') {
+      const { powerSaveBlocker } = require('electron');
+      powerSaveBlocker.start('prevent-app-suspension');
+    }
+
+    // Enhanced GPU Acceleration
+    app.commandLine.appendSwitch('ignore-gpu-blocklist');
+    app.commandLine.appendSwitch('enable-gpu-rasterization');
+    app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
+    
+    app.on('browser-window-blur', () => {
+      setTimeout(() => {
+        if (!getFocusedWindow()) {
+          enhancedMemoryManager.monitorMemory();
+        }
+      }, 5000);
+    });
+
+    performance.mark('app-ready');
+    performance.measure('App Launch', 'app-start', 'app-ready');
+
   } catch (err) {
     console.error('ESNTL: initialization error:', err);
   }
@@ -434,7 +650,7 @@ app.whenReady().then(async () => {
       const menuTemplate = Object.entries(macMenuLinks).map(([label, relativePath]) => ({
         label: label.charAt(0).toUpperCase() + label.slice(1),
         click: async () => {
-          const win = BrowserWindow.getFocusedWindow();
+          const win = getFocusedWindow();
           if (win) {
             await safeLoad(win, relativePath).catch(async (err) => {
               await handleError(win, err, 'mac-menu-navigation');
@@ -467,7 +683,7 @@ app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
 
-// Update window creation with better error handling
+// window creation
 const createWindow = async () => {
   try {
     mainWindow = await createWindowWithPromise({
@@ -484,12 +700,13 @@ const createWindow = async () => {
       throw err;
     });
 
-    // Add error handler for navigation
+    setupWindowFPSHandlers(mainWindow);
+    fpsManager.setFPS(mainWindow, fpsManager.HIGH_FPS);
+
     mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
       await handleError(mainWindow, new Error(`Navigation failed: ${errorDescription}`), 'page-load');
     });
 
-    // Add window move handling
     // Fix Error: 2025-04-18 14:51:59.590 Electron[25627:535694] Warning: Window move completed without beginning
     let isMoving = false;
     mainWindow.on('will-move', () => {
@@ -549,7 +766,6 @@ const createWindow = async () => {
 // On top window - fixed implementation for using static value 💀
 ipcMain.on('Keepontop', async (event, message) => {
   try {
-    const focusedWindow = BrowserWindow.getFocusedWindow();
     if (!focusedWindow) return;
 
     isAlwaysOnTop = !isAlwaysOnTop;
@@ -592,7 +808,7 @@ ipcMain.on('Keepontop', async (event, message) => {
     event.reply('always-on-top-changed', isAlwaysOnTop);
     
   } catch (err) {
-    await handleError(BrowserWindow.getFocusedWindow(), err, 'keep-on-top');
+    await handleError(focusedWindow, err, 'keep-on-top');
   }
 });
 
@@ -605,8 +821,7 @@ ipcMain.on('change-language', (event, locale) => {
 
 // Update show-context-menu handler
 ipcMain.handle('show-context-menu', async (event, pos) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return;
+  if (!focusedWindow) return;
 
   try {
     const cssPath = path.join(__dirname, 'CSS', 'contextMenu.css');
@@ -632,7 +847,7 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
     });
 
     if (menuItems.length === 0) {
-      await handleError(win, new Error('Did you using crack version of our app?'), 'context-menu');
+      await handleError(focusedWindow, new Error('Did you using crack version of our app?'), 'context-menu');
       return;
     }
 
@@ -647,7 +862,7 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
       </div>
     `;
 
-    await win.webContents.executeJavaScript(`
+    await focusedWindow.webContents.executeJavaScript(`
       (function() {
         // Add font stylesheet if not present
         if (!document.getElementById('contextMenuFonts')) {
@@ -709,16 +924,15 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
       })();
     `);
   } catch (err) {
-    await handleError(win, err, 'context-menu');
+    await handleError(focusedWindow, err, 'context-menu');
   }
 });
 
 // Add new IPC handler for safe navigation
 ipcMain.handle('safe-navigate', async (event, url) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return;
+  if (!focusedWindow) return;
 
-  await safeLoad(win, url);
+  await safeLoad(focusedWindow, url);
 });
 
 // Handle URLs in existing windows
@@ -728,7 +942,7 @@ ipcMain.handle('open-external-link', async (event, url) => {
     await shell.openExternal(url);
     return true;
   } catch (err) {
-    await handleError(BrowserWindow.getFocusedWindow(), err, 'external-link');
+    await handleError(focusedWindow, err, 'external-link');
     return false;
   }
 });
@@ -736,11 +950,10 @@ ipcMain.handle('open-external-link', async (event, url) => {
 // Update IPC handlers with proper error handling
 ipcMain.on('navigate', async (event, url) => {
   try {
-    const win = BrowserWindow.getFocusedWindow();
-    if (!win) throw new Error('No active window');
+    if (!focusedWindow) throw new Error('No active window');
 
-    const success = await safeLoad(win, url).catch(async (err) => {
-      await handleError(win, err, 'navigation');
+    const success = await safeLoad(focusedWindow, url).catch(async (err) => {
+      await handleError(focusedWindow, err, 'navigation');
       throw err;
     });
 
@@ -748,17 +961,16 @@ ipcMain.on('navigate', async (event, url) => {
       throw new Error(`Failed to load: ${url}`);
     }
   } catch (err) {
-    await handleError(BrowserWindow.getFocusedWindow(), err, 'navigation');
+    await handleError(focusedWindow, err, 'navigation');
   }
 });
 
 ipcMain.on('show-error', async (event, message) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) {
+  if (focusedWindow) {
     try {
-      await win.webContents.send('error-notification', message);
+      await focusedWindow.webContents.send('error-notification', message);
     } catch (err) {
-      await handleError(win, err, 'error-notification');
+      await handleError(focusedWindow, err, 'error-notification');
     }
   }
 });
@@ -780,10 +992,37 @@ ipcMain.handle('create-new-window', async (event, path) => {
       }
     });
 
+    // Add FPS management to new window
+    setupWindowFPSHandlers(newWindow);
+    fpsManager.setFPS(newWindow, fpsManager.HIGH_FPS);
+
     await loadFileWithCheck(newWindow, path, 'ctrl-click-new-window');
     return true;
   } catch (err) {
     await handleError(null, err, 'ctrl-click-window-creation');
     return false;
   }
+});
+
+// App-wide FPS control
+app.on('browser-window-created', (event, win) => {
+  setupWindowFPSHandlers(win);
+  globalShortcut.register('Control+Shift+I', () => {
+    if (focusedWindow) {
+      focusedWindow.webContents.toggleDevTools();
+    }
+  });
+});
+
+// Add power management
+app.on('ready', () => {
+  const { powerMonitor } = require('electron');
+  
+  powerMonitor.on('on-battery', () => {
+    fpsManager.applyToAllWindows(fpsManager.LOW_FPS);
+  });
+  
+  powerMonitor.on('on-ac', () => {
+    fpsManager.applyToAllWindows(fpsManager.HIGH_FPS);
+  });
 });

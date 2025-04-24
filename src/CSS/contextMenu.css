@@ -1,93 +1,128 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Hind:wght@300&family=IBM+Plex+Sans+Thai:wght@300&family=Inter+Tight:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
 
+:root {
+  --ctx-menu-bg: #181818;
+  --ctx-menu-hover: #313131;
+  --ctx-menu-active: #0c0c0c;
+  --ctx-menu-text: #e3e3e3;
+  --ctx-menu-text-hover: #ffffff;
+  --ctx-menu-blur: 8px;
+  --ctx-menu-shadow: 0px 24px 38px rgba(0, 0, 0, 0.4),
+                     0px 9px 46px rgba(0, 0, 0, 0.2);
+  --ctx-menu-radius: 6px;
+  --ctx-menu-padding: 8px;
+  --ctx-menu-min-width: 180px;
+  --ctx-menu-icon-size: 18px;
+  --ctx-menu-font-size: 14px;
+  --ctx-menu-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .custom-context-menu {
-    position: fixed;
-    background: #181818;
-    backdrop-filter: blur(8px);
-    /* --RCborder: solid 1px #292929; */
-    /* border: var(--RCborder); */
-    border-radius: 6px;
-    padding: 8px 0rem;
-    min-width: 180px;
-    box-shadow: 0px 24px 38px rgba(0, 0, 0, 0.4),
-        0px 9px 46px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    opacity: 0;
-    transform: scale(0.95);
-    transform-origin: top left;
-    transition: all 0.15s ease-out;
-    font-family: 'Inter Tight', 'IBM Plex Sans Thai', sans-serif;
+  position: fixed;
+  background: var(--ctx-menu-bg);
+  backdrop-filter: blur(var(--ctx-menu-blur));
+  border-radius: var(--ctx-menu-radius);
+  padding: var(--ctx-menu-padding) 0;
+  min-width: var(--ctx-menu-min-width);
+  box-shadow: var(--ctx-menu-shadow);
+  z-index: 1000;
+  opacity: 0;
+  transform: scale(0.95) translateY(-4px);
+  transform-origin: top left;
+  transition: all var(--ctx-menu-transition);
+  font-family: 'Inter Tight', 'IBM Plex Sans Thai', sans-serif;
+  will-change: transform, opacity;
 }
 
 .custom-context-menu.show {
-    opacity: 1;
-    transform: scale(1);
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 
 .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 16px;
-    color: #e3e3e3;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-weight: 300;
-    font-family: inherit;
+  display: flex;
+  align-items: center;
+  padding: var(--ctx-menu-padding) calc(var(--ctx-menu-padding) * 2);
+  color: var(--ctx-menu-text);
+  cursor: pointer;
+  transition: all var(--ctx-menu-transition);
+  font-weight: 300;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ctx-menu-hover);
+  opacity: 0;
+  transition: opacity var(--ctx-menu-transition);
+}
+
+.menu-item:hover::after {
+  opacity: 1;
 }
 
 .menu-item:hover {
-    background-color: #313131;
-    color: #fff;
+  color: var(--ctx-menu-text-hover);
 }
 
 .menu-item .material-symbols-outlined {
-    margin-right: 8px;
-    font-size: 18px;
-    opacity: 0.8;
+  margin-right: var(--ctx-menu-padding);
+  font-size: var(--ctx-menu-icon-size);
+  opacity: 0.8;
+  transition: opacity var(--ctx-menu-transition);
+  position: relative;
+  z-index: 1;
+}
+
+.menu-item:hover .material-symbols-outlined {
+  opacity: 1;
 }
 
 .menu-label {
-    font-size: 14px;
-    font-weight: 300;
-    font-family: inherit;
-    letter-spacing: 0.3px;
+  font-size: var(--ctx-menu-font-size);
+  font-weight: 300;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
 }
-
-/* .menu-item:active {
-    background-color: rgba(255, 255, 255, 0.15);
-    transform: scale(0.98);
-} */
 
 .menu-item:focus,
 .menu-item:active {
-    animation: btn-color 0.1s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
-    background-size: 0% 100%;
+  animation: btn-color 0.15s forwards cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes btn-color {
-    0% {
-        background-color: #0c0c0c;
-    }
-
-    20% {
-        background-color: #313131;
-    }
-
-    40% {
-        background-color: #0c0c0c;
-    }
-
-    60% {
-        background-color: #313131;
-    }
-
-    100% {
-        background-color: #0c0c0c;
-    }
+  0% { background-color: var(--ctx-menu-active); }
+  50% { background-color: var(--ctx-menu-hover); }
+  100% { background-color: var(--ctx-menu-active); }
 }
 
-/* Font faces for different languages */
+@media (prefers-contrast: high) {
+  :root {
+    --ctx-menu-bg: #000000;
+    --ctx-menu-text: #ffffff;
+    --ctx-menu-hover: #404040;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ctx-menu-transition: 0s;
+  }
+  
+  .menu-item:focus,
+  .menu-item:active {
+    animation: none;
+    background-color: var(--ctx-menu-active);
+  }
+}
+
 [data-lang="th-TH"] .menu-label {
     font-family: 'IBM Plex Sans Thai', sans-serif;
     font-size: 13.5px;
