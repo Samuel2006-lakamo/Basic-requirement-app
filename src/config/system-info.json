@@ -1,8 +1,8 @@
 {
   "runtimes": {
     "electron": {
-      "name": "Electron",
-      "features": ["native-api", "desktop-integration", "system-access"],
+      "name": "Essential app make by Peakk",
+      "features": ["DefineOS", "desktop-integration"],
       "ui": {
         "titlebar": true,
         "window-controls": true,
@@ -10,8 +10,8 @@
       }
     },
     "web": {
-      "name": "Web Browser",
-      "features": ["web-api", "browser-storage", "web-workers"],
+      "name": "Web",
+      "features": ["CSSweb"],
       "ui": {
         "titlebar": false,
         "window-controls": false,
