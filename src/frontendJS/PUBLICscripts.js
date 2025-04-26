@@ -1,13 +1,3 @@
-// Progress loaded
-document.addEventListener("DOMContentLoaded", () => {
-  NProgress.start();
-});
-
-// Unset if it done to load
-window.addEventListener("load", () => {
-  NProgress.done();
-});
-
 // Fix Always on top initialization
 let isClickedAlwaysOnTop = false;
 
@@ -15,7 +5,7 @@ document.getElementById('KeepONtop')?.addEventListener('click', () => {
   if (window.electronAPI) {
     window.electronAPI.keepOnTop();
     isClickedAlwaysOnTop = !isClickedAlwaysOnTop;
-    document.getElementById('KeepONtop').style.backgroundColor = 
+    document.getElementById('KeepONtop').style.backgroundColor =
       isClickedAlwaysOnTop ? 'var(--color-primary)' : 'transparent';
   }
 });
@@ -23,6 +13,8 @@ document.getElementById('KeepONtop')?.addEventListener('click', () => {
 // Rightclick ipc send to main process
 
 document.addEventListener('DOMContentLoaded', () => {
+  NProgress.start();
+
   if (window.electronAPI) {
     // For error heading
     document.addEventListener('contextmenu', async (e) => {
@@ -40,7 +32,94 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('API Not Available');
   }
+
+  const menu = document.querySelector('.menu');
+  const content = document.querySelector('.content');
+  const resizeHandle = document.createElement('div');
+  resizeHandle.className = 'resize-handle';
+  menu.appendChild(resizeHandle);
+
+  let isResizing = false;
+  let startX, startWidth;
+
+  const updateWidth = (width) => {
+    // Check reset
+    if (window.innerWidth <= 340) {
+      menu.style.width = '';
+      content.style.width = '100%';
+      content.style.marginLeft = '0';
+      return;
+    }
+
+    // Normal width handling
+    width = Math.max(170, Math.min(350, width));
+    menu.style.width = `${width}px`;
+    content.style.width = `calc(100vw - ${width}px)`;
+    content.style.marginLeft = `${width}px`;
+    localStorage.setItem('EssentialApp.Electron.sidebar-width', width);
+  };
+
+  // Reset
+  const resetOnMobile = () => {
+    if (window.innerWidth <= 340) {
+      updateWidth(0);
+    } else {
+      const savedWidth = localStorage.getItem('EssentialApp.Electron.sidebar-width');
+      if (savedWidth) updateWidth(parseInt(savedWidth));
+    }
+  };
+
+  window.addEventListener('resize', resetOnMobile);
+  resetOnMobile(); // Initial check
+
+  // Load width
+  const savedWidth = localStorage.getItem('EssentialApp.Electron.sidebar-width');
+  if (savedWidth) {
+    requestAnimationFrame(() => updateWidth(parseInt(savedWidth)));
+  }
+
+  const startResizing = (e) => {
+    isResizing = true;
+    startX = e.pageX;
+    startWidth = menu.offsetWidth;
+
+    menu.style.transition = 'none';
+    content.style.transition = 'none';
+    menu.style.willChange = 'width';
+    content.style.willChange = 'width';
+    document.body.style.cursor = 'col-resize';
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', stopResizing);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing) return;
+    requestAnimationFrame(() => {
+      const diff = e.pageX - startX;
+      updateWidth(startWidth + diff);
+    });
+  };
+
+  const stopResizing = () => {
+    isResizing = false;
+    document.body.style.cursor = '';
+    menu.style.transition = '';
+    content.style.transition = '';
+    menu.style.willChange = 'auto';
+    content.style.willChange = 'auto';
+
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', stopResizing);
+  };
+
+  resizeHandle.addEventListener('mousedown', startResizing);
 });
+
+window.addEventListener("load", () => {
+  NProgress.done();
+});
+
 
 // Set default new windows as bug set to featured.
 

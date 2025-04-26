@@ -81,7 +81,7 @@ const memoryManager = {
       app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=4096');
     }
   },
-  
+
   optimizeMemory: () => {
     v8.setFlagsFromString('--optimize_for_size');
     v8.setFlagsFromString('--max_old_space_size=4096');
@@ -101,7 +101,7 @@ const enhancedMemoryManager = {
       usage: ((total - free) / total) * 100
     };
   },
-  
+
   optimizeHeap: () => {
     if (global.gc) {
       performance.mark('gc-start');
@@ -109,7 +109,7 @@ const enhancedMemoryManager = {
       performance.mark('gc-end');
       performance.measure('Garbage Collection', 'gc-start', 'gc-end');
     }
-    
+
     v8.setFlagsFromString('--max_old_space_size=' + Math.floor(PERFORMANCE_CONFIG.memory.maxHeapSize / (1024 * 1024)));
     v8.setFlagsFromString('--initial_old_space_size=' + Math.floor(PERFORMANCE_CONFIG.memory.initialHeapSize / (1024 * 1024)));
   },
@@ -129,13 +129,13 @@ enhancedMemoryManager.optimizeHeap();
 const fpsManager = {
   HIGH_FPS: 60,
   LOW_FPS: 15,
-  
+
   setFPS: (win, fps) => {
     if (!win || win.isDestroyed()) return;
-    
+
     // Set FPS limit through webPreferences
     win.webContents.setFrameRate(fps);
-    
+
     // Additional optimization for unfocused windows
     if (fps === fpsManager.LOW_FPS) {
       win.webContents.setBackgroundThrottling(true);
@@ -181,7 +181,7 @@ if (process.platform === 'win32') {
 // preWarmApp
 const preWarmApp = async () => {
   performance.mark('prewarm-start');
-  
+
   const criticalAssets = [
     Essential_links.home,
     'preload.js',
@@ -197,7 +197,7 @@ const preWarmApp = async () => {
   try {
     await Promise.race([
       Promise.all(preloadPromises),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject('Preload timeout'), PERFORMANCE_CONFIG.startup.preloadTimeout)
       )
     ]);
@@ -489,7 +489,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 // Startup windows
 app.whenReady().then(async () => {
   performance.mark('app-start');
-  
+
   try {
     await preWarmApp();
 
@@ -571,7 +571,7 @@ app.whenReady().then(async () => {
     // Update shortcut window creation
     globalShortcut.register('Control+Shift+N', async () => {
       if (!focusedWindow) return; // If focused window
-      
+
       try {
         const newWindow = await createWindowWithPromise({
           ...WINDOW_CONFIG.common,
@@ -616,7 +616,7 @@ app.whenReady().then(async () => {
     app.commandLine.appendSwitch('ignore-gpu-blocklist');
     app.commandLine.appendSwitch('enable-gpu-rasterization');
     app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
-    
+
     app.on('browser-window-blur', () => {
       setTimeout(() => {
         if (!getFocusedWindow()) {
@@ -769,19 +769,19 @@ ipcMain.on('Keepontop', async (event, message) => {
     if (!focusedWindow) return;
 
     isAlwaysOnTop = !isAlwaysOnTop;
-    
+
     // Get screen dimensions
     const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
-    
+
     // Fixed dimensions for always on top mode
     const alwaysOnTopWidth = 340;  // Fixed width
     const alwaysOnTopHeight = 570; // Fixed height
-    
+
     if (isAlwaysOnTop) {
       // Calculate center-bottom position
       const x = Math.floor((screenWidth - alwaysOnTopWidth) / 2);
       const y = screenHeight - alwaysOnTopHeight - 10; // 10px from bottom
-      
+
       await Promise.all([
         focusedWindow.setAlwaysOnTop(true),
         focusedWindow.setResizable(false),
@@ -806,7 +806,7 @@ ipcMain.on('Keepontop', async (event, message) => {
     }
 
     event.reply('always-on-top-changed', isAlwaysOnTop);
-    
+
   } catch (err) {
     await handleError(focusedWindow, err, 'keep-on-top');
   }
@@ -837,7 +837,7 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
       { label: translations.settings, href: Essential_links.settings, icon: 'Settings' }
     ];
 
-    // If data is corrupted
+    // If data was corrupted
     menuItems = menuItems.filter(item => {
       const isValid = validateMenuLink(item.href);
       if (!isValid) {
@@ -1017,11 +1017,11 @@ app.on('browser-window-created', (event, win) => {
 // Add power management
 app.on('ready', () => {
   const { powerMonitor } = require('electron');
-  
+
   powerMonitor.on('on-battery', () => {
     fpsManager.applyToAllWindows(fpsManager.LOW_FPS);
   });
-  
+
   powerMonitor.on('on-ac', () => {
     fpsManager.applyToAllWindows(fpsManager.HIGH_FPS);
   });

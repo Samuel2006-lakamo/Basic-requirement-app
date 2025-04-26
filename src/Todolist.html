@@ -15,12 +15,12 @@
   <script>
     // Runtime detection
     (function () {
-        const runtime = window.electronAPI ? 'electron' : 'web';
-        document.documentElement.setAttribute('data-runtime', runtime);
+      const runtime = window.electronAPI ? 'electron' : 'web';
+      document.documentElement.setAttribute('data-runtime', runtime);
     })();
     document.documentElement.setAttribute('data-os', window.runtimeInfo.os);
     document.body.classList.add(`os-${window.runtimeInfo.os === 'darwin' ? 'mac' : window.runtimeInfo.os === 'win32' ? 'windows' : 'linux'}`);
-</script>
+  </script>
 </head>
 
 <body>
@@ -42,8 +42,8 @@
         <li id="CurrentPage"><a href="#" class="requestShiftkeyHolder">Todo list</a></li>
         <li><a href="Time.html" id="draggable" draggable="true" class="requestShiftkeyHolder">Clock</a></li>
         <li><a href="" draggable="false" class="requestShiftkeyHolder">Calculator</a></li>
-        <li><a href="" draggable="false" class="requestShiftkeyHolder">Sticky notes</a></li>
-        <li><a href="" draggable="false" class="requestShiftkeyHolder">Paint</a></li>
+        <li><a href="Notes.html" draggable="false" class="requestShiftkeyHolder">Notes</a></li>
+        <li><a href="Paint.html" draggable="false" class="requestShiftkeyHolder">Paint</a></li>
       </div>
     </ul>
   </nav>

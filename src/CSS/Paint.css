@@ -1,0 +1,33 @@
+.contentTEXT {
+    display: none;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.contentTEXT h1 {
+    font-family: "Host Grotesk", "Segoe UI", sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 720px) {
+
+    .contentTEXT {
+        display: inline-block;
+    }
+
+}
+
+@media (max-width: 340px) {
+    .contentTEXT {
+        left: 17px;
+        transform: translateX(0px);
+    }
+
+    #GotoHomePage {
+        display: none;
+    }
+}

@@ -1,6 +1,9 @@
 :root {
     --menu-transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
     --overlay-bg: rgba(0, 0, 0, 0.4);
+    --resize-handle-width: 8px;
+    --min-sidebar-width: 170px;
+    --max-sidebar-width: 350px;
 }
 
 .menu {
@@ -17,6 +20,27 @@
     will-change: transform;
     backface-visibility: hidden;
     -webkit-font-smoothing: subpixel-antialiased;
+    resize: none;
+    min-width: var(--min-sidebar-width);
+    max-width: var(--max-sidebar-width);
+}
+
+.resize-handle {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: var(--resize-handle-width);
+    height: 100%;
+    cursor: col-resize;
+    background: transparent;
+    z-index: 100;
+    touch-action: none;
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+    background: var(--ColorHighlight);
+    opacity: 0.2;
 }
 
 .menuText {
@@ -131,7 +155,7 @@
 }
 
 .content {
-    width: calc(100vw - 280px);
+    width: calc(100vw - var(--sidebar-width));
     position: absolute;
     right: 0;
     height: calc(100vh - 40px);

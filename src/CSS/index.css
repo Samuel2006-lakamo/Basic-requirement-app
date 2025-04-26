@@ -1,3 +1,9 @@
+:root {
+    --resize-handle-width: 8px;
+    --min-sidebar-width: 170px;
+    --max-sidebar-width: 350px;
+}
+
 html {
     scroll-behavior: smooth;
     overflow-y: auto;
@@ -44,6 +50,31 @@ html {
     margin-top: 40px;
     z-index: 10;
     pointer-events: all;
+    transition: transform var(--menu-transition), opacity var(--menu-transition);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    resize: none;
+    min-width: var(--min-sidebar-width);
+    max-width: var(--max-sidebar-width);
+}
+
+.resize-handle {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: var(--resize-handle-width);
+    height: 100%;
+    cursor: col-resize;
+    background: transparent;
+    z-index: 100;
+    touch-action: none;
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+    background: var(--ColorHighlight);
+    opacity: 0.2;
 }
 
 .menuText {
@@ -592,7 +623,7 @@ html {
 
     .menu {
         transform: translateX(-300px);
-        display: none;
+        opacity: 0;
     }
 
     .content {
