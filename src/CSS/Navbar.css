@@ -58,7 +58,7 @@ nav ul li a {
 
 nav ul li a:focus,
 nav ul li a:active {
-    animation: btn-color 0.1s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
+    animation: btn-color 0.25s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
     background-size: 0% 100%;
 }
 
@@ -67,11 +67,7 @@ nav ul li a:active {
         background-color: var(--nav-active);
     }
 
-    20% {
-        background-color: var(--nav-hover);
-    }
-
-    40% {
+    30% {
         background-color: var(--nav-active);
     }
 
@@ -80,7 +76,7 @@ nav ul li a:active {
     }
 
     100% {
-        background-color: var(--nav-active);
+        background-color: var(--nav-hover);
     }
 }
 
@@ -145,7 +141,7 @@ nav ul li a:hover {
 
 #KeepONtop {
     position: absolute;
-    right: 90px;
+    right: 135px;
     width: var(--nav-keepontop-width);
     height: calc(var(--nav-height) - 1px);
     border-left: var(--border);

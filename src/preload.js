@@ -37,7 +37,8 @@ contextBridge.exposeInMainWorld(
             ipcRenderer.removeListener('system-info', callback);
         };
     },
-    createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url)
+    createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url),
+    openAboutWindow: () => ipcRenderer.invoke('open-about-window')
 }
 );
 

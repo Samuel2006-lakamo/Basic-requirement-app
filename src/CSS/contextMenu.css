@@ -15,7 +15,7 @@
   --ctx-menu-min-width: 180px;
   --ctx-menu-icon-size: 18px;
   --ctx-menu-font-size: 14px;
-  --ctx-menu-transition: 400ms cubic-bezier(0.2, 0.0, 0, 1.0);
+  --ctx-menu-transition: 250ms cubic-bezier(0.2, 0.0, 0, 1.0);
 }
 
 @keyframes menuAppear {
@@ -23,6 +23,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -47,8 +48,8 @@
 }
 
 .custom-context-menu.show {
-  animation: menuAppear var(--ctx-menu-transition) forwards;
   opacity: 1;
+  animation: menuAppear var(--ctx-menu-transition) forwards;
 }
 
 .menu-item {
@@ -57,28 +58,16 @@
   padding: var(--ctx-menu-padding) calc(var(--ctx-menu-padding) * 2);
   color: var(--ctx-menu-text);
   cursor: pointer;
-  transition: all var(--ctx-menu-transition);
+  transition: opacity var(--ctx-menu-transition);
   font-weight: 300;
   font-family: inherit;
   position: relative;
   overflow: hidden;
 }
 
-.menu-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--ctx-menu-hover);
-  opacity: 0;
-  transition: opacity var(--ctx-menu-transition);
-}
-
-.menu-item:hover::after {
-  opacity: 1;
-}
-
 .menu-item:hover {
   color: var(--ctx-menu-text-hover);
+  background: var(--ctx-menu-hover);
 }
 
 .menu-item .material-symbols-outlined {
@@ -103,22 +92,35 @@
   z-index: 1;
 }
 
-.menu-item:focus,
-.menu-item:active {
-  animation: btn-color 0.15s forwards cubic-bezier(0.4, 0, 0.2, 1);
+.menu-item::after {
+  display: none;
 }
 
-@keyframes btn-color {
-  0% {
-    background-color: var(--ctx-menu-active);
-  }
+.menu-item--active {
+  display: none;
+}
 
-  50% {
-    background-color: var(--ctx-menu-hover);
+.menu-ripple {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.700);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: rippleEffect 400ms ease-out;
+  filter: blur(12.5px);
+}
+
+@keyframes rippleEffect {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
   }
 
   100% {
-    background-color: var(--ctx-menu-active);
+    width: 500px;
+    height: 500px;
+    opacity: 0;
   }
 }
 
@@ -133,12 +135,6 @@
 @media (prefers-reduced-motion: reduce) {
   :root {
     --ctx-menu-transition: 0s;
-  }
-
-  .menu-item:focus,
-  .menu-item:active {
-    animation: none;
-    background-color: var(--ctx-menu-active);
   }
 }
 

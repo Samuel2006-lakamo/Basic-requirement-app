@@ -27,13 +27,15 @@
 
 :root {
     /* Theme Colors */
-    --theme-bg: #101010;
+    --theme-bg: #0F0F0F;
     --theme-fg: #ffffff;
-    --theme-primary: #0c0c0c;
-    --theme-accent: #b2e77c;
+    --theme-primary: #080808;
+    --theme-accent: #b4f5c7;
     --theme-border: #3f3f3f;
     --theme-card: #141414;
-    --theme-titlebar: #141414;
+    --theme-titlebar: #0f0f0f;
+    --theme-links: #C4C4C4;
+    /* C4 color not bomb!! */
     
     --font-primary: "Manrope", sans-serif;
     --font-text: "Inter Tight", sans-serif;

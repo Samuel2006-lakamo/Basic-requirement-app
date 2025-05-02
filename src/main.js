@@ -231,18 +231,18 @@ const PLATFORM_CONFIG = {
 // Base window configurations
 const BASE_WINDOW_CONFIG = {
   common: {
-    backgroundMaterial: 'acrylic',
-    vibrancy: 'fullscreen-ui',
+    // backgroundMaterial: 'acrylic',
+    // vibrancy: 'fullscreen-ui',
     frame: false,
     title: Essential.name,
     titleBarOverlay: {
-      color: '#141414',
+      color: '#0f0f0f',
       symbolColor: '#FFFFFF',
       height: 39
     },
-    fullscreenable: false,
+    fullscreenable: true,
     fullscreen: false,
-    maximizable: false,
+    maximizable: true,
     webPreferences: {
       backgroundThrottling: false,
       enablePreferredSizeMode: true,
@@ -300,6 +300,7 @@ const Essential_links = {
   notes: 'Notes.html',
   paint: 'Paint.html',
   settings: 'Settings.html',
+  about: './Essential_Pages/AboutMint.html', // Add this line
   Error: {
     ErrorPage: 'error.html'
   }
@@ -322,6 +323,7 @@ let mainWindow;
 let isAlwaysOnTop = false;
 let centerX, centerY;
 let focusedWindow = null; // Add global focusedWindow
+let aboutWindow = null; // Add aboutWindow
 
 // Update getFocusedWindow utility
 const getFocusedWindow = () => {
@@ -511,8 +513,8 @@ app.whenReady().then(async () => {
       const aspectRatio = 16 / 9;
 
       // Base size for 1280x720 screen
-      const baseWidth = 820;
-      const baseHeight = 905;
+      const baseWidth = 730;
+      const baseHeight = 810;
       // Calculate scale factor based on screen width
       const scaleFactor = Math.min(screenWidth / 1280, screenHeight / 720);
       // Calculate dimensions ensuring they don't exceed 70% of screen
@@ -686,6 +688,8 @@ app.on('will-quit', () => {
 // window creation
 const createWindow = async () => {
   try {
+    // Fullscreen Restore
+    let originalBounds = null;
     mainWindow = await createWindowWithPromise({
       ...WINDOW_CONFIG.common,
       ...WINDOW_CONFIG.default,
@@ -698,6 +702,20 @@ const createWindow = async () => {
     }).catch(async (err) => {
       await handleError(null, err, 'window-creation');
       throw err;
+    });
+
+    mainWindow.on('enter-full-screen', () => {
+      originalBounds = mainWindow.getBounds();
+    });
+
+    mainWindow.on('leave-full-screen', () => {
+      if (originalBounds) {
+        // Restore original dimensions with slight delay for smooth transition
+        setTimeout(() => {
+          mainWindow.setBounds(originalBounds);
+          originalBounds = null;
+        }, 100);
+      }
     });
 
     setupWindowFPSHandlers(mainWindow);
@@ -869,7 +887,7 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
           const fontLink = document.createElement('link');
           fontLink.id = 'contextMenuFonts';
           fontLink.rel = 'stylesheet';
-          fontLink.href = 'https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&family=Noto+Sans+Thai:wght@400;500&display=swap';
+          fontLink.href = 'https://fonts.googleapis.com/css2?family=Hind:wght@300&family=IBM+Plex+Sans+Thai:wght@300&family=Inter+Tight:wght@300&family=Noto+Sans+SC:wght@300&display=swap';
           document.head.appendChild(fontLink);
         }
 
@@ -890,37 +908,33 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
 
         // Handle menu interactions
         const menu = document.getElementById('customContextMenu');
-        
-        // Add show animation
         requestAnimationFrame(() => menu.classList.add('show'));
 
-        // Handle menu item clicks with safeLoad
-        menu.addEventListener('click', (e) => {
-          const menuItem = e.target.closest('.menu-item');
-          if (menuItem) {
-            const href = menuItem.dataset.href;
-            menu.classList.remove('show');
-            setTimeout(() => {
-              if (href) {
-                // Use IPC to trigger safeLoad
-                window.electronAPI.safeNavigate(href);
-              }
+        document.querySelectorAll('.menu-item').forEach(item => {
+          let ripple = null;
+
+          item.addEventListener('mousedown', function(e) {
+            ripple = document.createElement('div');
+            ripple.className = 'menu-ripple';
+            ripple.style.left = \`\${e.clientX - this.getBoundingClientRect().left}px\`;
+            ripple.style.top = \`\${e.clientY - this.getBoundingClientRect().top}px\`;
+            this.appendChild(ripple);
+            
+            const href = this.getAttribute('data-href');
+            ripple.addEventListener('animationend', () => {
               menu.remove();
-            }, 150);
-          }
+              if (href) window.location.href = href;
+            });
+          });
         });
 
-        // Close menu when clicking outside
-        function closeMenu(e) {
+        // Close immediately on outside click
+        document.addEventListener('click', function closeMenu(e) {
           if (!menu.contains(e.target)) {
-            menu.classList.remove('show');
-            setTimeout(() => menu.remove(), 150);
+            menu.remove();
             document.removeEventListener('click', closeMenu);
           }
-        }
-
-        // Add slight delay before adding click listener
-        setTimeout(() => document.addEventListener('click', closeMenu), 10);
+        });
       })();
     `);
   } catch (err) {
@@ -1000,6 +1014,59 @@ ipcMain.handle('create-new-window', async (event, path) => {
     return true;
   } catch (err) {
     await handleError(null, err, 'ctrl-click-window-creation');
+    return false;
+  }
+});
+
+// Essential app About section
+ipcMain.handle('open-about-window', async () => {
+  try {
+    if (!aboutWindow || aboutWindow.isDestroyed()) {
+      aboutWindow = await createWindowWithPromise({
+        frame: false,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+          color: '#0f0f0f',
+          symbolColor: '#FFFFFF',
+          height: 39,
+          buttons: ['close']
+        },
+        // Rest of existing config
+        ...WINDOW_CONFIG.common,
+        width: 320,
+        height: 400,
+        maximizable: false,
+        minimizable: false,
+        resizable: false,
+        alwaysOnTop: true,
+        icon: getThemeIcon(),
+        x: centerX + 50,
+        y: centerY + 50,
+        webPreferences: {
+          ...PreferencesWindows.defineNewWindowsPreload
+        }
+      });
+
+      // Clean up on close
+      aboutWindow.on('closed', () => {
+        aboutWindow = null;
+      });
+
+      // Load about page
+      await loadFileWithCheck(aboutWindow, Essential_links.about, 'about-window');
+      
+      // Sync accent color
+      aboutWindow.webContents.on('did-finish-load', () => {
+        syncAccentColor(aboutWindow);
+      });
+
+      return true;
+    } else {
+      aboutWindow.focus();
+      return true;
+    }
+  } catch (err) {
+    await handleError(null, err, 'about-window-creation');
     return false;
   }
 });

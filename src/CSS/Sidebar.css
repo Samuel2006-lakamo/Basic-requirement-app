@@ -148,12 +148,6 @@
     z-index: 12;
 }
 
-.bottomCradit {
-    bottom: 25px;
-    position: absolute;
-    left: 1rem;
-}
-
 .content {
     width: calc(100vw - var(--sidebar-width));
     position: absolute;
@@ -162,6 +156,40 @@
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     margin-top: 40px;
     z-index: 5;
+}
+
+.bottomCradit {
+    bottom: 12px;
+    position: absolute;
+    min-width: max-content;
+    max-width: max-content;
+}
+
+.BottomLinks:hover {
+    background: #313131;
+}
+
+.BottomLinks {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100vw;
+    /* Width as max wont metter */
+    overflow: hidden;
+}
+
+.bottomCradit svg {
+    height: auto;
+    transform: translateY(6px);
+    margin-right: 0.5rem;
+}
+
+.bottomCradit a {
+    color: var(--theme-links);
+    margin-left: 1rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 37px;
 }
 
 @media (max-width: 640px) {

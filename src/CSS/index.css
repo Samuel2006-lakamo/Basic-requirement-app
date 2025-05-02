@@ -149,9 +149,37 @@ html {
 }
 
 .bottomCradit {
-    bottom: 25px;
+    bottom: 12px;
     position: absolute;
-    left: 1rem;
+    min-width: max-content;
+    max-width: max-content;
+}
+
+.BottomLinks:hover {
+    background: #313131;
+}
+
+.BottomLinks {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100vw;
+    /* Width as max wont metter */
+    overflow: hidden;
+}
+
+.bottomCradit svg {
+    height: auto;
+    transform: translateY(6px);
+    margin-right: 0.5rem;
+}
+
+.bottomCradit a {
+    color: var(--theme-links);
+    margin-left: 1rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 37px;
 }
 
 .content {
