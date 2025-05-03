@@ -172,6 +172,15 @@ nav ul li a:hover {
     }
 }
 
+@media (max-width: 340px) {
+    #KeepONtop {
+        right: 90px;
+    }
+    #GotoHomePage span {
+        color: var(--accent);
+    }
+}
+
 /* OS Specific Styles */
 [data-os="darwin"] #GotoHomePage {
     margin-left: 5.5rem;

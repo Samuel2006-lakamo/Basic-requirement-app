@@ -1,4 +1,7 @@
-// Fix Always on top initialization
+// This script for public app electron need to be define in the all html files
+// ** Make by Peakk - Mint teams **
+// Sync with main process
+
 let isClickedAlwaysOnTop = false;
 
 document.getElementById('KeepONtop')?.addEventListener('click', () => {
@@ -160,6 +163,25 @@ const homePageHandler = e => {
   e.preventDefault();
   window.electronAPI?.createNewWindow('index.html');
 };
+
+const createWindows = {
+  Aboutus: {
+    AboutEssential: document.getElementById("NewWindow_AboutMint"),
+  },
+  Settings: {
+    SettingsEssential: document.getElementById("NewWindow_Settings"),
+  }
+}
+
+createWindows.Aboutus.AboutEssential.addEventListener('click', async (eventToggleNewwindows_Aboutus) => {
+  eventToggleNewwindows_Aboutus.preventDefault();
+  await window.electronAPI.openAboutWindow();
+});
+
+createWindows.Settings.SettingsEssential.addEventListener('click', async (eventToggleNewwindows_Settings) => {
+  eventToggleNewwindows_Settings.preventDefault();
+  await window.electronAPI.openSettingsWindow('settings.html');
+});
 
 // Add event listeners
 document.getElementById('CurrentPage')?.addEventListener('click', currentPageHandler);

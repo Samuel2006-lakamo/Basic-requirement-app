@@ -38,7 +38,9 @@ contextBridge.exposeInMainWorld(
         };
     },
     createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url),
-    openAboutWindow: () => ipcRenderer.invoke('open-about-window')
+    openAboutWindow: () => ipcRenderer.invoke('open-about-window'),
+    openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
+    RenemeCurrentWindow: () => ipcRenderer.invoke("theme-rename-current-windows"),
 }
 );
 
@@ -53,4 +55,25 @@ delete window.require;
 delete window.exports;
 delete window.Buffer;
 delete window.process;
+
+window.addEventListener('DOMContentLoaded', () => {
+    // From localStorage
+    const savedAccent = localStorage.getItem('theme-accent');
+    if (savedAccent) {
+        const root = document.documentElement;
+        root.style.setProperty('--theme-accent', savedAccent);
+        root.style.setProperty('--accent', savedAccent);
+        root.style.setProperty('--ColorHighlight', savedAccent);
+    }
+
+    // ตรวจจับการเปลี่ยนแปลงใน localStorage
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme-accent') {
+            const root = document.documentElement;
+            root.style.setProperty('--theme-accent', e.newValue);
+            root.style.setProperty('--accent', e.newValue);
+            root.style.setProperty('--ColorHighlight', e.newValue);
+        }
+    });
+});
 

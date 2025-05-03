@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essential app settings</title>
+    <link rel="stylesheet" href="../CSS/DefaultComp.css">
+</head>
+
+<body>
+
+    <div class="DragAppRegion"></div>
+
+    <nav>
+        <div class="NavContent" style="border-top: solid 1px var(--theme-border);" id="ThemeContentToggle">
+            <div class="NavContentText">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)">
+                    <path
+                        d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z" />
+                </svg>
+                <div class="NavContenttext_Title">
+                    <h1>Theme</h1>
+                    <p>Color accent, Color preview</p>
+                </div>
+            </div>
+        </div>
+        <div class="NavContent">
+            <div class="NavContentText">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)">
+                    <path
+                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0-33-23.5-56.5T760-120H200Zm0-520h560v-120H200v120Zm560 80H200v360h560v-360Zm-560-80v80-80Zm0 0v-120 120Zm0 80v360-360Z" />
+                </svg>
+                <div class="NavContenttext_Title">
+                    <h1>Titlebar</h1>
+                    <p>Adjust top bar scale</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="ContentUpper_Theme" id="ContentUpper_Theme">
+        <div class="ContentUpper_Content">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="var(--theme-fg)" id="BackBtnContentTheme">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+            <div class="ContentUpperColorPicker">
+                <div class="picker-container" id="picker"></div>
+                <div class="accent-preview">Color Preview</div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .DragAppRegion {
+            width: 100vw;
+            position: fixed;
+            -webkit-app-region: drag;
+            height: 39px;
+            top: 0;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: absolute;
+            top: 40px;
+        }
+
+        .NavContent {
+            width: 100%;
+            height: 65px;
+            border-bottom: solid 1px var(--theme-border);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .NavContent:hover {
+            background-color: var(--SoftHoverColor);
+        }
+
+        .NavContentText {
+            display: flex;
+            align-items: center;
+            margin-left: 1.5rem;
+        }
+
+        .NavContenttext_Title {
+            margin-left: 1rem;
+        }
+
+        .NavContent h1 {
+            font-weight: 550;
+            line-height: 1.4;
+            font-size: 18px;
+            font-family: var(--font-text);
+            color: var(--theme-fg);
+        }
+
+        .NavContent p {
+            color: var(--theme-links);
+            font-size: 12px;
+            font-weight: 400;
+            font-family: var(--font-text);
+        }
+
+        /* Ripple links effect */
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.325);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            animation: rippleEffect 500ms ease-out;
+            filter: blur(20px);
+        }
+
+        @keyframes rippleEffect {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+
+            100% {
+                width: 500px;
+                height: 500px;
+                opacity: 0;
+            }
+        }
+
+        .ContentUpper_Theme {
+            width: 100%;
+            height: calc(100vh - 39px);
+            background-color: #0f0f0f;
+            position: fixed;
+            bottom: 0;
+            transform: translateY(500px);
+            transition: var(--MenuEaseTransition);
+            z-index: 10;
+        }
+
+        .ContentUpper_Content {
+            padding: 0rem 1.5rem;
+            margin: auto;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 39px);
+        }
+
+        #BackBtnContentTheme {
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            background-color: transparent;
+            z-index: 1000;
+            transition: var(--MenuEaseTransition);
+            opacity: 0;
+            -webkit-app-region: no-drag;
+            cursor: pointer;
+            transform: translateY(-26px);
+            position: relative;
+        }
+
+        #BackBtnContentTheme:hover {
+            background-color: var(--SoftHoverColor);
+        }
+
+        #BackBtnContentTheme.visible {
+            opacity: 1;
+        }
+
+        .picker-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            width: calc(100% - 4.2rem);
+            overflow: hidden;
+            border-radius: 12px;
+            gap: 2px;
+            background-color: var(--theme-border);
+        }
+
+        .color {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .color:active {
+            border: 2px solid #fff;
+            transform: scale(1.05);
+        }
+
+        .color:focus {
+            border: 2px solid #fff;
+            transform: scale(1.25);
+            z-index: 1;
+        }
+
+        .accent-preview {
+            margin: 1.5rem auto;
+            padding: 0.5rem 1.15rem;
+            background-color: var(--theme-accent);
+            color: black;
+            text-align: center;
+            width: fit-content;
+            font-weight: bold;
+            border-radius: 10rem;
+            position: absolute;
+            bottom: 0;
+            left: 1.5rem;
+        }
+    </style>
+
+    <script>
+        document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
+            let ripple = null;
+            let isPressed = false;
+
+            SettingsLinks.addEventListener('mousedown', function (e) {
+                isPressed = true;
+                ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = `${e.clientX - this.getBoundingClientRect().left}px`;
+                ripple.style.top = `${e.clientY - this.getBoundingClientRect().top}px`;
+                this.appendChild(ripple);
+            });
+
+            SettingsLinks.addEventListener('mouseup', function () {
+                if (ripple) {
+                    isPressed = false;
+                    const href = this.getAttribute('data-href');
+                    ripple.addEventListener('animationend', () => {
+                        ripple.remove();
+                        if (href) window.location.href = href;
+                    });
+                }
+            });
+        });
+
+        ThemeContentToggle.addEventListener("click", async (eventRenemeCurrentWindow) => {
+            setTimeout(() => {
+                document.getElementById("ContentUpper_Theme").style.transform = "translateY(0px)";
+                setTimeout(() => {
+                    BackBtnContentTheme.classList.add('visible');
+                }, 300);
+            }, 10);
+            eventRenemeCurrentWindow.preventDefault();
+            await window.electronAPI.RenemeCurrentWindow();
+        });
+
+        // Restore name when click back to
+
+        BackBtnContentTheme.addEventListener("click", () => {
+            BackBtnContentTheme.classList.remove('visible');
+            document.getElementById("ContentUpper_Theme").style.transform = "translateY(600px)";
+        });
+
+        // colors
+
+        const colors = [
+            // Blue shades
+            '#E7F1FF', '#B9DCFC', '#8AC5FF', '#5EB0FF', '#2E96FF',
+
+            // Green shades
+            '#E2F7DF', '#C3EAC6', '#9DDCA1', '#75CD7E', '#53BD63',
+
+            // Yellow shades
+            '#FFF8E6', '#FFF0C0', '#FFE699', '#FFDC73', '#FFD34D',
+
+            // Brown shades
+            '#F2EADF', '#E5D6C3', '#D8C2A6', '#CBAE8A', '#BF9B6E',
+
+            // Orange shades
+            '#FFEDE4', '#FFD7C2', '#FFC19F', '#FFAA7F', '#FF935F',
+
+            // Red shades
+            '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
+        ];
+
+        const picker = document.getElementById('picker');
+
+        // Update color
+        function updateAccentColor(color) {
+            const root = document.documentElement;
+            root.style.setProperty('--theme-accent', color);
+            root.style.setProperty('--accent', color);
+            root.style.setProperty('--ColorHighlight', color);
+            localStorage.setItem('theme-accent', color);
+        }
+
+        colors.forEach(color => {
+            const swatch = document.createElement('div');
+            swatch.classList.add('color');
+            swatch.setAttribute('tabindex', '0');
+            swatch.style.backgroundColor = color;
+
+            swatch.addEventListener('click', () => {
+                updateAccentColor(color);
+                swatch.focus();
+            });
+
+            picker.appendChild(swatch);
+        });
+
+        // Color loaded
+        const savedAccent = localStorage.getItem('theme-accent');
+        if (savedAccent) {
+            updateAccentColor(savedAccent);
+        }
+    </script>
+
+</body>
+
+</html>

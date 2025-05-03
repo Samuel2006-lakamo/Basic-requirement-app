@@ -156,7 +156,7 @@ html {
 }
 
 .BottomLinks:hover {
-    background: #313131;
+    background: var(--SoftHoverColor);
 }
 
 .BottomLinks {

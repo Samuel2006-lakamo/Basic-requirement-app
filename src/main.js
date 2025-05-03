@@ -299,8 +299,8 @@ const Essential_links = {
   clock: 'Time.html',
   notes: 'Notes.html',
   paint: 'Paint.html',
-  settings: 'Settings.html',
-  about: './Essential_Pages/AboutMint.html', // Add this line
+  settings: './Essential_Pages/Settings.html',
+  about: './Essential_Pages/AboutMint.html',
   Error: {
     ErrorPage: 'error.html'
   }
@@ -324,6 +324,7 @@ let isAlwaysOnTop = false;
 let centerX, centerY;
 let focusedWindow = null; // Add global focusedWindow
 let aboutWindow = null; // Add aboutWindow
+let SettingsWindows = null;
 
 // Update getFocusedWindow utility
 const getFocusedWindow = () => {
@@ -1018,47 +1019,110 @@ ipcMain.handle('create-new-window', async (event, path) => {
   }
 });
 
+const DialogWindows_Config = {
+  title: Essential.name,
+  frame: false,
+  titleBarStyle: 'hidden',
+  titleBarOverlay: {
+    color: '#0f0f0f',
+    symbolColor: '#FFFFFF',
+    height: 39,
+    buttons: ['close']
+  },
+  width: 320,
+  height: 400,
+  maximizable: false,
+  minimizable: false,
+  resizable: false,
+  icon: getThemeIcon(),
+  x: centerX + 50,
+  y: centerY + 50,
+  DialogWinConfig_webPreferences: {
+    backgroundThrottling: false,
+    enablePreferredSizeMode: true,
+    spellcheck: false,
+    enableBlinkFeatures: 'CompositorThreading,LazyFrameLoading,CanvasOptimizedRenderer,FastPath,GpuRasterization',
+    v8CacheOptions: 'bypassHeatCheck',
+    offscreen: false,
+    enableWebSQL: false,
+    nodeIntegration: false,
+    contextIsolation: true,
+    sandbox: true,
+    webgl: true,
+    accelerator: 'gpu',
+    paintWhenInitiallyHidden: false,
+    experimentalFeatures: true,
+    zoomFactor: 1.0,
+    scrollBounce: true,
+    defaultFontSize: 16
+  }
+}
+
+function ConfigWindowsProperties(windowType) {
+  if (windowType === 'about' && aboutWindow && !aboutWindow.isDestroyed()) {
+    aboutWindow.setBackgroundColor('#0f0f0f');
+  } else if (windowType === 'settings' && SettingsWindows && !SettingsWindows.isDestroyed()) {
+    SettingsWindows.setBackgroundColor('#0f0f0f');
+  }
+}
+
+const DialogWindowsName = {
+  about: 'About Essential app',
+  settings: 'Essential app settings',
+  settingsContent: {
+    Theme: 'Theme',
+    Titlebar: 'Titlebar',
+  }
+}
+
 // Essential app About section
 ipcMain.handle('open-about-window', async () => {
   try {
     if (!aboutWindow || aboutWindow.isDestroyed()) {
       aboutWindow = await createWindowWithPromise({
-        frame: false,
-        titleBarStyle: 'hidden',
-        titleBarOverlay: {
-          color: '#0f0f0f',
-          symbolColor: '#FFFFFF',
-          height: 39,
-          buttons: ['close']
-        },
-        // Rest of existing config
-        ...WINDOW_CONFIG.common,
-        width: 320,
-        height: 400,
-        maximizable: false,
-        minimizable: false,
-        resizable: false,
-        alwaysOnTop: true,
-        icon: getThemeIcon(),
-        x: centerX + 50,
-        y: centerY + 50,
+        ...DialogWindows_Config,
         webPreferences: {
-          ...PreferencesWindows.defineNewWindowsPreload
+          ...PreferencesWindows.defineNewWindowsPreload,
+          ...DialogWindows_Config.DialogWinConfig_webPreferences
         }
       });
 
-      // Clean up on close
+      ConfigWindowsProperties('about');
+
       aboutWindow.on('closed', () => {
         aboutWindow = null;
       });
 
-      // Load about page
+      const TitlebarcssPath = path.join(__dirname, 'CSS', 'CSS_Essential_Pages', 'Titlebar.css');
+      const TitlebarcssContent = fs.readFileSync(TitlebarcssPath, 'utf8');
+
+      // Loaded AboutMint.html first
       await loadFileWithCheck(aboutWindow, Essential_links.about, 'about-window');
-      
-      // Sync accent color
-      aboutWindow.webContents.on('did-finish-load', () => {
-        syncAccentColor(aboutWindow);
-      });
+
+      // inject CSS
+      await aboutWindow.webContents.executeJavaScript(`
+        (function() {
+          // Add CSS
+          const style = document.createElement('style');
+          style.textContent = \`${TitlebarcssContent}\`;
+          document.head.appendChild(style);
+          
+          // Titlebar content
+          const content = \`
+                <div id="CenterTitlebar" class="electron-only">
+                    <div class="Text">
+                        <div class="Title">
+                            <img src="https://scontent.fbkk22-6.fna.fbcdn.net/v/t1.15752-9/494358002_597299470032669_7888890228994791555_n.webp?_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_ohc=BLopJLNgYDEQ7kNvwEGTV4h&_nc_oc=Adn-n6ngpDM0F5sv8Uuy8tnpsrzEo_EjriXmbY53Isye-Cusfn4W86ps-9abYB3saCgabf_ZIQ1qI47DqEDkihQV&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fbkk22-6.fna&oh=03_Q7cD2AHkoXfR1WZPjg8FeJkABQ2KS8eILS6R8bReEwdsv5BZAg&oe=683C6D2B"
+                                alt="MintTeams logo" width="20px" height="20px" style="border-radius: 50%;">
+                            <h2>${DialogWindowsName.about}</h2>
+                        </div>
+                    </div>
+                </div>
+          \`;
+          
+          document.body.insertAdjacentHTML('beforeend', content);
+        })();
+      `);
 
       return true;
     } else {
@@ -1067,6 +1131,80 @@ ipcMain.handle('open-about-window', async () => {
     }
   } catch (err) {
     await handleError(null, err, 'about-window-creation');
+    return false;
+  }
+});
+
+// Essential app Settings section
+ipcMain.handle('open-settings-window', async () => {
+  try {
+    if (!SettingsWindows || SettingsWindows.isDestroyed()) {
+      SettingsWindows = await createWindowWithPromise({
+        ...DialogWindows_Config,
+        webPreferences: {
+          ...PreferencesWindows.defineNewWindowsPreload,
+          ...DialogWindows_Config.DialogWinConfig_webPreferences
+        }
+      });
+
+      ConfigWindowsProperties('settings');
+
+      SettingsWindows.on('closed', () => {
+        SettingsWindows = null;
+      });
+
+      const TitlebarcssPath = path.join(__dirname, 'CSS', 'CSS_Essential_Pages', 'Titlebar.css');
+      const TitlebarcssContent = fs.readFileSync(TitlebarcssPath, 'utf8');
+
+      await loadFileWithCheck(SettingsWindows, Essential_links.settings, 'settings-window');
+
+      await SettingsWindows.webContents.executeJavaScript(`
+        (function() {
+          // Add CSS
+          const style = document.createElement('style');
+          style.textContent = \`${TitlebarcssContent}\`;
+          document.head.appendChild(style);
+          
+          // Titlebar content
+          const content = \`
+                <div id="CenterTitlebar" class="electron-only">
+                    <div class="Text">
+                        <div class="Title">
+                            <h2>${DialogWindowsName.settings}</h2>
+                        </div>
+                    </div>
+                </div>
+          \`;
+          
+          document.body.insertAdjacentHTML('beforeend', content);
+        })();
+      `);
+
+      return true;
+    } else {
+      SettingsWindows.focus();
+      return true;
+    }
+  } catch (err) {
+    await handleError(null, err, 'settings-window-creation');
+    return false;
+  }
+});
+
+ipcMain.handle('theme-rename-current-windows', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(`
+        const titleElement = document.querySelector('#CenterTitlebar .Title h2');
+        if (titleElement) {
+          titleElement.textContent = '${DialogWindowsName.settingsContent.Theme}';
+        }
+      `);
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error updating window title:', err);
     return false;
   }
 });

@@ -36,6 +36,8 @@
     --theme-titlebar: #0f0f0f;
     --theme-links: #C4C4C4;
     /* C4 color not bomb!! */
+    --HoverColor: #313131;
+    --SoftHoverColor: #1e1e1e;
     
     --font-primary: "Manrope", sans-serif;
     --font-text: "Inter Tight", sans-serif;
@@ -52,6 +54,7 @@
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --menu-transition: 300ms cubic-bezier(0.075, 0.82, 0.165, 1);
+    --MenuEaseTransition: 300ms cubic-bezier(0.2, 0.0, 0, 1.0);
     
     /* Legacy variables */
     --ResetPadding: 0;
@@ -62,6 +65,7 @@
     --ColorHighlight: var(--theme-accent);
     --TitlebarColor: var(--theme-titlebar);
     --CardMainColor: var(--theme-card);
+    --accent: var(--theme-accent);
 }
 
 /* (default) */

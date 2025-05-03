@@ -134,7 +134,7 @@
 }
 
 .lang-option:hover {
-    background: #313131;
+    background: var(--HoverColor);
 }
 
 /* Remove old dropdown styles */

@@ -87,7 +87,7 @@
         <hr>
         <div class="bottomCradit">
             <div class="bottomCraditcontent">
-                <li class="BottomLinks">
+                <li class="BottomLinks" id="NewWindow_Settings">
                     <a href="#">
                         <svg xmlns="http://www.w3.org/2000/svg" height="auto" viewBox="0 -960 960 960" width="24px"
                             fill="var(--theme-links)">
@@ -96,8 +96,8 @@
                         </svg>
                         Settings</a>
                 </li>
-                <li class="BottomLinks">
-                    <a href="#" id="NewWindow_AboutMint" class="about-trigger">
+                <li class="BottomLinks" id="NewWindow_AboutMint">
+                    <a href="#" class="about-trigger">
                         <svg xmlns="http://www.w3.org/2000/svg" height="auto" viewBox="0 -960 960 960" width="24px"
                             fill="var(--theme-links)">
                             <path
@@ -190,12 +190,7 @@
     <script src="./frontendJS/PUBLICscripts.js" type="module" defer></script>
     <script src="renderer.js"></script>
     <script src="./frontendJS/Getstart.js"></script>
-    <script>
-        document.querySelector('.about-trigger').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await window.electronAPI.openAboutWindow();
-        });
-    </script>
+    
 </body>
 
 </html>
