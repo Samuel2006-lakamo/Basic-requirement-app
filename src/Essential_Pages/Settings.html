@@ -13,10 +13,10 @@
     <div class="DragAppRegion"></div>
 
     <nav>
-        <div class="NavContent" style="border-top: solid 1px var(--theme-border);" id="ThemeContentToggle">
+        <div class="NavContent" style="margin-top: 1rem;" id="ThemeContentToggle">
             <div class="NavContentText">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="var(--theme-fg)">
+                    fill="var(--accent)">
                     <path
                         d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-220 40q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120-160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm200 0q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm120 160q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z" />
                 </svg>
@@ -26,16 +26,55 @@
                 </div>
             </div>
         </div>
-        <div class="NavContent">
+        <div class="NavContent" id="AppearanceContentToggle">
             <div class="NavContentText">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="var(--theme-fg)">
+                    fill="var(--accent)">
+                    <path
+                        d="M80 0v-160h800V0H80Zm140-280 210-560h100l210 560h-96l-50-144H368l-52 144h-96Zm176-224h168l-82-232h-4l-82 232Z" />
+                </svg>
+                <div class="NavContenttext_Title">
+                    <h1>Appearance</h1>
+                    <p>Adjust dark & light mode</p>
+                </div>
+            </div>
+        </div>
+        <div class="NavContent" id="TitlebarContentToggle">
+            <div class="NavContentText">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--accent)">
                     <path
                         d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0-33-23.5-56.5T760-120H200Zm0-520h560v-120H200v120Zm560 80H200v360h560v-360Zm-560-80v80-80Zm0 0v-120 120Zm0 80v360-360Z" />
                 </svg>
                 <div class="NavContenttext_Title">
                     <h1>Titlebar</h1>
                     <p>Adjust top bar scale</p>
+                </div>
+            </div>
+        </div>
+        <div class="NavContent" id="AlwaysOnTopsContentToggle">
+            <div class="NavContentText">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--accent)">
+                    <path
+                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
+                </svg>
+                <div class="NavContenttext_Title">
+                    <h1>Always on tops</h1>
+                    <p>Custom style, interface, etc</p>
+                </div>
+            </div>
+        </div>
+        <div class="NavContent" id="NavigationContentToggle">
+            <div class="NavContentText">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--accent)">
+                    <path
+                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm280-80h280v-560H480v560Z" />
+                </svg>
+                <div class="NavContenttext_Title">
+                    <h1>Navigation</h1>
+                    <p>Adjust other options for navigation interface</p>
                 </div>
             </div>
         </div>
@@ -51,6 +90,46 @@
                 <div class="picker-container" id="picker"></div>
                 <div class="accent-preview">Color Preview</div>
             </div>
+        </div>
+    </div>
+
+    <div class="ContentUpper_Appearance" id="ContentUpper_Appearance">
+        <div class="ContentUpper_Content">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="var(--theme-fg)" id="BackBtnContentAppearance">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+
+        </div>
+    </div>
+
+    <div class="ContentUpper_Titlebar" id="ContentUpper_Titlebar">
+        <div class="ContentUpper_Content">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="var(--theme-fg)" id="BackBtnContentTitlebar">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+
+        </div>
+    </div>
+
+    <div class="ContentUpper_AlwaysOnTops" id="ContentUpper_AlwaysOnTops">
+        <div class="ContentUpper_Content">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="var(--theme-fg)" id="BackBtnContentAlwaysOnTops">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+
+        </div>
+    </div>
+
+    <div class="ContentUpper_Navigation" id="ContentUpper_Navigation">
+        <div class="ContentUpper_Content">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                fill="var(--theme-fg)" id="BackBtnContentNavigation">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+            </svg>
+
         </div>
     </div>
 
@@ -74,11 +153,14 @@
         .NavContent {
             width: 100%;
             height: 65px;
-            border-bottom: solid 1px var(--theme-border);
+            /* border-bottom: solid 1px var(--theme-border); */
             display: flex;
             align-items: center;
             overflow: hidden;
             position: relative;
+            animation: slideUpNav 400ms cubic-bezier(0.2, 0.0, 0, 1.0) forwards;
+            animation-delay: calc(var(--delay) * 100ms);
+            opacity: 0;
         }
 
         .NavContent:hover {
@@ -136,7 +218,28 @@
             }
         }
 
-        .ContentUpper_Theme {
+        @keyframes slideUpNav {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+                filter: blur(10px);
+            }
+
+            70% {
+                filter: blur(0px);
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .ContentUpper_Theme,
+        .ContentUpper_Appearance,
+        .ContentUpper_Titlebar,
+        .ContentUpper_AlwaysOnTops,
+        .ContentUpper_Navigation {
             width: 100%;
             height: calc(100vh - 39px);
             background-color: #0f0f0f;
@@ -155,7 +258,11 @@
             height: calc(100vh - 39px);
         }
 
-        #BackBtnContentTheme {
+        #BackBtnContentTheme,
+        #BackBtnContentAppearance,
+        #BackBtnContentTitlebar,
+        #BackBtnContentAlwaysOnTops,
+        #BackBtnContentNavigation {
             border-radius: 50%;
             width: 14px;
             height: 14px;
@@ -169,11 +276,19 @@
             position: relative;
         }
 
-        #BackBtnContentTheme:hover {
+        #BackBtnContentTheme:hover,
+        #BackBtnContentAppearance:hover,
+        #BackBtnContentTitlebar:hover,
+        #BackBtnContentAlwaysOnTops:hover,
+        #BackBtnContentNavigation:hover {
             background-color: var(--SoftHoverColor);
         }
 
-        #BackBtnContentTheme.visible {
+        #BackBtnContentTheme.visible,
+        #BackBtnContentAppearance.visible,
+        #BackBtnContentTitlebar.visible,
+        #BackBtnContentAlwaysOnTops.visible,
+        #BackBtnContentNavigation.visible {
             opacity: 1;
         }
 
@@ -223,11 +338,12 @@
     </style>
 
     <script>
-        document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
+        // Ripple Effect Function
+        function createRippleEffect(element) {
             let ripple = null;
             let isPressed = false;
 
-            SettingsLinks.addEventListener('mousedown', function (e) {
+            element.addEventListener('mousedown', function (e) {
                 isPressed = true;
                 ripple = document.createElement('div');
                 ripple.className = 'ripple';
@@ -236,7 +352,7 @@
                 this.appendChild(ripple);
             });
 
-            SettingsLinks.addEventListener('mouseup', function () {
+            element.addEventListener('mouseup', function () {
                 if (ripple) {
                     isPressed = false;
                     const href = this.getAttribute('data-href');
@@ -246,24 +362,82 @@
                     });
                 }
             });
+        }
+
+        // Content configuration
+        const contentConfig = {
+            theme: {
+                toggleId: 'ThemeContentToggle',
+                contentId: 'ContentUpper_Theme',
+                backBtnId: 'BackBtnContentTheme',
+                ipcEvent: 'theme-rename-current-windows'
+            },
+            appearance: {
+                toggleId: 'AppearanceContentToggle',
+                contentId: 'ContentUpper_Appearance',
+                backBtnId: 'BackBtnContentAppearance',
+                ipcEvent: 'appearance-rename-current-windows'
+            },
+            titlebar: {
+                toggleId: 'TitlebarContentToggle',
+                contentId: 'ContentUpper_Titlebar',
+                backBtnId: 'BackBtnContentTitlebar',
+                ipcEvent: 'titlebar-rename-current-windows'
+            },
+            alwaysOnTops: {
+                toggleId: 'AlwaysOnTopsContentToggle',
+                contentId: 'ContentUpper_AlwaysOnTops',
+                backBtnId: 'BackBtnContentAlwaysOnTops',
+                ipcEvent: 'alwaysontops-rename-current-windows'
+            },
+            navigation: {
+                toggleId: 'NavigationContentToggle',
+                contentId: 'ContentUpper_Navigation',
+                backBtnId: 'BackBtnContentNavigation',
+                ipcEvent: 'navigation-rename-current-windows'
+            }
+        };
+
+        // Helper function to hide all content except active
+        function hideOtherContent(activeContentId) {
+            Object.values(contentConfig).forEach(config => {
+                if (config.contentId !== activeContentId) {
+                    document.getElementById(config.contentId).style.transform = "translateY(500px)";
+                }
+            });
+        }
+
+        // Setup content toggles
+        Object.values(contentConfig).forEach(config => {
+            const toggle = document.getElementById(config.toggleId);
+            if (toggle) {
+                toggle.addEventListener("click", async (event) => {
+                    setTimeout(() => {
+                        document.getElementById(config.contentId).style.transform = "translateY(0px)";
+                        hideOtherContent(config.contentId);
+                        setTimeout(() => {
+                            document.getElementById(config.backBtnId).classList.add('visible');
+                        }, 300);
+                    }, 10);
+                    event.preventDefault();
+                    await window.electronAPI[config.ipcEvent]();
+                });
+            }
+
+            const backBtn = document.getElementById(config.backBtnId);
+            if (backBtn) {
+                backBtn.addEventListener("click", async (event) => {
+                    backBtn.classList.remove('visible');
+                    document.getElementById(config.contentId).style.transform = "translateY(600px)";
+                    event.preventDefault();
+                    await window.electronAPI.RestoreCurrentName();
+                });
+            }
         });
 
-        ThemeContentToggle.addEventListener("click", async (eventRenemeCurrentWindow) => {
-            setTimeout(() => {
-                document.getElementById("ContentUpper_Theme").style.transform = "translateY(0px)";
-                setTimeout(() => {
-                    BackBtnContentTheme.classList.add('visible');
-                }, 300);
-            }, 10);
-            eventRenemeCurrentWindow.preventDefault();
-            await window.electronAPI.RenemeCurrentWindow();
-        });
-
-        // Restore name when click back to
-
-        BackBtnContentTheme.addEventListener("click", () => {
-            BackBtnContentTheme.classList.remove('visible');
-            document.getElementById("ContentUpper_Theme").style.transform = "translateY(600px)";
+        // Apply ripple effect
+        document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
+            createRippleEffect(SettingsLinks);
         });
 
         // colors
@@ -318,6 +492,19 @@
         if (savedAccent) {
             updateAccentColor(savedAccent);
         }
+
+        // define delay anim for NavContent
+        document.querySelectorAll('.NavContent').forEach((nav, index) => {
+            nav.style.setProperty('--delay', index);
+        });
+
+        // Back button for theme content
+        BackBtnContentTheme.addEventListener("click", async (eventRestoreCurrentName) => {
+            BackBtnContentTheme.classList.remove('visible');
+            document.getElementById("ContentUpper_Theme").style.transform = "translateY(600px)";
+            eventRestoreCurrentName.preventDefault();
+            await window.electronAPI.RestoreCurrentName();
+        });
     </script>
 
 </body>

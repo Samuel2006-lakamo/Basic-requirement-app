@@ -1071,9 +1071,30 @@ const DialogWindowsName = {
   settings: 'Essential app settings',
   settingsContent: {
     Theme: 'Theme',
+    Appearance: 'Appearance',
     Titlebar: 'Titlebar',
+    AlwaysOnTops: 'Always on tops',
+    Navigation: 'Navigation'
   }
 }
+
+// Create helper function for title updates
+const updateWindowTitle = async (title) => {
+  return `
+    new Promise((resolve) => {
+      const checkElement = () => {
+        const titleElement = document.querySelector('#CenterTitlebar .Title h2');
+        if (titleElement) {
+          titleElement.textContent = '${title}';
+          resolve(true);
+        } else {
+          setTimeout(checkElement, 100);
+        }
+      };
+      checkElement();
+    });
+  `;
+};
 
 // Essential app About section
 ipcMain.handle('open-about-window', async () => {
@@ -1194,17 +1215,89 @@ ipcMain.handle('open-settings-window', async () => {
 ipcMain.handle('theme-rename-current-windows', async () => {
   try {
     if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(`
-        const titleElement = document.querySelector('#CenterTitlebar .Title h2');
-        if (titleElement) {
-          titleElement.textContent = '${DialogWindowsName.settingsContent.Theme}';
-        }
-      `);
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settingsContent.Theme)
+      );
       return true;
     }
     return false;
   } catch (err) {
     console.error('Error updating window title:', err);
+    return false;
+  }
+});
+
+ipcMain.handle('appearance-rename-current-windows', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settingsContent.Appearance)
+      );
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error updating window title:', err);
+    return false;
+  }
+});
+
+ipcMain.handle('titlebar-rename-current-windows', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settingsContent.Titlebar)
+      );
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error updating window title:', err);
+    return false;
+  }
+});
+
+ipcMain.handle('alwaysontops-rename-current-windows', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settingsContent.AlwaysOnTops)
+      );
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error updating window title:', err);
+    return false;
+  }
+});
+
+ipcMain.handle('navigation-rename-current-windows', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settingsContent.Navigation)
+      );
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error updating window title:', err);
+    return false;
+  }
+});
+
+ipcMain.handle('restore-current-name', async () => {
+  try {
+    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
+      await SettingsWindows.webContents.executeJavaScript(
+        await updateWindowTitle(DialogWindowsName.settings)
+      );
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('Error restoring window title:', err);
     return false;
   }
 });

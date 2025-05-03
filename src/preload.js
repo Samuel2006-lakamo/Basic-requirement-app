@@ -41,6 +41,13 @@ contextBridge.exposeInMainWorld(
     openAboutWindow: () => ipcRenderer.invoke('open-about-window'),
     openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
     RenemeCurrentWindow: () => ipcRenderer.invoke("theme-rename-current-windows"),
+    RestoreCurrentName: () => ipcRenderer.invoke('restore-current-name'), // Change to use consistent naming
+    'theme-rename-current-windows': () => ipcRenderer.invoke('theme-rename-current-windows'),
+    'appearance-rename-current-windows': () => ipcRenderer.invoke('appearance-rename-current-windows'),
+    'titlebar-rename-current-windows': () => ipcRenderer.invoke('titlebar-rename-current-windows'),
+    'alwaysontops-rename-current-windows': () => ipcRenderer.invoke('alwaysontops-rename-current-windows'),
+    'navigation-rename-current-windows': () => ipcRenderer.invoke('navigation-rename-current-windows'),
+    'RestoreCurrentName': () => ipcRenderer.invoke('restore-current-name')
 }
 );
 
