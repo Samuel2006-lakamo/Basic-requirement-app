@@ -1192,8 +1192,29 @@ ipcMain.handle('open-about-window', async () => {
                 <div id="CenterTitlebar" class="electron-only">
                     <div class="Text">
                         <div class="Title">
-                            <img src="https://scontent.fbkk22-6.fna.fbcdn.net/v/t1.15752-9/494358002_597299470032669_7888890228994791555_n.webp?_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_ohc=BLopJLNgYDEQ7kNvwEGTV4h&_nc_oc=Adn-n6ngpDM0F5sv8Uuy8tnpsrzEo_EjriXmbY53Isye-Cusfn4W86ps-9abYB3saCgabf_ZIQ1qI47DqEDkihQV&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fbkk22-6.fna&oh=03_Q7cD2AHkoXfR1WZPjg8FeJkABQ2KS8eILS6R8bReEwdsv5BZAg&oe=683C6D2B"
-                                alt="MintTeams logo" width="20px" height="20px" style="border-radius: 50%;">
+                            <svg width="384" height="383" viewBox="0 0 384 383" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect x="153" y="343" width="79" height="40" fill="white"/>
+                              <rect x="153" width="79" height="40" fill="white"/>
+                              <rect x="230" y="305" width="41" height="40" fill="white"/>
+                              <rect x="307" y="229" width="39" height="40" fill="white"/>
+                              <rect x="269" y="267" width="40" height="40" fill="white"/>
+                              <rect x="344" y="154" width="40" height="76" fill="white"/>
+                              <rect y="153" width="40" height="77" fill="white"/>
+                              <rect x="306" y="116" width="40" height="39" fill="white"/>
+                              <rect width="40" height="39" transform="matrix(-1 0 0 1 78 116)" fill="white"/>
+                              <rect width="40" height="39" transform="matrix(-1 0 0 1 78 229)" fill="white"/>
+                              <rect width="40" height="39" transform="matrix(-1 0 0 1 116 268)" fill="white"/>
+                              <rect width="40" height="39" transform="matrix(-1 0 0 1 153 306)" fill="white"/>
+                              <rect x="268" y="77" width="41" height="40" fill="white"/>
+                              <rect width="41" height="40" transform="matrix(-1 0 0 1 116 77)" fill="white"/>
+                              <rect x="230" y="40" width="41" height="39" fill="white"/>
+                              <rect width="41" height="39" transform="matrix(-1 0 0 1 154 40)" fill="white"/>
+                              <path d="M172.5 268.5H211V229.5H230.5V191.5H209.5V213H177.5V191.5H153V229.5H172.5V268.5Z" fill="white" stroke="white"/>
+                              <path d="M152.5 153.5H114.5V191.5H152.5V153.5Z" fill="white"/>
+                              <path d="M230.5 191.5H269.5V153.5H230.5V191.5Z" fill="white"/>
+                              <path d="M230.5 153.5V116H152.5V153.5H230.5Z" fill="white"/>
+                              <path d="M230.5 153.5H269.5V191.5H230.5V153.5ZM230.5 153.5V116H152.5V153.5M230.5 153.5H152.5M152.5 153.5H114.5V191.5H152.5V153.5Z" stroke="white"/>
+                            </svg>
                             <h2>${DialogWindowsName.about}</h2>
                         </div>
                     </div>
