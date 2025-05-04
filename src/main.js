@@ -1,9 +1,10 @@
-const { app, BrowserWindow, ipcMain, globalShortcut, Menu, screen, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut, Menu, screen, nativeTheme, session } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
 const v8 = require('v8');
 const os = require('os');
 const { performance } = require('perf_hooks');
+const { execSync } = require('child_process');
 
 const Essential = {
   name: "Essential App",
@@ -11,31 +12,50 @@ const Essential = {
 
 require('dotenv').config();
 
-// Using Environment Variable > DISABLE_GITHUB_TOKEN
-// const token = process.env.GITHUB_TOKEN;
-// console.log(`GitHub Token: ${token}`);
-
-// Add after other requires
 const menuTranslations = require('./locales/menu.js');
-let currentLocale = 'en-US'; // Default locale
+let currentLocale = 'en-US';
 
-// Config object 
+const STARTUP_CONFIG = {
+  priority: { cpu: 'realtime', io: 'high' },
+  preload: { timeout: 500, concurrent: 8, retries: 0 },
+  cache: { disk: 26214400, gpu: 13107200, media: 13107200 }
+};
+
 const PERFORMANCE_CONFIG = {
   startup: {
-    scheduler: 'performance',
-    cpuUsageLimit: 85,
-    preloadTimeout: 1500,
-    gcInterval: 30000
+    scheduler: 'performance', 
+    cpuUsageLimit: 75,
+    preloadTimeout: 1000,
+    gcInterval: 60000
   },
   memory: {
-    minFreeMemMB: 256,
-    maxHeapSize: Math.min(os.totalmem() * 0.8, 8192 * 1024 * 1024),
-    initialHeapSize: 512 * 1024 * 1024
+    minFreeMemMB: 128,
+    maxHeapSize: Math.min(os.totalmem() * 0.6, 4096 * 1024 * 1024),
+    initialHeapSize: 256 * 1024 * 1024
   },
   gpu: {
-    minVRAM: 256,
+    minVRAM: 128,
     preferHardware: true,
     vsync: false
+  }
+};
+
+const optimizeCPUAffinity = () => {
+  if (process.platform === 'win32') {
+    const { exec } = require('child_process');
+    const pid = process.pid;
+    
+    exec(`wmic process where ProcessID=${pid} CALL setpriority "high priority"`);
+    
+    const cpuCount = os.cpus().length;
+    const performanceCores = Math.max(2, Math.floor(cpuCount / 4));
+    const affinityMask = ((1 << performanceCores) - 1) << (cpuCount - performanceCores);
+    
+    try {
+      process.processManager?.setAffinity(affinityMask);
+    } catch (e) {
+      console.warn('CPU affinity setting not supported');
+    }
   }
 };
 
@@ -48,8 +68,17 @@ app.commandLine.appendSwitch('enable-accelerated-mjpeg-decode');
 app.commandLine.appendSwitch('enable-accelerated-video');
 app.commandLine.appendSwitch('disable-gpu-driver-bug-workarounds');
 
-// Enhanced Performance Optimization for Electron 35.2.1
-app.commandLine.appendSwitch('enable-features', 'CanvasOptimizedRenderer,PreloadMediaEngagement,ThreadedScrolling,PaintHolding,LazyFrameLoading,BackForwardCache');
+app.commandLine.appendSwitch('enable-features', 
+  'CanvasOptimizedRenderer,' +
+  'PreloadMediaEngagement,' +
+  'ThreadedScrolling,' +
+  'PaintHolding,' +
+  'LazyFrameLoading,' +
+  'BackForwardCache,' +
+  'CalculateNativeWinOcclusion,' +
+  'UseSkiaRenderer,' +
+  'EnableDrDc'
+);
 app.commandLine.appendSwitch('enable-zero-copy');
 app.commandLine.appendSwitch('enable-drdc');
 app.commandLine.appendSwitch('force-gpu-mem-available-mb', '1024');
@@ -63,11 +92,20 @@ app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
 app.commandLine.appendSwitch('disable-frame-rate-limit');
 app.commandLine.appendSwitch('ignore-gpu-blocklist');
 
-// CPU & Memory Optimization
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096 --optimize-for-size --max-inlined-source-size=1000');
-v8.setFlagsFromString('--max_old_space_size=4096');
+app.commandLine.appendSwitch('js-flags', 
+  '--max-old-space-size=2048 ' +
+  '--optimize-for-size ' +
+  '--max-inlined-source-size=512 ' +
+  '--gc-interval=100000 ' +
+  '--stack-size=500 ' +
+  '--use-strict'
+);
+v8.setFlagsFromString('--max_old_space_size=2048');
 v8.setFlagsFromString('--optimize_for_size');
-v8.setFlagsFromString('--max_inlined_source_size=1000');
+v8.setFlagsFromString('--max_inlined_source_size=512');
+v8.setFlagsFromString('--gc_interval=100000');
+v8.setFlagsFromString('--stack_size=500');
+v8.setFlagsFromString('--use_strict');
 
 const memoryManager = {
   checkMemory: () => {
@@ -76,17 +114,17 @@ const memoryManager = {
     const memoryUsagePercent = (usedMemory.heapUsed / maxMemory) * 100;
 
     if (memoryUsagePercent > 75) {
-      global.gc && global.gc(); // Force garbage collection if available
-      v8.setFlagsFromString('--max_old_space_size=4096');
-      app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=4096');
+      global.gc && global.gc();
+      v8.setFlagsFromString('--max_old_space_size=2048');
+      app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=2048');
     }
   },
 
   optimizeMemory: () => {
     v8.setFlagsFromString('--optimize_for_size');
-    v8.setFlagsFromString('--max_old_space_size=4096');
-    v8.setFlagsFromString('--initial_old_space_size=4096');
-    v8.setFlagsFromString('--max_semi_space_size=256');
+    v8.setFlagsFromString('--max_old_space_size=2048');
+    v8.setFlagsFromString('--initial_old_space_size=256');
+    v8.setFlagsFromString('--max_semi_space_size=128');
   }
 };
 
@@ -122,7 +160,6 @@ const enhancedMemoryManager = {
   }
 };
 
-// Using heap mem usage
 setInterval(enhancedMemoryManager.monitorMemory, PERFORMANCE_CONFIG.startup.gcInterval);
 enhancedMemoryManager.optimizeHeap();
 
@@ -133,10 +170,8 @@ const fpsManager = {
   setFPS: (win, fps) => {
     if (!win || win.isDestroyed()) return;
 
-    // Set FPS limit through webPreferences
     win.webContents.setFrameRate(fps);
 
-    // Additional optimization for unfocused windows
     if (fps === fpsManager.LOW_FPS) {
       win.webContents.setBackgroundThrottling(true);
       app.commandLine.appendSwitch('force-renderer-accessibility', false);
@@ -165,7 +200,6 @@ const setupWindowFPSHandlers = (win) => {
   });
 };
 
-// Process Priority (Windows)
 if (process.platform === 'win32') {
   const { exec } = require('child_process');
   exec(`wmic process where name="electron.exe" CALL setpriority "high priority"`);
@@ -173,32 +207,49 @@ if (process.platform === 'win32') {
   app.commandLine.appendSwitch('force-device-scale-factor', '1');
 }
 
-// Protocol handling for Windows
 if (process.platform === 'win32') {
   app.setAsDefaultProtocolClient('essential');
 }
 
-// preWarmApp
+const optimizeStartup = () => {
+  if (process.platform === 'win32') {
+    const { exec } = require('child_process');
+    exec(`wmic process where ProcessID=${process.pid} CALL setpriority "high priority"`);
+    
+    process.env.ELECTRON_ENABLE_STACK_DUMPING = 'false';
+    process.env.ELECTRON_ENABLE_LOGGING = 'false';
+    app.commandLine.appendSwitch('enable-features', 'HighPriorityWorkers');
+  }
+};
+
 const preWarmApp = async () => {
   performance.mark('prewarm-start');
 
   const criticalAssets = [
     Essential_links.home,
     'preload.js',
-    'CSS/style.css',
-    'assets/icons/EssentialAPPIcons.png'
+    'CSS/style.css'
   ];
 
-  const preloadPromises = criticalAssets.map(asset => {
-    const fullPath = path.join(__dirname, asset);
-    return fs.promises.readFile(fullPath).catch(() => null);
-  });
+  const loadWithConcurrency = async (assets, concurrency) => {
+    const results = [];
+    for (let i = 0; i < assets.length; i += concurrency) {
+      const chunk = assets.slice(i, i + concurrency);
+      const promises = chunk.map(asset => {
+        const fullPath = path.join(__dirname, asset);
+        return fs.promises.readFile(fullPath)
+          .catch(() => null);
+      });
+      results.push(...await Promise.all(promises));
+    }
+    return results;
+  };
 
   try {
     await Promise.race([
-      Promise.all(preloadPromises),
-      new Promise((_, reject) =>
-        setTimeout(() => reject('Preload timeout'), PERFORMANCE_CONFIG.startup.preloadTimeout)
+      loadWithConcurrency(criticalAssets, STARTUP_CONFIG.preload.concurrent),
+      new Promise((_, reject) => 
+        setTimeout(() => reject('Preload timeout'), STARTUP_CONFIG.preload.timeout)
       )
     ]);
   } catch (e) {
@@ -213,7 +264,6 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// Platform-specific configurations without screen-dependent values
 const PLATFORM_CONFIG = {
   darwin: {
     window: {
@@ -228,11 +278,8 @@ const PLATFORM_CONFIG = {
   }
 };
 
-// Base window configurations
 const BASE_WINDOW_CONFIG = {
   common: {
-    // backgroundMaterial: 'acrylic',
-    // vibrancy: 'fullscreen-ui',
     frame: false,
     title: Essential.name,
     titleBarOverlay: {
@@ -260,7 +307,11 @@ const BASE_WINDOW_CONFIG = {
       experimentalFeatures: true,
       zoomFactor: 1.0,
       scrollBounce: true,
-      defaultFontSize: 16
+      defaultFontSize: 16,
+      partition: 'persist:main',
+      webviewTag: false,
+      clearCache: true,
+      cache: false
     }
   }
 };
@@ -278,7 +329,7 @@ const PreferencesWindows = {
     preload: path.join(__dirname, 'preload.js'),
     nodeIntegration: false,
     contextIsolation: true,
-    sandbox: true, // VERY IMPORTANT IF NEW WINDOWS USE THIS COMMAND!!!
+    sandbox: true,
     autoHideMenuBar: true,
     backgroundThrottling: false,
     enablePreferredSizeMode: true,
@@ -290,8 +341,6 @@ const PreferencesWindows = {
     hardwareAcceleration: true
   }
 }
-
-// Config Page
 
 const Essential_links = {
   home: 'index.html',
@@ -306,7 +355,6 @@ const Essential_links = {
   }
 };
 
-// Add after Essential_links object
 const validateMenuLink = (href) => {
   return Object.values(Essential_links).some(link => {
     if (typeof link === 'string') {
@@ -322,17 +370,15 @@ let WINDOW_CONFIG;
 let mainWindow;
 let isAlwaysOnTop = false;
 let centerX, centerY;
-let focusedWindow = null; // Add global focusedWindow
-let aboutWindow = null; // Add aboutWindow
+let focusedWindow = null;
+let aboutWindow = null;
 let SettingsWindows = null;
 
-// Update getFocusedWindow utility
 const getFocusedWindow = () => {
   focusedWindow = BrowserWindow.getFocusedWindow();
   return focusedWindow;
 };
 
-// Add window focus tracking
 app.on('browser-window-focus', (_, window) => {
   focusedWindow = window;
 });
@@ -346,14 +392,12 @@ app.on('browser-window-blur', () => {
   }, 5000);
 });
 
-// Add this helper function after the initial constants
 const getThemeIcon = () => {
   return nativeTheme.shouldUseDarkColors
     ? path.join(__dirname, 'assets', 'icons', 'EssentialAPPIcons.png')
     : path.join(__dirname, 'assets', 'icons', 'EssentialAPPIconsLight.png');
 };
 
-// Global Error Handler Utilities
 const handleError = async (win, error, context = '') => {
   console.error(`Error in ${context}:`, error);
   if (win && !win.isDestroyed()) {
@@ -372,7 +416,6 @@ const handleError = async (win, error, context = '') => {
   return Promise.reject(error);
 };
 
-// Window Management Promise Wrapper
 const createWindowWithPromise = (config) => {
   return new Promise((resolve, reject) => {
     try {
@@ -384,16 +427,13 @@ const createWindowWithPromise = (config) => {
   });
 };
 
-// Enhanced safeLoad with protocol handling
 const safeLoad = async (win, filePath) => {
   try {
-    // Handle external URLs
     if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
       await win.loadURL(filePath);
       return true;
     }
 
-    // Handle internal file paths
     const fullPath = path.join(__dirname, filePath);
     if (fs.existsSync(fullPath)) {
       await win.loadFile(fullPath);
@@ -410,13 +450,11 @@ const safeLoad = async (win, filePath) => {
   }
 };
 
-// Handle deep linking
 app.on('second-instance', (event, commandLine, workingDirectory) => {
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
     mainWindow.focus();
 
-    // Handle protocol urls
     const url = commandLine.pop();
     if (url && url.startsWith('essential://')) {
       const path = url.replace('essential://', '');
@@ -425,7 +463,6 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
   }
 });
 
-// File Loading Promise Wrapper
 const loadFileWithCheck = async (window, filePath, context) => {
   try {
     const fullPath = path.join(__dirname, filePath);
@@ -440,7 +477,6 @@ const loadFileWithCheck = async (window, filePath, context) => {
   }
 };
 
-// Load system config and initialize system info
 const systemConfig = require('./config/system-info.json');
 const { title } = require('node:process');
 const systemInfo = {
@@ -451,22 +487,11 @@ const systemInfo = {
   platform: {
     type: process.platform,
     ...systemConfig.platforms[process.platform]
-  },
-  // details: {
-  //   arch: process.arch,
-  //   version: process.getSystemVersion?.() || 'unknown',
-  //   electron: process.versions.electron,
-  //   chrome: process.versions.chrome,
-  //   node: process.versions.node,
-  //   timestamp: Date.now(),
-  //   appVersion: app.getVersion()
-  // }
+  }
 };
 
-// Log system info once
 console.log('[System Info]', JSON.stringify(systemInfo, null, 2));
 
-// GPU error handling
 app.on('gpu-process-crashed', async (event, killed) => {
   if (focusedWindow) {
     await handleError(
@@ -475,13 +500,11 @@ app.on('gpu-process-crashed', async (event, killed) => {
       'gpu-crash'
     );
 
-    // Disable GPU features & reload
     app.disableHardwareAcceleration();
     focusedWindow.reload();
   }
 });
 
-// Add global promise rejection handler
 process.on('unhandledRejection', async (reason, promise) => {
   console.error('Unhandled Promise Rejection:', reason);
   if (focusedWindow) {
@@ -489,17 +512,46 @@ process.on('unhandledRejection', async (reason, promise) => {
   }
 });
 
-// Startup windows
+const userDataPath = app.getPath('userData');
+const setupCachePermissions = () => {
+  try {
+    if (process.platform === 'win32') {
+      const cachePath = path.join(userDataPath, 'Cache');
+      const gpuCachePath = path.join(userDataPath, 'GPUCache');
+      
+      [cachePath, gpuCachePath].forEach(dir => {
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        execSync(`icacls "${dir}" /grant "${process.env.USERNAME}":(OI)(CI)F /T`);
+      });
+    }
+  } catch (err) {
+    console.warn('Cache permission setup failed:', err);
+  }
+};
+
 app.whenReady().then(async () => {
   performance.mark('app-start');
 
   try {
-    await preWarmApp();
+    optimizeStartup();
+    
+    app.commandLine.appendSwitch('disk-cache-size', STARTUP_CONFIG.cache.disk.toString());
+    app.commandLine.appendSwitch('gpu-cache-size', STARTUP_CONFIG.cache.gpu.toString());
+    app.commandLine.appendSwitch('media-cache-size', STARTUP_CONFIG.cache.media.toString());
 
-    // Enable process reuse
-    app.allowRendererProcessReuse = true;
+    const ses = session.defaultSession;
+    await Promise.all([
+      ses.clearCache(),
+      ses.clearCodeCaches({ urls: [] })
+    ]);
 
-    // Increase resource limits
+    const preWarmPromise = preWarmApp();
+    setupCachePermissions();
+
+    await preWarmPromise;
+
     if (process.platform === 'linux') {
       try {
         require('resource-usage').setrlimit('nofile', 100000);
@@ -513,24 +565,18 @@ app.whenReady().then(async () => {
       const { width: screenWidth, height: screenHeight } = display.workAreaSize;
       const aspectRatio = 16 / 9;
 
-      // Base size for 1280x720 screen
       const baseWidth = 730;
       const baseHeight = 810;
-      // Calculate scale factor based on screen width
       const scaleFactor = Math.min(screenWidth / 1280, screenHeight / 720);
-      // Calculate dimensions ensuring they don't exceed 70% of screen
       let width = Math.min(baseWidth, Math.floor(screenWidth * 0.7));
       let height = Math.min(baseHeight, Math.floor(screenHeight * 0.7));
-      // Ensure dimensions are divisible by 8 for better GPU rendering
       width = Math.floor(width / 8) * 8;
       height = Math.floor(height / 8) * 8;
-      // Ensure minimum size
       width = Math.max(width, 640);
       height = Math.max(height, 480);
       return { width, height };
     };
 
-    // Initialize window config with screen-dependent values
     const optimal = calculateOptimalWindowSize();
     WINDOW_CONFIG = {
       ...BASE_WINDOW_CONFIG,
@@ -545,7 +591,6 @@ app.whenReady().then(async () => {
       alwaysOnTop: { width: 340, height: 570 }
     };
 
-    // Calculate center position
     const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
     centerX = Math.floor((screenWidth - WINDOW_CONFIG.default.width) / 2);
     centerY = Math.floor((screenHeight - WINDOW_CONFIG.default.height) / 2);
@@ -557,7 +602,6 @@ app.whenReady().then(async () => {
       }
     });
 
-    // Update the theme listener
     nativeTheme.on('updated', async () => {
       const windows = BrowserWindow.getAllWindows();
       const currentIcon = getThemeIcon();
@@ -571,9 +615,8 @@ app.whenReady().then(async () => {
       });
     });
 
-    // Update shortcut window creation
     globalShortcut.register('Control+Shift+N', async () => {
-      if (!focusedWindow) return; // If focused window
+      if (!focusedWindow) return;
 
       try {
         const newWindow = await createWindowWithPromise({
@@ -589,11 +632,9 @@ app.whenReady().then(async () => {
           }
         });
 
-        // Add FPS management to new window
         setupWindowFPSHandlers(newWindow);
         fpsManager.setFPS(newWindow, fpsManager.HIGH_FPS);
 
-        // Set runtime
         newWindow.webContents.once('dom-ready', () => {
           newWindow.webContents.executeJavaScript(`
             document.documentElement.setAttribute('data-runtime', 'electron');
@@ -601,7 +642,6 @@ app.whenReady().then(async () => {
           `);
         });
 
-        // Ensure it's properly initialized
         await loadFileWithCheck(newWindow, Essential_links.home, 'new-window-shortcut');
         return newWindow;
       } catch (err) {
@@ -609,13 +649,11 @@ app.whenReady().then(async () => {
       }
     });
 
-    // Process Optimization For Electron 35.2.1
     if (process.platform === 'win32') {
       const { powerSaveBlocker } = require('electron');
       powerSaveBlocker.start('prevent-app-suspension');
     }
 
-    // Enhanced GPU Acceleration
     app.commandLine.appendSwitch('ignore-gpu-blocklist');
     app.commandLine.appendSwitch('enable-gpu-rasterization');
     app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
@@ -628,6 +666,8 @@ app.whenReady().then(async () => {
       }, 5000);
     });
 
+    optimizeCPUAffinity();
+
     performance.mark('app-ready');
     performance.measure('App Launch', 'app-start', 'app-ready');
 
@@ -635,11 +675,9 @@ app.whenReady().then(async () => {
     console.error('ESNTL: initialization error:', err);
   }
 
-  // Mac menubar
   if (process.platform !== 'darwin') {
-    Menu.setApplicationMenu(null); // Disable menubar Windows, Linux
+    Menu.setApplicationMenu(null);
   } else {
-    // Define links from Essential_links for Mac menubar
     const macMenuLinks = {
       home: Essential_links.home,
       todolist: Essential_links.todolist,
@@ -669,9 +707,6 @@ app.whenReady().then(async () => {
     }
   }
 
-  // mainWindow.webContents.openDevTools();
-
-  // Define name of this app
   mainWindow.setTitle("Essential App");
   process.title = "Essential App";
 });
@@ -686,10 +721,21 @@ app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
 
-// window creation
+const setupWindowCleanup = (win) => {
+  win.on('close', async () => {
+    try {
+      const ses = win.webContents.session;
+      await ses.clearCache();
+      await ses.clearAuthCache();
+      await ses.clearHostResolverCache();
+    } catch (err) {
+      console.warn('Window cleanup failed:', err);
+    }
+  });
+};
+
 const createWindow = async () => {
   try {
-    // Fullscreen Restore
     let originalBounds = null;
     mainWindow = await createWindowWithPromise({
       ...WINDOW_CONFIG.common,
@@ -711,7 +757,6 @@ const createWindow = async () => {
 
     mainWindow.on('leave-full-screen', () => {
       if (originalBounds) {
-        // Restore original dimensions with slight delay for smooth transition
         setTimeout(() => {
           mainWindow.setBounds(originalBounds);
           originalBounds = null;
@@ -722,11 +767,12 @@ const createWindow = async () => {
     setupWindowFPSHandlers(mainWindow);
     fpsManager.setFPS(mainWindow, fpsManager.HIGH_FPS);
 
+    setupWindowCleanup(mainWindow);
+
     mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
       await handleError(mainWindow, new Error(`Navigation failed: ${errorDescription}`), 'page-load');
     });
 
-    // Fix Error: 2025-04-18 14:51:59.590 Electron[25627:535694] Warning: Window move completed without beginning
     let isMoving = false;
     mainWindow.on('will-move', () => {
       isMoving = true;
@@ -739,31 +785,26 @@ const createWindow = async () => {
         mainWindow.webContents.send('window-move-started');
       }
     });
-    // Add position save on move end
     mainWindow.on('moved', () => {
       const bounds = mainWindow.getBounds();
       centerX = bounds.x;
       centerY = bounds.y;
     });
 
-    // Send system info after window is ready
     mainWindow.webContents.on('did-finish-load', () => {
       mainWindow.webContents.send('system-info', systemInfo);
     });
 
-    // Optimize window performance
     mainWindow.webContents.setZoomFactor(1);
     mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
     mainWindow.webContents.setBackgroundThrottling(false);
 
-    // Create windows here
     await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation')
       .catch(async (err) => {
         await handleError(mainWindow, err, 'initial-load');
         throw err;
       });
 
-    // Listeners for error handling
     mainWindow.on('page-title-updated', async () => {
       try {
         await mainWindow.setIcon(getThemeIcon());
@@ -782,24 +823,20 @@ const createWindow = async () => {
   }
 };
 
-// On top window - fixed implementation for using static value 💀
 ipcMain.on('Keepontop', async (event, message) => {
   try {
     if (!focusedWindow) return;
 
     isAlwaysOnTop = !isAlwaysOnTop;
 
-    // Get screen dimensions
     const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
 
-    // Fixed dimensions for always on top mode
-    const alwaysOnTopWidth = 340;  // Fixed width
-    const alwaysOnTopHeight = 570; // Fixed height
+    const alwaysOnTopWidth = 340;
+    const alwaysOnTopHeight = 570;
 
     if (isAlwaysOnTop) {
-      // Calculate center-bottom position
       const x = Math.floor((screenWidth - alwaysOnTopWidth) / 2);
-      const y = screenHeight - alwaysOnTopHeight - 10; // 10px from bottom
+      const y = screenHeight - alwaysOnTopHeight - 10;
 
       await Promise.all([
         focusedWindow.setAlwaysOnTop(true),
@@ -831,14 +868,10 @@ ipcMain.on('Keepontop', async (event, message) => {
   }
 });
 
-// RightClick Menu toggle & Include CSS
-
-// Add IPC handler for language change
 ipcMain.on('change-language', (event, locale) => {
   currentLocale = locale;
 });
 
-// Update show-context-menu handler
 ipcMain.handle('show-context-menu', async (event, pos) => {
   if (!focusedWindow) return;
 
@@ -856,7 +889,6 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
       { label: translations.settings, href: Essential_links.settings, icon: 'Settings' }
     ];
 
-    // If data was corrupted
     menuItems = menuItems.filter(item => {
       const isValid = validateMenuLink(item.href);
       if (!isValid) {
@@ -883,7 +915,6 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
 
     await focusedWindow.webContents.executeJavaScript(`
       (function() {
-        // Add font stylesheet if not present
         if (!document.getElementById('contextMenuFonts')) {
           const fontLink = document.createElement('link');
           fontLink.id = 'contextMenuFonts';
@@ -892,11 +923,9 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
           document.head.appendChild(fontLink);
         }
 
-        // Remove existing menu if any
         const existingMenu = document.getElementById('customContextMenu');
         if (existingMenu) existingMenu.remove();
 
-        // Add CSS if not already present
         if (!document.getElementById('contextMenuStyles')) {
           const style = document.createElement('style');
           style.id = 'contextMenuStyles';
@@ -904,10 +933,8 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
           document.head.appendChild(style);
         }
 
-        // Add menu HTML
         document.body.insertAdjacentHTML('beforeend', \`${menuHTML}\`);
 
-        // Handle menu interactions
         const menu = document.getElementById('customContextMenu');
         requestAnimationFrame(() => menu.classList.add('show'));
 
@@ -929,7 +956,6 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
           });
         });
 
-        // Close immediately on outside click
         document.addEventListener('click', function closeMenu(e) {
           if (!menu.contains(e.target)) {
             menu.remove();
@@ -943,14 +969,12 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
   }
 });
 
-// Add new IPC handler for safe navigation
 ipcMain.handle('safe-navigate', async (event, url) => {
   if (!focusedWindow) return;
 
   await safeLoad(focusedWindow, url);
 });
 
-// Handle URLs in existing windows
 ipcMain.handle('open-external-link', async (event, url) => {
   try {
     const { shell } = require('electron');
@@ -962,7 +986,6 @@ ipcMain.handle('open-external-link', async (event, url) => {
   }
 });
 
-// Update IPC handlers with proper error handling
 ipcMain.on('navigate', async (event, url) => {
   try {
     if (!focusedWindow) throw new Error('No active window');
@@ -990,8 +1013,6 @@ ipcMain.on('show-error', async (event, message) => {
   }
 });
 
-// User click links to new windows on titlebar
-// Ctrl + Click
 ipcMain.handle('create-new-window', async (event, path) => {
   try {
     const newWindow = await createWindowWithPromise({
@@ -1007,7 +1028,6 @@ ipcMain.handle('create-new-window', async (event, path) => {
       }
     });
 
-    // Add FPS management to new window
     setupWindowFPSHandlers(newWindow);
     fpsManager.setFPS(newWindow, fpsManager.HIGH_FPS);
 
@@ -1078,25 +1098,68 @@ const DialogWindowsName = {
   }
 }
 
-// Create helper function for title updates
+const titleUpdateQueue = new Map();
 const updateWindowTitle = async (title) => {
   return `
-    new Promise((resolve) => {
-      const checkElement = () => {
-        const titleElement = document.querySelector('#CenterTitlebar .Title h2');
-        if (titleElement) {
-          titleElement.textContent = '${title}';
-          resolve(true);
-        } else {
-          setTimeout(checkElement, 100);
-        }
-      };
-      checkElement();
-    });
+    (() => {
+      const titleElement = document.querySelector('#CenterTitlebar .Title h2');
+      if (titleElement) {
+        requestAnimationFrame(() => titleElement.textContent = '${title}');
+      }
+    })();
   `;
 };
 
-// Essential app About section
+const handleWindowTitleUpdate = async (window, title) => {
+  if (!window || window.isDestroyed()) return false;
+  
+  if (titleUpdateQueue.has(window.id)) {
+    clearTimeout(titleUpdateQueue.get(window.id));
+  }
+
+  return new Promise((resolve) => {
+    titleUpdateQueue.set(window.id, setTimeout(async () => {
+      try {
+        await window.webContents.executeJavaScript(
+          await updateWindowTitle(title)
+        );
+        titleUpdateQueue.delete(window.id);
+        resolve(true);
+      } catch {
+        titleUpdateQueue.delete(window.id);
+        resolve(false);
+      }
+    }, 50));
+  });
+};
+
+const createTitleUpdateHandler = (windowKey, title) => {
+  return async () => {
+    try {
+      const window = eval(windowKey);
+      if (!window || window.isDestroyed()) {
+        console.warn(`Window ${windowKey} not found or destroyed`);
+        return false;
+      }
+      return await handleWindowTitleUpdate(window, title);
+    } catch (err) {
+      console.error(`Title update failed for ${windowKey}:`, err);
+      return false;
+    }
+  };
+};
+
+const titleHandlers = {
+  'theme-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.Theme],
+  'alwaysontops-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.AlwaysOnTops],
+  'navigation-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.Navigation],
+  'restore-current-name': ['SettingsWindows', DialogWindowsName.settings]
+};
+
+Object.entries(titleHandlers).forEach(([channel, [window, title]]) => {
+  ipcMain.handle(channel, createTitleUpdateHandler(window, title));
+});
+
 ipcMain.handle('open-about-window', async () => {
   try {
     if (!aboutWindow || aboutWindow.isDestroyed()) {
@@ -1117,18 +1180,14 @@ ipcMain.handle('open-about-window', async () => {
       const TitlebarcssPath = path.join(__dirname, 'CSS', 'CSS_Essential_Pages', 'Titlebar.css');
       const TitlebarcssContent = fs.readFileSync(TitlebarcssPath, 'utf8');
 
-      // Loaded AboutMint.html first
       await loadFileWithCheck(aboutWindow, Essential_links.about, 'about-window');
 
-      // inject CSS
       await aboutWindow.webContents.executeJavaScript(`
         (function() {
-          // Add CSS
           const style = document.createElement('style');
           style.textContent = \`${TitlebarcssContent}\`;
           document.head.appendChild(style);
           
-          // Titlebar content
           const content = \`
                 <div id="CenterTitlebar" class="electron-only">
                     <div class="Text">
@@ -1156,7 +1215,6 @@ ipcMain.handle('open-about-window', async () => {
   }
 });
 
-// Essential app Settings section
 ipcMain.handle('open-settings-window', async () => {
   try {
     if (!SettingsWindows || SettingsWindows.isDestroyed()) {
@@ -1181,12 +1239,10 @@ ipcMain.handle('open-settings-window', async () => {
 
       await SettingsWindows.webContents.executeJavaScript(`
         (function() {
-          // Add CSS
           const style = document.createElement('style');
           style.textContent = \`${TitlebarcssContent}\`;
           document.head.appendChild(style);
           
-          // Titlebar content
           const content = \`
                 <div id="CenterTitlebar" class="electron-only">
                     <div class="Text">
@@ -1212,115 +1268,42 @@ ipcMain.handle('open-settings-window', async () => {
   }
 });
 
-ipcMain.handle('theme-rename-current-windows', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settingsContent.Theme)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error updating window title:', err);
-    return false;
-  }
-});
-
-ipcMain.handle('appearance-rename-current-windows', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settingsContent.Appearance)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error updating window title:', err);
-    return false;
-  }
-});
-
-ipcMain.handle('titlebar-rename-current-windows', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settingsContent.Titlebar)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error updating window title:', err);
-    return false;
-  }
-});
-
-ipcMain.handle('alwaysontops-rename-current-windows', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settingsContent.AlwaysOnTops)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error updating window title:', err);
-    return false;
-  }
-});
-
-ipcMain.handle('navigation-rename-current-windows', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settingsContent.Navigation)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error updating window title:', err);
-    return false;
-  }
-});
-
-ipcMain.handle('restore-current-name', async () => {
-  try {
-    if (SettingsWindows && !SettingsWindows.isDestroyed()) {
-      await SettingsWindows.webContents.executeJavaScript(
-        await updateWindowTitle(DialogWindowsName.settings)
-      );
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error restoring window title:', err);
-    return false;
-  }
-});
-
-// App-wide FPS control
 app.on('browser-window-created', (event, win) => {
+  const winRef = new WeakRef(win);
+  
   setupWindowFPSHandlers(win);
-  globalShortcut.register('Control+Shift+I', () => {
-    if (focusedWindow) {
-      focusedWindow.webContents.toggleDevTools();
+  
+  const devToolsShortcut = () => {
+    const currentWin = winRef.deref();
+    if (currentWin && !currentWin.isDestroyed()) {
+      currentWin.webContents.toggleDevTools();
     }
+  };
+  
+  globalShortcut.register('Control+Shift+I', devToolsShortcut);
+  
+  win.once('closed', () => {
+    globalShortcut.unregister('Control+Shift+I');
   });
 });
 
-// Add power management
 app.on('ready', () => {
   const { powerMonitor } = require('electron');
+  let powerThrottleTimeout;
+
+  const throttledFPSUpdate = (fps) => {
+    clearTimeout(powerThrottleTimeout);
+    powerThrottleTimeout = setTimeout(() => {
+      fpsManager.applyToAllWindows(fps);
+    }, 1000);
+  };
 
   powerMonitor.on('on-battery', () => {
-    fpsManager.applyToAllWindows(fpsManager.LOW_FPS);
+    throttledFPSUpdate(fpsManager.LOW_FPS);
+    enhancedMemoryManager.optimizeHeap();
   });
 
   powerMonitor.on('on-ac', () => {
-    fpsManager.applyToAllWindows(fpsManager.HIGH_FPS);
+    throttledFPSUpdate(fpsManager.HIGH_FPS);
   });
 });
