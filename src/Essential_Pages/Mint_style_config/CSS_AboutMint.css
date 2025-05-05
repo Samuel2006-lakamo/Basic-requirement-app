@@ -1,0 +1,356 @@
+.About {
+    max-width: 280px;
+    width: 280px;
+    margin: auto;
+}
+
+/* Logo Animation Styles */
+.logo-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0f0f0f;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.2, 0.0, 0, 1.0);
+    z-index: 9998;
+}
+
+.logo-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#EssentialLogoIcons {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#EssentialLogoIcons.expanded {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -75%) scale(1.5);
+    z-index: 9999;
+}
+
+#TextEssentialLogo {
+    width: 205px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 7rem;
+}
+
+.AboutSvgLogo svg {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    width: 65px;
+    height: auto;
+    position: fixed;
+    top: 28%;
+    left: 50%;
+    margin-bottom: 1.5rem;
+    transform: translate(-50%, 0%);
+}
+
+.AboutSvgLogo svg path {
+    fill: var(--theme-accent);
+    animation: none !important;
+}
+
+#TextEssentialLogo path {
+    stroke: var(--theme-accent);
+    stroke-width: 1;
+    stroke-dasharray: 2500;
+    stroke-dashoffset: 2500;
+    animation: stroke-animation 4s ease forwards,
+        fill-animation 1.25s ease forwards 0.5s;
+    fill: transparent;
+}
+
+@keyframes stroke-animation {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fill-animation {
+    from {
+        fill: transparent;
+    }
+
+    to {
+        fill: var(--accent);
+    }
+}
+
+#ForMint {
+    font-size: 16px;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%,8px);
+    z-index: 9999;
+    font-weight: 500;
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+/* Typing Effect Styles */
+#Typing_Effect {
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 40px;
+    font-weight: 450;
+    font-size: 16.4px;
+    min-width: max-content;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    white-space: pre;
+    pointer-events: none;
+}
+
+#Typing_Effect.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scramble-text {
+    color: var(--theme-accent);
+    display: inline-block;
+    animation: glitch 0.2s ease-in-out;
+}
+
+#Typing_Effect.active {
+    opacity: 1;
+}
+
+.scramble {
+    display: inline-block;
+    color: var(--theme-accent);
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0)
+    }
+
+    25% {
+        transform: translate(-2px, 2px)
+    }
+
+    50% {
+        transform: translate(2px, -2px)
+    }
+
+    75% {
+        transform: translate(-2px, -2px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
+
+#VersionName {
+    color: #e2e2e2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-family: var(--font-text);
+    min-width: max-content;
+}
+
+#version {
+    margin-left: 0.2rem;
+    font-family: var(--font-text);
+}
+
+/* Platform specific display */
+[data-runtime="web"] .web-message {
+    display: block !important;
+}
+
+[data-runtime="web"] .electron-only {
+    display: none !important;
+}
+
+/* Web Config */
+.webContentText {
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.webContentText p {
+    margin-top: 1rem;
+}
+
+.EssentialLogo svg {
+    width: 50px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+/* Web Footer */
+.webFooter {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+.webFooter p {
+    color: #b3b3b3;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.ColorHighlight {
+    color: var(--theme-accent);
+}
+
+.FooterLinks {
+    font-size: 14px;
+}
+
+.FooterLinks a {
+    color: #b3b3b3;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.FooterLinks a:hover {
+    color: var(--theme-accent);
+}
+
+.FooterLinks .dot {
+    color: #b3b3b3;
+    margin: 0 8px;
+}
+
+/* Contact Dropdown */
+.contact-dropdown {
+    display: inline-block;
+    position: relative;
+}
+
+.contact-trigger {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    transition: 0.5s ease;
+}
+
+.contact-trigger:hover {
+    color: var(--theme-accent);
+    transition: 0.5s ease;
+}
+
+.team-members {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--theme-card);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    min-width: 130px;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(10px) translateX(-50%);
+    transition: none;
+    padding: 0.5rem 0rem;
+    height: 80px;
+    outline: solid 1px #1c1c1c;
+}
+
+.team-members.active {
+    display: block;
+    animation: dropdownShow 0.3s ease forwards;
+    height: fit-content;
+}
+
+@keyframes dropdownShow {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) translateX(-50%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+.member {
+    padding: 6.5px;
+    padding-left: 14px;
+    padding-right: 14px;
+    text-align: left;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: block;
+}
+
+.member:hover {
+    background: var(--HoverColor);
+}
+
+.member .name {
+    display: block;
+    color: var(--theme-accent);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.member .social {
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+/* Transition Styles for Text */
+.normal-text {
+    color: #fff;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: normalTextShow 0.5s ease forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease forwards !important;
+}
+
+@keyframes normalTextShow {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
