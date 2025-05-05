@@ -493,6 +493,23 @@ html {
 #TextCards h1 {
     font-weight: 500;
     letter-spacing: -0.3px;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#TextCards h1.typing-text {
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: typing 0.5s steps(30) 0.5s 1 normal both;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
 }
 
 .AppcardsContent {

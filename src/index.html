@@ -145,7 +145,7 @@
             <!-- Create card app here -->
             <div class="app-cards" id="APPcards">
                 <div id="TextCards">
-                    <h1>Recommendations Apps</h1>
+                    <h1 class="typing-text"></h1>
                 </div>
                 <!-- To apply link use data-href="" -->
                 <div class="AppcardsContent">
@@ -190,7 +190,25 @@
     <script src="./frontendJS/PUBLICscripts.js" type="module" defer></script>
     <script src="renderer.js"></script>
     <script src="./frontendJS/Getstart.js"></script>
+    <script>
+        // Typing animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const text = "Recommendations Apps";
+            const typingText = document.querySelector('#TextCards .typing-text');
+            let index = 0;
 
+            setTimeout(() => {
+                function typeText() {
+                    if (index < text.length) {
+                        typingText.textContent += text.charAt(index);
+                        index++;
+                        setTimeout(typeText, 40);
+                    }
+                }
+                typeText();
+            }, 800);
+        });
+    </script>
 </body>
 
 </html>
