@@ -804,6 +804,14 @@ const createWindow = async () => {
     mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
     mainWindow.webContents.setBackgroundThrottling(false);
 
+    // mainWindow.webContents.on('dom-ready', () => {
+    //   mainWindow.webContents.executeJavaScript(`
+    //       const script = document.createElement('script');
+    //       script.src = '${path.join(__dirname, 'utils/ThemeManager.js')}';
+    //       document.head.appendChild(script);
+    //   `);
+    // });
+
     await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation')
       .catch(async (err) => {
         await handleError(mainWindow, err, 'initial-load');
@@ -1054,9 +1062,10 @@ const DialogWindows_Config = {
 function ConfigWindowsProperties(windowType) {
   if (windowType === 'about' && aboutWindow && !aboutWindow.isDestroyed()) {
     aboutWindow.setBackgroundColor('#0f0f0f');
-  } else if (windowType === 'settings' && SettingsWindows && !SettingsWindows.isDestroyed()) {
-    SettingsWindows.setBackgroundColor('#0f0f0f');
   }
+  // if (windowType === 'settings' && SettingsWindows && !SettingsWindows.isDestroyed()) {
+  //   SettingsWindows.setBackgroundColor('#0f0f0f');
+  // }
 }
 
 const DialogWindowsName = {

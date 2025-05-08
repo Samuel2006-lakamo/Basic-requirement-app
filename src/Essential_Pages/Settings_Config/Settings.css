@@ -82,6 +82,7 @@ nav {
         opacity: 0.5;
         transform: translate3d(-50%, -50%, 0) scale(0);
     }
+
     to {
         width: 200px;
         height: 200px;
@@ -96,6 +97,7 @@ nav {
         opacity: 0;
         filter: blur(7px);
     }
+
     100% {
         transform: translate3d(0, 0, 0);
         opacity: 1;
@@ -109,7 +111,7 @@ nav {
 .ContentUpper_Navigation {
     width: 100%;
     height: calc(100vh - 39px);
-    background-color: #0f0f0f;
+    background-color: var(--theme-bg);
     position: fixed;
     bottom: 0;
     transform: translateY(500px);
@@ -163,13 +165,19 @@ nav {
 .picker-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    width: calc(100% - 4.2rem);
+    width: calc(100% - 5rem);
     overflow: hidden;
     border-radius: 12px;
     gap: 2px;
     background-color: var(--theme-border);
     position: relative;
+    transform: translateY(-12px);
+}
+
+.ContentUpperColorPicker h1 {
     transform: translateY(-21.5px);
+    font-family: "inter tight", sans-serif;
+    font-weight: 580;
 }
 
 .color {
@@ -196,7 +204,7 @@ nav {
     margin: 1.5rem auto;
     padding: 0.5rem 1.15rem;
     background-color: var(--theme-accent);
-    color: black;
+    color: var(--theme-bg);
     text-align: center;
     width: fit-content;
     font-weight: bold;
@@ -233,7 +241,7 @@ nav {
     background-color: var(--SoftHoverColor);
 }
 
-.LightMode:active, 
+.LightMode:active,
 .DarkMode:active {
     background-color: var(--HoverColor);
 }

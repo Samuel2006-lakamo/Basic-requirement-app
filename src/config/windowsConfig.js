@@ -1,5 +1,15 @@
-// Only settings page
 const path = require('path');
+
+const themeColors = {
+  dark: {
+    background: '#0f0f0f',
+    symbol: '#FFFFFF'
+  },
+  light: {
+    background: '#FFF',
+    symbol: '#0f0f0f'
+  }
+};
 
 const PreferencesWindows = {
   defineNewWindowsPreload: {
@@ -24,8 +34,8 @@ const DialogWindows_Config = {
   frame: false,
   titleBarStyle: 'hidden',
   titleBarOverlay: {
-    color: '#0f0f0f',
-    symbolColor: '#FFFFFF',
+    color: themeColors.dark.background,
+    symbolColor: themeColors.dark.symbol,
     height: 39,
     buttons: ['close']
   },
@@ -55,4 +65,18 @@ const DialogWindows_Config = {
   }
 };
 
-module.exports = { PreferencesWindows, DialogWindows_Config };
+// Add theme update function
+function updateTitleBarTheme(window, theme) {
+  if (!window) return;
+  const colors = themeColors[theme];
+  window.setTitleBarOverlay({
+    color: colors.background,
+    symbolColor: colors.symbol
+  });
+}
+
+module.exports = { 
+  PreferencesWindows, 
+  DialogWindows_Config,
+  updateTitleBarTheme 
+};

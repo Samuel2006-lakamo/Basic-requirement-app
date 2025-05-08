@@ -66,6 +66,17 @@ contextBridge.exposeInMainWorld('electron', {
         on: (channel, func) => {
             ipcRenderer.on(channel, (event, ...args) => func(...args));
         }
+    },
+    saveThemeToSettings: (theme) => ipcRenderer.send('save-theme', theme),
+    theme: {
+        save: (theme) => ipcRenderer.invoke('save-theme', theme),
+        load: () => ipcRenderer.invoke('get-theme'),
+        onChange: (callback) => {
+            ipcRenderer.on('theme-changed', (_, theme) => callback(theme));
+            return () => {
+                ipcRenderer.removeListener('theme-changed', callback);
+            };
+        }
     }
 });
 

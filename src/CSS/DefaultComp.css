@@ -70,8 +70,10 @@
 
 /* (default) */
 :root[data-theme="dark"] {
-    --theme-bg: #101010;
+    --theme-bg: #0F0F0F;
     --theme-fg: #ffffff;
+    --HoverColor: #313131;
+    --SoftHoverColor: #1e1e1e;
     color-scheme: dark;
 }
 
@@ -82,6 +84,8 @@
     --theme-card: #ffffff;
     --theme-titlebar: #f0f0f0;
     --theme-border: #e0e0e0;
+    --HoverColor: #c2c2c2;
+    --SoftHoverColor: #eeeeee;
     color-scheme: light;
 }
 

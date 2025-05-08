@@ -91,25 +91,28 @@ document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
 
 // colors
 
-const colors = [
-    // Blue shades
-    '#E7F1FF', '#B9DCFC', '#8AC5FF', '#5EB0FF', '#2E96FF',
-
-    // Green shades
-    '#E2F7DF', '#C3EAC6', '#9DDCA1', '#75CD7E', '#53BD63',
-
-    // Yellow shades
-    '#FFF8E6', '#FFF0C0', '#FFE699', '#FFDC73', '#FFD34D',
-
-    // Brown shades
-    '#F2EADF', '#E5D6C3', '#D8C2A6', '#CBAE8A', '#BF9B6E',
-
-    // Orange shades
-    '#FFEDE4', '#FFD7C2', '#FFC19F', '#FFAA7F', '#FF935F',
-
-    // Red shades
-    '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
-];
+const themeColorSets = {
+    light: [
+        // Blue shades - darker
+        '#4B9BFF', '#1E88E5', '#1976D2', '#1565C0', '#0D47A1',
+        // Green shades - darker
+        '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#1A4D1A',
+        // Yellow/Orange shades - darker
+        '#FFB300', '#FFA000', '#FF8F00', '#FF6F00', '#E65100',
+        // Brown shades - darker
+        '#795548', '#6D4C41', '#5D4037', '#4E342E', '#3E2723',
+        // Red shades - darker
+        '#E53935', '#D32F2F', '#C62828', '#B71C1C', '#891515',
+    ],
+    dark: [
+        // Original light colors...
+        '#E7F1FF', '#B9DCFC', '#8AC5FF', '#5EB0FF', '#2E96FF',
+        '#E2F7DF', '#C3EAC6', '#9DDCA1', '#75CD7E', '#53BD63',
+        '#FFF8E6', '#FFF0C0', '#FFE699', '#FFDC73', '#FFD34D',
+        '#F2EADF', '#E5D6C3', '#D8C2A6', '#CBAE8A', '#BF9B6E',
+        '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
+    ]
+};
 
 const picker = document.getElementById('picker');
 
@@ -122,19 +125,51 @@ function updateAccentColor(color) {
     localStorage.setItem('theme-accent', color);
 }
 
-colors.forEach(color => {
-    const swatch = document.createElement('div');
-    swatch.classList.add('color');
-    swatch.setAttribute('tabindex', '0');
-    swatch.style.backgroundColor = color;
-
-    swatch.addEventListener('click', () => {
-        updateAccentColor(color);
-        swatch.focus();
+// Update color picker based on theme
+function updateColorPicker() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const colors = themeColorSets[currentTheme];
+    
+    picker.innerHTML = ''; // Clear existing swatches
+    colors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.classList.add('color');
+        swatch.setAttribute('tabindex', '0');
+        swatch.style.backgroundColor = color;
+        swatch.addEventListener('click', () => {
+            updateAccentColor(color);
+            swatch.focus();
+        });
+        picker.appendChild(swatch);
     });
+}
 
-    picker.appendChild(swatch);
+// Realtime sync
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+            updateColorPicker();
+        }
+    });
 });
+
+observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+});
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    updateColorPicker();
+});
+
+// Listen for theme changes
+window.electron?.theme.onChange(theme => {
+    updateColorPicker();
+});
+
+// Initial setup
+updateColorPicker();
 
 // Color loaded
 const savedAccent = localStorage.getItem('theme-accent');

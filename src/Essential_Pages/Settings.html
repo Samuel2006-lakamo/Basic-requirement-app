@@ -90,6 +90,7 @@
                 </svg>
             </div>
             <div class="ContentUpperColorPicker">
+                <h1>Theme</h1>
                 <div class="picker-container" id="picker"></div>
                 <div class="accent-preview">Color Preview</div>
             </div>
@@ -106,10 +107,10 @@
             </div>
 
             <h1 id="TitleName">Appearance</h1>
-            
+
             <div class="AppearanceSettings">
 
-                <div class="DarkMode">
+                <div class="DarkMode" id="darkBtn">
                     <svg width="184" height="164" viewBox="0 0 184 164" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="1" y="1" width="182" height="162" rx="17" fill="#0F0F0F" />
                         <rect x="1" y="1" width="182" height="162" rx="17" stroke="#313131" stroke-width="2" />
@@ -132,7 +133,7 @@
                     <p>Dark mode</p>
                 </div>
 
-                <div class="LightMode">
+                <div class="LightMode" id="lightBtn">
                     <svg width="184" height="164" viewBox="0 0 184 164" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="1" y="1" width="182" height="162" rx="17" fill="#F9FAFB" />
                         <rect x="1" y="1" width="182" height="162" rx="17" stroke="#CACACA" stroke-width="2" />
@@ -197,6 +198,14 @@
     </div>
 
     <script src="./Settings_Config/Settings.js"></script>
+    <script type="module">
+        import { initTheme, setTheme } from './Settings_Config/theme.js'
+
+        const current = initTheme()
+        initTheme()
+        document.getElementById('lightBtn').onclick = () => setTheme('light')
+        document.getElementById('darkBtn').onclick = () => setTheme('dark')
+    </script>
 </body>
 
 </html>

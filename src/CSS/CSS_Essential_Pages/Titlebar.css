@@ -8,8 +8,8 @@
 
 body {
     margin: 0;
-    background-color: #0F0F0F;
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,7 +40,7 @@ body {
     top: 0;
     -webkit-app-region: drag;
     z-index: 999;
-    background-color: #0F0F0F;
+    background-color: var(--theme-bg);
     width: max-content;
 }
 
