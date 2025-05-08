@@ -5,6 +5,8 @@ const v8 = require('v8');
 const os = require('os');
 const { performance } = require('perf_hooks');
 const { execSync } = require('child_process');
+const ContextMenu = require('./components/ContextMenu');
+const SettingsWindowsComponent = require('./components/WindowsSettings.js');
 
 const Essential = {
   name: "Essential App",
@@ -23,7 +25,7 @@ const STARTUP_CONFIG = {
 
 const PERFORMANCE_CONFIG = {
   startup: {
-    scheduler: 'performance', 
+    scheduler: 'performance',
     cpuUsageLimit: 75,
     preloadTimeout: 1000,
     gcInterval: 60000
@@ -44,13 +46,13 @@ const optimizeCPUAffinity = () => {
   if (process.platform === 'win32') {
     const { exec } = require('child_process');
     const pid = process.pid;
-    
+
     exec(`wmic process where ProcessID=${pid} CALL setpriority "high priority"`);
-    
+
     const cpuCount = os.cpus().length;
     const performanceCores = Math.max(2, Math.floor(cpuCount / 4));
     const affinityMask = ((1 << performanceCores) - 1) << (cpuCount - performanceCores);
-    
+
     try {
       process.processManager?.setAffinity(affinityMask);
     } catch (e) {
@@ -68,7 +70,7 @@ app.commandLine.appendSwitch('enable-accelerated-mjpeg-decode');
 app.commandLine.appendSwitch('enable-accelerated-video');
 app.commandLine.appendSwitch('disable-gpu-driver-bug-workarounds');
 
-app.commandLine.appendSwitch('enable-features', 
+app.commandLine.appendSwitch('enable-features',
   'CanvasOptimizedRenderer,' +
   'PreloadMediaEngagement,' +
   'ThreadedScrolling,' +
@@ -92,7 +94,7 @@ app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
 app.commandLine.appendSwitch('disable-frame-rate-limit');
 app.commandLine.appendSwitch('ignore-gpu-blocklist');
 
-app.commandLine.appendSwitch('js-flags', 
+app.commandLine.appendSwitch('js-flags',
   '--max-old-space-size=2048 ' +
   '--optimize-for-size ' +
   '--max-inlined-source-size=512 ' +
@@ -215,7 +217,7 @@ const optimizeStartup = () => {
   if (process.platform === 'win32') {
     const { exec } = require('child_process');
     exec(`wmic process where ProcessID=${process.pid} CALL setpriority "high priority"`);
-    
+
     process.env.ELECTRON_ENABLE_STACK_DUMPING = 'false';
     process.env.ELECTRON_ENABLE_LOGGING = 'false';
     app.commandLine.appendSwitch('enable-features', 'HighPriorityWorkers');
@@ -248,7 +250,7 @@ const preWarmApp = async () => {
   try {
     await Promise.race([
       loadWithConcurrency(criticalAssets, STARTUP_CONFIG.preload.concurrent),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject('Preload timeout'), STARTUP_CONFIG.preload.timeout)
       )
     ]);
@@ -346,6 +348,7 @@ const Essential_links = {
   home: 'index.html',
   todolist: 'Todolist.html',
   clock: 'Time.html',
+  Calc: 'calc.html',
   notes: 'Notes.html',
   paint: 'Paint.html',
   settings: './Essential_Pages/Settings.html',
@@ -373,6 +376,8 @@ let centerX, centerY;
 let focusedWindow = null;
 let aboutWindow = null;
 let SettingsWindows = null;
+
+const settingsComponent = new SettingsWindowsComponent();
 
 const getFocusedWindow = () => {
   focusedWindow = BrowserWindow.getFocusedWindow();
@@ -518,7 +523,7 @@ const setupCachePermissions = () => {
     if (process.platform === 'win32') {
       const cachePath = path.join(userDataPath, 'Cache');
       const gpuCachePath = path.join(userDataPath, 'GPUCache');
-      
+
       [cachePath, gpuCachePath].forEach(dir => {
         if (!fs.existsSync(dir)) {
           fs.mkdirSync(dir, { recursive: true });
@@ -536,7 +541,7 @@ app.whenReady().then(async () => {
 
   try {
     optimizeStartup();
-    
+
     app.commandLine.appendSwitch('disk-cache-size', STARTUP_CONFIG.cache.disk.toString());
     app.commandLine.appendSwitch('gpu-cache-size', STARTUP_CONFIG.cache.gpu.toString());
     app.commandLine.appendSwitch('media-cache-size', STARTUP_CONFIG.cache.media.toString());
@@ -769,8 +774,8 @@ const createWindow = async () => {
 
     setupWindowCleanup(mainWindow);
 
-    mainWindow.webContents.on('did-fail-load', async (event, errorCode, errorDescription) => {
-      await handleError(mainWindow, new Error(`Navigation failed: ${errorDescription}`), 'page-load');
+    mainWindow.webContents.on('did-fail-load', async (event, errorCode) => {
+      await handleError(mainWindow, new Error(`Navigation failed`), 'page-load');
     });
 
     let isMoving = false;
@@ -877,41 +882,10 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
 
   try {
     const cssPath = path.join(__dirname, 'CSS', 'contextMenu.css');
-    const cssContent = await fs.promises.readFile(cssPath, 'utf8');
     const translations = menuTranslations[currentLocale] || menuTranslations['en-US'];
 
-    let menuItems = [
-      { label: translations.home, href: Essential_links.home, icon: 'home' },
-      { label: translations.todolist, href: Essential_links.todolist, icon: 'list' },
-      { label: translations.clock, href: Essential_links.clock, icon: 'schedule' },
-      { label: translations.notes, href: Essential_links.notes, icon: 'note' },
-      { label: translations.paint, href: Essential_links.paint, icon: 'brush' },
-      { label: translations.settings, href: Essential_links.settings, icon: 'Settings' }
-    ];
-
-    menuItems = menuItems.filter(item => {
-      const isValid = validateMenuLink(item.href);
-      if (!isValid) {
-        console.warn(`"${item.href}" Not found try to reinstall this app`);
-      }
-      return isValid;
-    });
-
-    if (menuItems.length === 0) {
-      await handleError(focusedWindow, new Error('Did you using crack version of our app?'), 'context-menu');
-      return;
-    }
-
-    const menuHTML = `
-      <div class="custom-context-menu" id="customContextMenu" data-lang="${currentLocale}" style="left: ${pos.x}px; top: ${pos.y}px;">
-        ${menuItems.map(item => `
-          <div class="menu-item" data-href="${item.href}">
-            <span class="material-symbols-outlined">${item.icon}</span>
-            <span class="menu-label">${item.label}</span>
-          </div>
-        `).join('')}
-      </div>
-    `;
+    const contextMenu = new ContextMenu(translations, Essential_links, cssPath);
+    const { menuHTML, cssContent } = await contextMenu.create(pos);
 
     await focusedWindow.webContents.executeJavaScript(`
       (function() {
@@ -940,7 +914,6 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
 
         document.querySelectorAll('.menu-item').forEach(item => {
           let ripple = null;
-
           item.addEventListener('mousedown', function(e) {
             ripple = document.createElement('div');
             ripple.className = 'menu-ripple';
@@ -951,7 +924,7 @@ ipcMain.handle('show-context-menu', async (event, pos) => {
             const href = this.getAttribute('data-href');
             ripple.addEventListener('animationend', () => {
               menu.remove();
-              if (href) window.location.href = href;
+                if (href) window.location.href = href;
             });
           });
         });
@@ -1112,7 +1085,7 @@ const updateWindowTitle = async (title) => {
 
 const handleWindowTitleUpdate = async (window, title) => {
   if (!window || window.isDestroyed()) return false;
-  
+
   if (titleUpdateQueue.has(window.id)) {
     clearTimeout(titleUpdateQueue.get(window.id));
   }
@@ -1148,17 +1121,6 @@ const createTitleUpdateHandler = (windowKey, title) => {
     }
   };
 };
-
-const titleHandlers = {
-  'theme-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.Theme],
-  'alwaysontops-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.AlwaysOnTops],
-  'navigation-rename-current-windows': ['SettingsWindows', DialogWindowsName.settingsContent.Navigation],
-  'restore-current-name': ['SettingsWindows', DialogWindowsName.settings]
-};
-
-Object.entries(titleHandlers).forEach(([channel, [window, title]]) => {
-  ipcMain.handle(channel, createTitleUpdateHandler(window, title));
-});
 
 ipcMain.handle('open-about-window', async () => {
   try {
@@ -1236,73 +1198,24 @@ ipcMain.handle('open-about-window', async () => {
   }
 });
 
-ipcMain.handle('open-settings-window', async () => {
-  try {
-    if (!SettingsWindows || SettingsWindows.isDestroyed()) {
-      SettingsWindows = await createWindowWithPromise({
-        ...DialogWindows_Config,
-        webPreferences: {
-          ...PreferencesWindows.defineNewWindowsPreload,
-          ...DialogWindows_Config.DialogWinConfig_webPreferences
-        }
-      });
-
-      ConfigWindowsProperties('settings');
-
-      SettingsWindows.on('closed', () => {
-        SettingsWindows = null;
-      });
-
-      const TitlebarcssPath = path.join(__dirname, 'CSS', 'CSS_Essential_Pages', 'Titlebar.css');
-      const TitlebarcssContent = fs.readFileSync(TitlebarcssPath, 'utf8');
-
-      await loadFileWithCheck(SettingsWindows, Essential_links.settings, 'settings-window');
-
-      await SettingsWindows.webContents.executeJavaScript(`
-        (function() {
-          const style = document.createElement('style');
-          style.textContent = \`${TitlebarcssContent}\`;
-          document.head.appendChild(style);
-          
-          const content = \`
-                <div id="CenterTitlebar" class="electron-only">
-                    <div class="Text">
-                        <div class="Title">
-                            <h2>${DialogWindowsName.settings}</h2>
-                        </div>
-                    </div>
-                </div>
-          \`;
-          
-          document.body.insertAdjacentHTML('beforeend', content);
-        })();
-      `);
-
-      return true;
-    } else {
-      SettingsWindows.focus();
-      return true;
-    }
-  } catch (err) {
-    await handleError(null, err, 'settings-window-creation');
-    return false;
-  }
+ipcMain.handle('open-settings', async () => {
+  return await settingsComponent.window?.webContents.send('open-settings-window', DialogWindows_Config);
 });
 
 app.on('browser-window-created', (event, win) => {
   const winRef = new WeakRef(win);
-  
+
   setupWindowFPSHandlers(win);
-  
+
   const devToolsShortcut = () => {
     const currentWin = winRef.deref();
     if (currentWin && !currentWin.isDestroyed()) {
       currentWin.webContents.toggleDevTools();
     }
   };
-  
+
   globalShortcut.register('Control+Shift+I', devToolsShortcut);
-  
+
   win.once('closed', () => {
     globalShortcut.unregister('Control+Shift+I');
   });

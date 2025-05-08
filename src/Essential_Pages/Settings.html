@@ -83,10 +83,12 @@
 
     <div class="ContentUpper_Theme" id="ContentUpper_Theme">
         <div class="ContentUpper_Content">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill="var(--theme-fg)" id="BackBtnContentTheme">
-                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
+            <div class="ClickableBackButton" id="BackBtnContentTheme">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)" class="BackButton" id="BackButton">
+                    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+                </svg>
+            </div>
             <div class="ContentUpperColorPicker">
                 <div class="picker-container" id="picker"></div>
                 <div class="accent-preview">Color Preview</div>
@@ -96,40 +98,100 @@
 
     <div class="ContentUpper_Appearance" id="ContentUpper_Appearance">
         <div class="ContentUpper_Content">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill="var(--theme-fg)" id="BackBtnContentAppearance">
-                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
+            <div class="ClickableBackButton" id="BackBtnContentAppearance">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)" class="BackButton" id="BackButton">
+                    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+                </svg>
+            </div>
+
+            <h1 id="TitleName">Appearance</h1>
+            
+            <div class="AppearanceSettings">
+
+                <div class="DarkMode">
+                    <svg width="184" height="164" viewBox="0 0 184 164" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="1" y="1" width="182" height="162" rx="17" fill="#0F0F0F" />
+                        <rect x="1" y="1" width="182" height="162" rx="17" stroke="#313131" stroke-width="2" />
+                        <mask id="path-2-inside-1_887_21" fill="white">
+                            <path
+                                d="M38 49C38 42.3726 43.3726 37 50 37H182V150C182 156.627 176.627 162 170 162H38V49Z" />
+                        </mask>
+                        <path d="M38 49C38 42.3726 43.3726 37 50 37H182V150C182 156.627 176.627 162 170 162H38V49Z"
+                            fill="#0B0B0B" />
+                        <path
+                            d="M36 49C36 41.268 42.268 35 50 35H182V39H50C44.4772 39 40 43.4772 40 49H36ZM182 162H38H182ZM36 162V49C36 41.268 42.268 35 50 35V39C44.4772 39 40 43.4772 40 49V162H36ZM182 37V162V37Z"
+                            fill="#313131" mask="url(#path-2-inside-1_887_21)" />
+                        <path
+                            d="M64.46 77V63.4H69.3C72.48 63.4 74.44 65.06 74.44 67.78C74.44 70.56 72.44 72.18 69.34 72.18H66.7V77H64.46ZM69.28 65.2H66.7V70.38H69.22C71.1 70.38 72.14 69.38 72.14 67.8C72.14 66.22 71.08 65.2 69.28 65.2ZM76.107 77V66.34H78.247V67.92C78.947 66.64 80.047 66.06 81.287 66.06C81.707 66.06 82.107 66.16 82.307 66.34V68.22C81.987 68.12 81.607 68.08 81.167 68.08C79.127 68.08 78.247 69.32 78.247 71.18V77H76.107ZM92.628 73.52C92.048 76 90.208 77.26 87.708 77.26C84.568 77.26 82.648 75.16 82.648 71.68C82.648 68.06 84.568 66.06 87.608 66.06C90.688 66.06 92.548 68.14 92.548 71.56V72.08H84.828C84.948 74.26 85.968 75.48 87.708 75.48C89.068 75.48 90.028 74.84 90.388 73.52H92.628ZM87.608 67.84C86.068 67.84 85.148 68.82 84.888 70.62H90.328C90.068 68.82 89.128 67.84 87.608 67.84ZM96.757 77L92.837 66.34H95.137L97.877 74.26L98.137 75.28L98.397 74.26L101.117 66.34H103.297L99.377 77H96.757ZM104.282 65.02V62.6H106.422V65.02H104.282ZM104.282 77V66.34H106.422V77H104.282ZM118.069 73.52C117.489 76 115.649 77.26 113.149 77.26C110.009 77.26 108.089 75.16 108.089 71.68C108.089 68.06 110.009 66.06 113.049 66.06C116.129 66.06 117.989 68.14 117.989 71.56V72.08H110.269C110.389 74.26 111.409 75.48 113.149 75.48C114.509 75.48 115.469 74.84 115.829 73.52H118.069ZM113.049 67.84C111.509 67.84 110.589 68.82 110.329 70.62H115.769C115.509 68.82 114.569 67.84 113.049 67.84ZM128.896 77L126.776 69.42L126.556 68.22L126.316 69.42L124.196 77H121.556L118.476 66.34H120.776L122.736 74.26L122.996 75.46L123.276 74.26L125.516 66.34H127.776L130.036 74.26L130.276 75.4L130.516 74.26L132.476 66.34H134.676L131.576 77H128.896Z"
+                            fill="white" />
+                    </svg>
+                    <div class="ColorAccentpreviewTheme">
+                        <h4>Essential app</h4>
+                    </div>
+                    <p>Dark mode</p>
+                </div>
+
+                <div class="LightMode">
+                    <svg width="184" height="164" viewBox="0 0 184 164" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="1" y="1" width="182" height="162" rx="17" fill="#F9FAFB" />
+                        <rect x="1" y="1" width="182" height="162" rx="17" stroke="#CACACA" stroke-width="2" />
+                        <mask id="path-2-inside-1_886_10" fill="white">
+                            <path
+                                d="M38 49C38 42.3726 43.3726 37 50 37H182V150C182 156.627 176.627 162 170 162H38V49Z" />
+                        </mask>
+                        <path d="M38 49C38 42.3726 43.3726 37 50 37H182V150C182 156.627 176.627 162 170 162H38V49Z"
+                            fill="#FAFAFA" />
+                        <path
+                            d="M36 49C36 41.268 42.268 35 50 35H182V39H50C44.4772 39 40 43.4772 40 49H36ZM182 162H38H182ZM36 162V49C36 41.268 42.268 35 50 35V39C44.4772 39 40 43.4772 40 49V162H36ZM182 37V162V37Z"
+                            fill="#CACACA" mask="url(#path-2-inside-1_886_10)" />
+                        <path
+                            d="M64.46 77V63.4H69.3C72.48 63.4 74.44 65.06 74.44 67.78C74.44 70.56 72.44 72.18 69.34 72.18H66.7V77H64.46ZM69.28 65.2H66.7V70.38H69.22C71.1 70.38 72.14 69.38 72.14 67.8C72.14 66.22 71.08 65.2 69.28 65.2ZM76.107 77V66.34H78.247V67.92C78.947 66.64 80.047 66.06 81.287 66.06C81.707 66.06 82.107 66.16 82.307 66.34V68.22C81.987 68.12 81.607 68.08 81.167 68.08C79.127 68.08 78.247 69.32 78.247 71.18V77H76.107ZM92.628 73.52C92.048 76 90.208 77.26 87.708 77.26C84.568 77.26 82.648 75.16 82.648 71.68C82.648 68.06 84.568 66.06 87.608 66.06C90.688 66.06 92.548 68.14 92.548 71.56V72.08H84.828C84.948 74.26 85.968 75.48 87.708 75.48C89.068 75.48 90.028 74.84 90.388 73.52H92.628ZM87.608 67.84C86.068 67.84 85.148 68.82 84.888 70.62H90.328C90.068 68.82 89.128 67.84 87.608 67.84ZM96.757 77L92.837 66.34H95.137L97.877 74.26L98.137 75.28L98.397 74.26L101.117 66.34H103.297L99.377 77H96.757ZM104.282 65.02V62.6H106.422V65.02H104.282ZM104.282 77V66.34H106.422V77H104.282ZM118.069 73.52C117.489 76 115.649 77.26 113.149 77.26C110.009 77.26 108.089 75.16 108.089 71.68C108.089 68.06 110.009 66.06 113.049 66.06C116.129 66.06 117.989 68.14 117.989 71.56V72.08H110.269C110.389 74.26 111.409 75.48 113.149 75.48C114.509 75.48 115.469 74.84 115.829 73.52H118.069ZM113.049 67.84C111.509 67.84 110.589 68.82 110.329 70.62H115.769C115.509 68.82 114.569 67.84 113.049 67.84ZM128.896 77L126.776 69.42L126.556 68.22L126.316 69.42L124.196 77H121.556L118.476 66.34H120.776L122.736 74.26L122.996 75.46L123.276 74.26L125.516 66.34H127.776L130.036 74.26L130.276 75.4L130.516 74.26L132.476 66.34H134.676L131.576 77H128.896Z"
+                            fill="black" />
+                    </svg>
+                    <div class="ColorAccentpreviewTheme">
+                        <h4>Essential app</h4>
+                    </div>
+                    <p>Light mode</p>
+                </div>
+
+            </div>
 
         </div>
     </div>
 
     <div class="ContentUpper_Titlebar" id="ContentUpper_Titlebar">
         <div class="ContentUpper_Content">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill="var(--theme-fg)" id="BackBtnContentTitlebar">
-                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
+            <div class="ClickableBackButton" id="BackBtnContentTitlebar">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)" class="BackButton" id="BackButton">
+                    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+                </svg>
+            </div>
 
         </div>
     </div>
 
     <div class="ContentUpper_AlwaysOnTops" id="ContentUpper_AlwaysOnTops">
         <div class="ContentUpper_Content">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill="var(--theme-fg)" id="BackBtnContentAlwaysOnTops">
-                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
+            <div class="ClickableBackButton" id="BackBtnContentAlwaysOnTops">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)" class="BackButton" id="BackButton">
+                    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+                </svg>
+            </div>
 
         </div>
     </div>
 
     <div class="ContentUpper_Navigation" id="ContentUpper_Navigation">
         <div class="ContentUpper_Content">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                fill="var(--theme-fg)" id="BackBtnContentNavigation">
-                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
+            <div class="ClickableBackButton" id="BackBtnContentNavigation">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="var(--theme-fg)" class="BackButton" id="BackButton">
+                    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+                </svg>
+            </div>
 
         </div>
     </div>

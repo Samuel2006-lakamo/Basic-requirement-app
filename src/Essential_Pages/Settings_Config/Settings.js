@@ -30,31 +30,26 @@ const contentConfig = {
         toggleId: 'ThemeContentToggle',
         contentId: 'ContentUpper_Theme',
         backBtnId: 'BackBtnContentTheme',
-        ipcEvent: 'theme-rename-current-windows'
     },
     appearance: {
         toggleId: 'AppearanceContentToggle',
         contentId: 'ContentUpper_Appearance',
         backBtnId: 'BackBtnContentAppearance',
-        ipcEvent: 'appearance-rename-current-windows'
     },
     titlebar: {
         toggleId: 'TitlebarContentToggle',
         contentId: 'ContentUpper_Titlebar',
         backBtnId: 'BackBtnContentTitlebar',
-        ipcEvent: 'titlebar-rename-current-windows'
     },
     alwaysOnTops: {
         toggleId: 'AlwaysOnTopsContentToggle',
         contentId: 'ContentUpper_AlwaysOnTops',
         backBtnId: 'BackBtnContentAlwaysOnTops',
-        ipcEvent: 'alwaysontops-rename-current-windows'
     },
     navigation: {
         toggleId: 'NavigationContentToggle',
         contentId: 'ContentUpper_Navigation',
         backBtnId: 'BackBtnContentNavigation',
-        ipcEvent: 'navigation-rename-current-windows'
     }
 };
 
@@ -75,22 +70,16 @@ Object.values(contentConfig).forEach(config => {
             setTimeout(() => {
                 document.getElementById(config.contentId).style.transform = "translateY(0px)";
                 hideOtherContent(config.contentId);
-                setTimeout(() => {
-                    document.getElementById(config.backBtnId).classList.add('visible');
-                }, 300);
             }, 10);
             event.preventDefault();
-            await window.electronAPI[config.ipcEvent]();
         });
     }
 
     const backBtn = document.getElementById(config.backBtnId);
     if (backBtn) {
         backBtn.addEventListener("click", async (event) => {
-            backBtn.classList.remove('visible');
             document.getElementById(config.contentId).style.transform = "translateY(600px)";
             event.preventDefault();
-            await window.electronAPI.RestoreCurrentName();
         });
     }
 });
@@ -159,9 +148,7 @@ document.querySelectorAll('.NavContent').forEach((nav, index) => {
 });
 
 // Back button for theme content
-BackBtnContentTheme.addEventListener("click", async (eventRestoreCurrentName) => {
+BackBtnContentTheme.addEventListener("click", async () => {
     BackBtnContentTheme.classList.remove('visible');
     document.getElementById("ContentUpper_Theme").style.transform = "translateY(600px)";
-    eventRestoreCurrentName.preventDefault();
-    await window.electronAPI.RestoreCurrentName();
 });

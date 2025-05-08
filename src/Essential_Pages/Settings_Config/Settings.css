@@ -1,9 +1,10 @@
 .DragAppRegion {
-    width: 100vw;
+    width: calc(100vw - 50px);
     position: fixed;
     -webkit-app-region: drag;
     height: 39px;
     top: 0;
+    right: 0;
 }
 
 nav {
@@ -65,13 +66,13 @@ nav {
 
 .ripple {
     position: absolute;
-    background: rgba(255, 255, 255, 0.325);
+    background: rgba(255, 255, 255, 0.450);
     border-radius: 50%;
     pointer-events: none;
     transform: translate3d(-50%, -50%, 0);
     will-change: transform, width, height, opacity;
-    animation: rippleEffect 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    filter: blur(8px);
+    animation: rippleEffect 600ms cubic-bezier(0.2, 0.0, 0, 1.0) forwards;
+    filter: blur(20px);
 }
 
 @keyframes rippleEffect {
@@ -124,24 +125,6 @@ nav {
     height: calc(100vh - 39px);
 }
 
-#BackBtnContentTheme,
-#BackBtnContentAppearance,
-#BackBtnContentTitlebar,
-#BackBtnContentAlwaysOnTops,
-#BackBtnContentNavigation {
-    border-radius: 50%;
-    width: 14px;
-    height: 14px;
-    background-color: transparent;
-    z-index: 1000;
-    transition: var(--MenuEaseTransition);
-    opacity: 0;
-    -webkit-app-region: no-drag;
-    cursor: pointer;
-    transform: translateY(-26px);
-    position: relative;
-}
-
 #BackBtnContentTheme:hover,
 #BackBtnContentAppearance:hover,
 #BackBtnContentTitlebar:hover,
@@ -150,11 +133,30 @@ nav {
     background-color: var(--SoftHoverColor);
 }
 
-#BackBtnContentTheme.visible,
-#BackBtnContentAppearance.visible,
-#BackBtnContentTitlebar.visible,
-#BackBtnContentAlwaysOnTops.visible,
-#BackBtnContentNavigation.visible {
+.ClickableBackButton {
+    position: relative;
+    left: -21px;
+    top: -38px;
+    width: 50px;
+    height: 39px;
+    z-index: -1;
+}
+
+.BackButton {
+    border-radius: 50%;
+    width: 52.5px;
+    height: 14px;
+    background-color: transparent;
+    z-index: 1000;
+    transition: var(--MenuEaseTransition);
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.BackButton .visible {
     opacity: 1;
 }
 
@@ -166,6 +168,8 @@ nav {
     border-radius: 12px;
     gap: 2px;
     background-color: var(--theme-border);
+    position: relative;
+    transform: translateY(-21.5px);
 }
 
 .color {
@@ -200,4 +204,67 @@ nav {
     position: absolute;
     bottom: 0;
     left: 1.5rem;
+}
+
+/* AppearanceSettings */
+
+#TitleName {
+    font-family: "inter tight", sans-serif;
+    font-weight: 580;
+    transform: translateY(-21.5px);
+}
+
+.AppearanceSettings {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 18px;
+}
+
+.LightMode,
+.DarkMode {
+    position: relative;
+    border-radius: 20px;
+}
+
+.LightMode:hover,
+.DarkMode:hover {
+    background-color: var(--SoftHoverColor);
+}
+
+.LightMode:active, 
+.DarkMode:active {
+    background-color: var(--HoverColor);
+}
+
+.LightMode svg,
+.DarkMode svg {
+    width: 130px;
+    height: auto;
+}
+
+.LightMode p,
+.DarkMode p {
+    text-align: center;
+    line-height: 3;
+    border-radius: 200px;
+    margin-top: 0rem;
+}
+
+.ColorAccentpreviewTheme {
+    line-height: 2.25;
+    font-size: 12.5px;
+    background-color: var(--theme-accent);
+    color: #000;
+    width: 102px;
+    position: absolute;
+    right: 0;
+    top: 70px;
+}
+
+.ColorAccentpreviewTheme h4 {
+    font-family: var(--font-text);
+    font-weight: 600;
+    margin-left: 16px;
 }

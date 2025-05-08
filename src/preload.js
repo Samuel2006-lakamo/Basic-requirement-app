@@ -1,5 +1,13 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Settings window title management
+const settingsTitleChannels = {
+  'theme-section': 'theme-rename-current-windows',
+  'alwaysontop-section': 'alwaysontops-rename-current-windows',
+  'navigation-section': 'navigation-rename-current-windows',
+  'restore-title': 'restore-current-name'
+};
+
 contextBridge.exposeInMainWorld(
     'electronAPI', {
     showContextMenu: (pos) => ipcRenderer.invoke('show-context-menu', pos),
@@ -18,7 +26,6 @@ contextBridge.exposeInMainWorld(
         platform: process.platform,
         runtime: 'electron'
     },
-    // Add OS info API
     getOSInfo: () => ({
         platform: process.platform,
         runtime: 'electron',
@@ -40,20 +47,26 @@ contextBridge.exposeInMainWorld(
     createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url),
     openAboutWindow: () => ipcRenderer.invoke('open-about-window'),
     openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
-    RenemeCurrentWindow: () => ipcRenderer.invoke("theme-rename-current-windows"),
-    RestoreCurrentName: () => ipcRenderer.invoke('restore-current-name'), // Change to use consistent naming
-    'theme-rename-current-windows': () => ipcRenderer.invoke('theme-rename-current-windows'),
-    'appearance-rename-current-windows': () => ipcRenderer.invoke('appearance-rename-current-windows'),
-    'titlebar-rename-current-windows': () => ipcRenderer.invoke('titlebar-rename-current-windows'),
-    'alwaysontops-rename-current-windows': () => ipcRenderer.invoke('alwaysontops-rename-current-windows'),
-    'navigation-rename-current-windows': () => ipcRenderer.invoke('navigation-rename-current-windows'),
-    'RestoreCurrentName': () => ipcRenderer.invoke('restore-current-name')
+    settingsTitle: {
+        changeToTheme: () => ipcRenderer.invoke('theme-section'),
+        changeToAlwaysOnTop: () => ipcRenderer.invoke('alwaysontop-section'),
+        changeToNavigation: () => ipcRenderer.invoke('navigation-section'),
+        restore: () => ipcRenderer.invoke('restore-title')
+    }
 }
 );
 
 contextBridge.exposeInMainWorld('runtimeInfo', {
     runtime: process.versions.electron ? 'electron' : 'web',
     os: process.platform // 'win32', 'darwin', 'linux'
+});
+
+contextBridge.exposeInMainWorld('electron', {
+    ipcRenderer: {
+        on: (channel, func) => {
+            ipcRenderer.on(channel, (event, ...args) => func(...args));
+        }
+    }
 });
 
 // Secure the window object
@@ -73,7 +86,6 @@ window.addEventListener('DOMContentLoaded', () => {
         root.style.setProperty('--ColorHighlight', savedAccent);
     }
 
-    // ตรวจจับการเปลี่ยนแปลงใน localStorage
     window.addEventListener('storage', (e) => {
         if (e.key === 'theme-accent') {
             const root = document.documentElement;
@@ -82,5 +94,9 @@ window.addEventListener('DOMContentLoaded', () => {
             root.style.setProperty('--ColorHighlight', e.newValue);
         }
     });
+});
+
+ipcRenderer.on('open-settings-trigger', () => {
+    ipcRenderer.invoke('open-settings-window');
 });
 
