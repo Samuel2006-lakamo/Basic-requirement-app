@@ -101,8 +101,10 @@ Whether you're using an old iMac from 2011, a budget Windows machine, or anythin
 1. Navigate to the project folder.  
 2. Open the terminal and run the following commands:  
    ```bash
-   npm install
-   npm run start
+   powershell -c "irm bun.sh/install.ps1|iex" -> For windows to install bun.js
+   curl -fsSL https://bun.sh/install -> For macOS to install bun.js
+   bun install
+   bun run start
    ```
 
 ---
