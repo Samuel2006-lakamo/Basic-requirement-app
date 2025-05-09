@@ -7,6 +7,12 @@
     font-family: "Host Grotesk", "Segoe UI", sans-serif;
 }
 
+#GotoHomePage {
+    border-bottom: var(--TitlebarColorBorder);
+    background-color: var(--TitlebarColor) !important;
+    border-right: none !important;
+}
+
 .contentBTN {
     display: flex;
     gap: 10px;
@@ -63,6 +69,7 @@
         left: 17px;
         transform: translateX(0px);
     }
+
     #GotoHomePage {
         display: none;
     }

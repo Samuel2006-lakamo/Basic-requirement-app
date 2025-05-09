@@ -66,6 +66,15 @@ contextBridge.exposeInMainWorld('electron', {
     }
 });
 
+contextBridge.exposeInMainWorld('titlebarTheme', {
+    update: (isDark) => ipcRenderer.send('update-titlebar-theme', isDark)
+});
+
+contextBridge.exposeInMainWorld('themeAPI', {
+    updateTitlebar: () => ipcRenderer.send('update-titlebar-theme'),
+    onThemeUpdated: (callback) => ipcRenderer.on('theme-updated', callback)
+});
+
 // Secure the window object
 delete window.module;
 delete window.require;
@@ -96,4 +105,3 @@ window.addEventListener('DOMContentLoaded', () => {
 ipcRenderer.on('open-settings-trigger', () => {
     ipcRenderer.invoke('open-settings-window');
 });
-

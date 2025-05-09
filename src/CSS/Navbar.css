@@ -11,6 +11,13 @@
     --nav-keepontop-width: 46px;
 }
 
+:root[data-theme="light"] {
+    --nav-hover: #d1d1d1;
+    --nav-active: #f5f5f7;
+    --nav-current: #ffffff;
+    --TitlebarColorButton: #222;
+}
+
 nav {
     width: 100%;
     height: var(--nav-height);
@@ -28,7 +35,7 @@ nav ul {
     align-items: center;
     list-style-type: none;
     height: var(--nav-height);
-    border-bottom: var(--border);
+    border-bottom: var(--TitlebarColorBorder);
     position: relative;
     z-index: 1000;
 }
@@ -40,7 +47,7 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: var(--theme-fg);
+    color: var(--TitlebarColorButton);
     padding: 0 var(--nav-padding);
     height: calc(var(--nav-height) - 1px);
     line-height: var(--nav-height);
@@ -95,15 +102,18 @@ nav ul li a:hover {
 #CurrentPage {
     background-color: var(--nav-current);
     height: var(--nav-height);
-    border-left: var(--border);
-    border-right: var(--border);
+    border-left: var(--TitlebarColorBorder);
+    border-right: var(--TitlebarColorBorder);
 }
 
 #GotoHomePage {
     width: var(--nav-btn-width);
     height: var(--nav-height);
     position: relative;
-    border-right: var(--border);
+    border-right: var(--TitlebarColorBorder);
+    background-color: var(--theme-primary);
+    height: 40px;
+    line-height: 40px;
 }
 
 #GotoHomePage a:hover {
@@ -116,7 +126,7 @@ nav ul li a:hover {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: var(--nav-icon-size);
-    color: var(--theme-fg);
+    color: var(--theme-links);
 }
 
 #Settings,
@@ -134,7 +144,7 @@ nav ul li a:hover {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1.5rem;
-    color: #ffffff;
+    fill: var(--theme-fg);
     width: 20px;
     height: auto;
 }
@@ -144,7 +154,7 @@ nav ul li a:hover {
     right: 135px;
     width: var(--nav-keepontop-width);
     height: calc(var(--nav-height) - 1px);
-    border-left: var(--border);
+    border-left: var(--TitlebarColorBorder);
 }
 
 #KeepONtop:focus {
@@ -176,6 +186,7 @@ nav ul li a:hover {
     #KeepONtop {
         right: 90px;
     }
+
     #GotoHomePage span {
         color: var(--accent);
     }

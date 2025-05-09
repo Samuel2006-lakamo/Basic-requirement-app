@@ -104,6 +104,11 @@
 
     <script src="./frontendJS/PUBLICscripts.js"></script>
     <script src="renderer.js"></script>
+    <script type="module">
+        import { initTheme, listenThemeSync } from './Essential_Pages/Settings_Config/theme.js';
+        initTheme();
+        listenThemeSync();
+    </script>
 </body>
 
 </html>

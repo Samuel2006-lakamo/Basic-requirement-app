@@ -1,3 +1,9 @@
+#GotoHomePage {
+    border-bottom: var(--TitlebarColorBorder);
+    background-color: var(--TitlebarColor) !important;
+    border-right: none !important;
+}
+
 .contentTEXT {
     display: none;
     position: absolute;

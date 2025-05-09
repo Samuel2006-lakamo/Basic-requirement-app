@@ -60,7 +60,7 @@
     width: 100%;
     height: 40px;
     align-content: center;
-    background-image: linear-gradient(#222, #222);
+    background-image: linear-gradient(var(--SoftHoverColor), var(--SoftHoverColor));
     background-repeat: no-repeat;
     background-size: 0% 100%;
     background-position-x: right;
@@ -76,7 +76,7 @@
 
 .menuLinks li a {
     padding: 0rem 1rem;
-    color: #e3e3e3;
+    color: var(--theme-fg);
     height: 40px;
     line-height: 40px;
     width: 100%;
@@ -110,7 +110,6 @@
 }
 
 .menu hr {
-    --HRborder: solid 1px #2f2f2f;
     border: var(--HRborder);
     margin: 0.5rem 0rem;
     margin-bottom: 0.75rem;
@@ -127,7 +126,7 @@
 }
 
 .AllmenuLinks li:hover {
-    background-color: #222;
+    background-color: var(--SoftHoverColor);
 }
 
 .AllmenuLinks li a svg {
@@ -137,7 +136,7 @@
 
 .AllmenuLinks a {
     padding: 0rem 1rem;
-    color: #c2c2c2;
+    color: var(--theme-fg);
     height: 40px;
     line-height: 40px;
     width: 100%;

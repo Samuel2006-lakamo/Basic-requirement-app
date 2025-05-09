@@ -56,29 +56,29 @@
     </div>
     <div class="menuLinks">
       <li id="Current"><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-            viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+            viewBox="0 -960 960 960" width="24px" fill="var(--theme-fg)">
             <path
               d="M244-204h116v-238.5h240V-204h116v-355L480-736 244-559v355Zm-75 75v-467.5L480-830l311 233.67V-129H525v-238.5h-90V-129H169Zm311-341Z" />
           </svg>Home</a></li>
       <li><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-            width="24px" fill="#e3e3e3">
+            width="24px" fill="var(--)">
             <path d="M445-445.5H210v-70h235v-235h70v235h235v70H515v235h-70v-235Z" />
           </svg>Add list</a></li>
     </div>
     <hr>
     <div class="AllmenuLinks">
       <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-            fill="#c2c2c2">
+            fill="var(--theme-fg)">
             <path
               d="m634-479 78 77v75H517.5v233L480-56l-37.5-38v-233H248v-75l78-77v-278h-40v-75h388v75h-40v278Zm-279 77h250l-46-45v-310H401v310l-46 45Zm125 0Z" />
           </svg>Planned</a></li>
       <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-            fill="#c2c2c2">
+            fill="var(--theme-fg)">
             <path
               d="M350-281.5 480-360l130 79-34.5-148 115-99-151-13.5-59.5-140L420.5-542l-151 13 115 99.5-34.5 148ZM236.5-125 301-402 86-588l283.5-24.5 110.5-261 110.5 261L874-588 659-402l64.5 277L480-272 236.5-125ZM480-471Z" />
           </svg>Important</a></li>
       <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-            fill="#c2c2c2">
+            fill="var(--theme-fg)">
             <path
               d="M345-540H205q-30.94 0-52.97-22.03Q130-584.06 130-615v-140q0-30.94 22.03-52.97Q174.06-830 205-830h140q30.94 0 52.97 22.03Q420-785.94 420-755v140q0 30.94-22.03 52.97Q375.94-540 345-540Zm-140-75h140v-140H205v140Zm140 485H205q-30.94 0-52.97-22.03Q130-174.06 130-205v-140q0-30.94 22.03-52.97Q174.06-420 205-420h140q30.94 0 52.97 22.03Q420-375.94 420-345v140q0 30.94-22.03 52.97Q375.94-130 345-130Zm-140-75h140v-140H205v140Zm550-335H615q-30.94 0-52.97-22.03Q540-584.06 540-615v-140q0-30.94 22.03-52.97Q584.06-830 615-830h140q30.94 0 52.97 22.03Q830-785.94 830-755v140q0 30.94-22.03 52.97Q785.94-540 755-540Zm-140-75h140v-140H615v140Zm140 485H615q-30.94 0-52.97-22.03Q540-174.06 540-205v-140q0-30.94 22.03-52.97Q584.06-420 615-420h140q30.94 0 52.97 22.03Q830-375.94 830-345v140q0 30.94-22.03 52.97Q785.94-130 755-130Zm-140-75h140v-140H615v140ZM345-615Zm0 270Zm270-270Zm0 270Z" />
           </svg>Tasks</a></li>
@@ -117,29 +117,19 @@
       <div class="lang-option" data-lang="hi-IN">हिंदी</div>
       <div class="lang-option" data-lang="zh-CN">中文</div>
     </div>
-    <section class="todolist">
-      <div class="todolistContent">
-        <h2 class="greetingText">Howdy User! What do you want to add today?</h2>
-        <div class="todolistData">
-          <input type="text" id="inputBox" placeholder="Add a new task..." />
-          <button id="submitbtn">Add</button>
-        </div>
-        <div class="addedTasks">
-          <ul class="todolistaddedContent">
-            <li class="todolistaddedContentItem" id="todolistaddedContentItem1">Task 1</li>
-            <li class="todolistaddedContentItem" id="todolistaddedContentItem2">Task 2</li>
-            <li class="todolistaddedContentItem" id="todolistaddedContentItem3">Task 3</li>
-            <li class="todolistaddedContentItem" id="todolistaddedContentItem4">Task 4</li>
-            <li class="todolistaddedContentItem" id="todolistaddedContentItem5">Task 5</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+
+    
+
   </div>
 
   <script src="renderer.js"></script>
   <script src="./frontendJS/TodoList.js"></script>
   <script src="./frontendJS/PUBLICscripts.js"></script>
+  <script type="module">
+    import { initTheme, listenThemeSync } from './Essential_Pages/Settings_Config/theme.js';
+    initTheme();
+    listenThemeSync();
+  </script>
 </body>
 
 </html>

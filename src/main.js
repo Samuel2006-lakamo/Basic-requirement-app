@@ -12,6 +12,10 @@ const Essential = {
   name: "Essential App",
 }
 
+const isDark = nativeTheme.shouldUseDarkColors;
+const titleBarColor = isDark ? '#0f0f0f' : '#ffffff';
+const symbolColor = isDark ? '#ffffff' : '#000000';
+
 require('dotenv').config();
 
 const menuTranslations = require('./locales/menu.js');
@@ -284,9 +288,11 @@ const BASE_WINDOW_CONFIG = {
   common: {
     frame: false,
     title: Essential.name,
-    // titleBarOverlay: {
-    //   height: 39
-    // },
+    titleBarOverlay: {
+      height: 39,
+      color: titleBarColor,
+      symbolColor,
+    },
     fullscreenable: true,
     fullscreen: false,
     maximizable: true,
@@ -1022,12 +1028,12 @@ const DialogWindows_Config = {
   title: Essential.name,
   frame: false,
   titleBarStyle: 'hidden',
-  // titleBarOverlay: {
-  //   // color: '#0f0f0f',
-  //   // symbolColor: '#FFFFFF',
-  //   height: 39,
-  //   buttons: ['close']
-  // },
+  titleBarOverlay: {
+    color: titleBarColor,
+    symbolColor,
+    height: 39,
+    buttons: ['close']
+  },
   width: 320,
   height: 400,
   maximizable: false,
@@ -1226,6 +1232,8 @@ app.on('browser-window-created', (event, win) => {
   win.once('closed', () => {
     globalShortcut.unregister('Control+Shift+I');
   });
+
+  updateTitlebarTheme(win);
 });
 
 app.on('ready', () => {
@@ -1247,4 +1255,33 @@ app.on('ready', () => {
   powerMonitor.on('on-ac', () => {
     throttledFPSUpdate(fpsManager.HIGH_FPS);
   });
+});
+
+// เพิ่มฟังก์ชันสำหรับอัพเดท titlebar
+const updateTitlebarTheme = (window) => {
+  if (!window || window.isDestroyed()) return;
+  
+  const isDark = nativeTheme.shouldUseDarkColors;
+  const options = {
+    color: isDark ? '#0f0f0f' : '#ffffff',
+    symbolColor: isDark ? '#ffffff' : '#000000',
+    height: 39
+  };
+
+  try {
+    window.setTitleBarOverlay(options);
+  } catch (err) {
+    console.warn('Failed to update titlebar:', err);
+  }
+};
+
+nativeTheme.on('updated', () => {
+  BrowserWindow.getAllWindows().forEach(window => {
+    updateTitlebarTheme(window);
+  });
+});
+
+ipcMain.on('update-titlebar-theme', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  updateTitlebarTheme(window);
 });

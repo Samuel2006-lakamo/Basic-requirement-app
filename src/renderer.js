@@ -25,7 +25,7 @@ window.addEventListener('dragend', (event) => {
 });
 
 document.getElementById('KeepONtop').addEventListener('click', () => {
-    ipcRenderer.send('Keepontop', 'Keep on top featured!');
+    ipcRenderer.send('Keepontop', 'Hello from the button!');
 });
 
 // Runtime & OS Detection
@@ -106,5 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add(`os-${platform === 'darwin' ? 'mac' : platform === 'win32' ? 'windows' : 'linux'}`);
 });
 
-// Initialize environment detection
-document.addEventListener('DOMContentLoaded', detectEnvironment);
+const watchTheme = () => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', () => {
+        window.themeAPI.updateTitlebar();
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    detectEnvironment();
+    watchTheme();
+    window.themeAPI.updateTitlebar();
+});

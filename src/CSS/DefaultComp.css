@@ -38,7 +38,8 @@
     /* C4 color not bomb!! */
     --HoverColor: #313131;
     --SoftHoverColor: #1e1e1e;
-    
+    --NameColorSvg: #fff;
+
     --font-primary: "Manrope", sans-serif;
     --font-text: "Inter Tight", sans-serif;
     --font-size-base: 16px;
@@ -50,12 +51,12 @@
     --spacing-sm: var(--spacing-unit);
     --spacing-md: calc(var(--spacing-unit) * 2);
     --spacing-lg: calc(var(--spacing-unit) * 3);
-    
+
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --menu-transition: 300ms cubic-bezier(0.075, 0.82, 0.165, 1);
     --MenuEaseTransition: 300ms cubic-bezier(0.2, 0.0, 0, 1.0);
-    
+
     /* Legacy variables */
     --ResetPadding: 0;
     --ResetMargin: 0;
@@ -63,9 +64,15 @@
     --color-primary: var(--theme-primary);
     --border: 1px solid var(--theme-border);
     --ColorHighlight: var(--theme-accent);
-    --TitlebarColor: var(--theme-titlebar);
     --CardMainColor: var(--theme-card);
     --accent: var(--theme-accent);
+    --HRborder: solid 1px #2f2f2f;
+    --RippleEffectColor: rgba(255, 255, 255, 0.270);
+
+    --TitlebarColor: #0f0f0f;
+    --TitlebarColorButton: #fff;
+    --TitlebarColorBorder: solid 1px #3f3f3f;
+    --TitlebarColorHover: var(--SoftHoverColor);
 }
 
 /* (default) */
@@ -78,18 +85,29 @@
 }
 
 :root[data-theme="light"] {
-    --theme-bg: #FFF;
+    --theme-bg: #fbfbfb;
     --theme-fg: #000000;
-    --theme-primary: #F5F7FA;
-    --theme-card: #F5F7FA;
-    --theme-titlebar: #f0f0f0;
-    --theme-border: #e0e0e0;
-    --HoverColor: #c2c2c2;
-    --SoftHoverColor: #eeeeee;
+    --theme-primary: #ffffff;
+    --theme-card: #FFFFFF;
+    --theme-titlebar: #0f0f0f;
+    --theme-border: #e6e6e6;
+    --HoverColor: #eeeeee;
+    --SoftHoverColor: #f5f5f5;
+    --theme-links: #222;
+    --NameColorSvg: #000;
+    --theme-accent: #6aacff;
+    --HRborder: solid 1px #e6e6e6;
+    --RippleEffectColor: rgba(0, 0, 0, 0.27);
+    /* Titlebar */
+    --TitlebarColor: #f1f1f1;
+    --TitlebarColorButton: #303030;
+    --TitlebarColorBorder: solid 1px #d1d1d1;
+    --TitlebarColorHover: #d1d1d1;
     color-scheme: light;
 }
 
-html.dark, body.dark {
+html.dark,
+body.dark {
     --theme-bg: #0f0f0f;
     --theme-fg: #fff;
     --theme-primary: #080808;
@@ -105,15 +123,26 @@ html.dark, body.dark {
     color: var(--theme-fg);
 }
 
-html.light, body.light {
-    --theme-bg: #fff;
+html.light,
+body.light {
+    --theme-bg: #fbfbfb;
     --theme-fg: #0f0f0f;
-    --theme-primary: #F5F7FA;
-    --theme-card: #F5F7FA;
+    --theme-primary: #ffffff;
+    --theme-card: #FFFFFF;
     --theme-titlebar: #f0f0f0;
-    --theme-border: #e0e0e0;
-    --HoverColor: #c2c2c2;
-    --SoftHoverColor: #eeeeee;
+    --theme-border: #e6e6e6;
+    --HoverColor: #eeeeee;
+    --SoftHoverColor: #f5f5f5;
+    --theme-links: #222;
+    --NameColorSvg: #000;
+    --theme-accent: #6aacff;
+    --HRborder: solid 1px #e6e6e6;
+    --RippleEffectColor: rgba(0, 0, 0, 0.27);
+    /* Titlebar */
+    --TitlebarColor: #f1f1f1;
+    --TitlebarColorButton: #303030;
+    --TitlebarColorBorder: solid 1px #d1d1d1;
+    --TitlebarColorHover: #d1d1d1;
     color-scheme: light;
     background: var(--theme-bg);
     color: var(--theme-fg);
@@ -127,9 +156,7 @@ html.light, body.light {
     box-sizing: var(--ResetBoxSizing);
     -webkit-user-select: none;
     user-select: none;
-    transition: background-color var(--transition-fast),
-                border-color var(--transition-fast),
-                color var(--transition-fast);
+    transition: 0s;
 }
 
 html {
