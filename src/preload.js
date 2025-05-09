@@ -66,13 +66,13 @@ contextBridge.exposeInMainWorld('electron', {
     }
 });
 
-contextBridge.exposeInMainWorld('titlebarTheme', {
-    update: (isDark) => ipcRenderer.send('update-titlebar-theme', isDark)
-});
-
-contextBridge.exposeInMainWorld('themeAPI', {
-    updateTitlebar: () => ipcRenderer.send('update-titlebar-theme'),
-    onThemeUpdated: (callback) => ipcRenderer.on('theme-updated', callback)
+contextBridge.exposeInMainWorld('titlebarAPI', {
+    setTheme: (theme) => {
+        ipcRenderer.send('titlebar-theme-change', theme);
+        // บันทึก theme ลงใน localStorage ด้วย
+        localStorage.setItem('app_theme', theme);
+    },
+    getCurrentTheme: () => localStorage.getItem('app_theme') || 'dark'
 });
 
 // Secure the window object

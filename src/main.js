@@ -12,10 +12,6 @@ const Essential = {
   name: "Essential App",
 }
 
-const isDark = nativeTheme.shouldUseDarkColors;
-const titleBarColor = isDark ? '#0f0f0f' : '#ffffff';
-const symbolColor = isDark ? '#ffffff' : '#000000';
-
 require('dotenv').config();
 
 const menuTranslations = require('./locales/menu.js');
@@ -290,8 +286,8 @@ const BASE_WINDOW_CONFIG = {
     title: Essential.name,
     titleBarOverlay: {
       height: 39,
-      color: titleBarColor,
-      symbolColor,
+      color: "0F0F0F",
+      symbolColor: "FFF",
     },
     fullscreenable: true,
     fullscreen: false,
@@ -611,19 +607,6 @@ app.whenReady().then(async () => {
       }
     });
 
-    nativeTheme.on('updated', async () => {
-      const windows = BrowserWindow.getAllWindows();
-      const currentIcon = getThemeIcon();
-
-      windows.forEach(async win => {
-        try {
-          await win.setIcon(currentIcon);
-        } catch (err) {
-          await handleError(win, err, 'theme-update');
-        }
-      });
-    });
-
     globalShortcut.register('Control+Shift+N', async () => {
       if (!focusedWindow) return;
 
@@ -760,6 +743,20 @@ const createWindow = async () => {
       throw err;
     });
 
+    // Start load from localstroage
+    mainWindow.webContents.on('dom-ready', () => {
+      mainWindow.webContents.executeJavaScript(`
+          try {
+              const savedTheme = localStorage.getItem('app_theme');
+              if (savedTheme && window.titlebarAPI) {
+                  window.titlebarAPI.setTheme(savedTheme);
+              }
+          } catch (err) {
+              console.error('Error loading theme:', err);
+          }
+      `);
+    });
+
     mainWindow.on('enter-full-screen', () => {
       originalBounds = mainWindow.getBounds();
     });
@@ -807,14 +804,6 @@ const createWindow = async () => {
     mainWindow.webContents.setZoomFactor(1);
     mainWindow.webContents.setVisualZoomLevelLimits(1, 1);
     mainWindow.webContents.setBackgroundThrottling(false);
-
-    // mainWindow.webContents.on('dom-ready', () => {
-    //   mainWindow.webContents.executeJavaScript(`
-    //       const script = document.createElement('script');
-    //       script.src = '${path.join(__dirname, 'utils/ThemeManager.js')}';
-    //       document.head.appendChild(script);
-    //   `);
-    // });
 
     await loadFileWithCheck(mainWindow, Essential_links.home, 'main-window-creation')
       .catch(async (err) => {
@@ -1029,8 +1018,8 @@ const DialogWindows_Config = {
   frame: false,
   titleBarStyle: 'hidden',
   titleBarOverlay: {
-    color: titleBarColor,
-    symbolColor,
+    color: "0F0F0F",
+    symbolColor: "FFF",
     height: 39,
     buttons: ['close']
   },
@@ -1067,9 +1056,6 @@ function ConfigWindowsProperties(windowType) {
   if (windowType === 'about' && aboutWindow && !aboutWindow.isDestroyed()) {
     aboutWindow.setBackgroundColor('#0f0f0f');
   }
-  // if (windowType === 'settings' && SettingsWindows && !SettingsWindows.isDestroyed()) {
-  //   SettingsWindows.setBackgroundColor('#0f0f0f');
-  // }
 }
 
 const DialogWindowsName = {
@@ -1233,55 +1219,32 @@ app.on('browser-window-created', (event, win) => {
     globalShortcut.unregister('Control+Shift+I');
   });
 
-  updateTitlebarTheme(win);
-});
-
-app.on('ready', () => {
-  const { powerMonitor } = require('electron');
-  let powerThrottleTimeout;
-
-  const throttledFPSUpdate = (fps) => {
-    clearTimeout(powerThrottleTimeout);
-    powerThrottleTimeout = setTimeout(() => {
-      fpsManager.applyToAllWindows(fps);
-    }, 1000);
-  };
-
-  powerMonitor.on('on-battery', () => {
-    throttledFPSUpdate(fpsManager.LOW_FPS);
-    enhancedMemoryManager.optimizeHeap();
-  });
-
-  powerMonitor.on('on-ac', () => {
-    throttledFPSUpdate(fpsManager.HIGH_FPS);
+  win.webContents.on('dom-ready', () => {
+    win.webContents.executeJavaScript(`
+        const savedTheme = localStorage.getItem('app_theme');
+        if (savedTheme && window.titlebarAPI) {
+            window.titlebarAPI.setTheme(savedTheme);
+        }
+    `);
   });
 });
 
-// เพิ่มฟังก์ชันสำหรับอัพเดท titlebar
-const updateTitlebarTheme = (window) => {
-  if (!window || window.isDestroyed()) return;
-  
-  const isDark = nativeTheme.shouldUseDarkColors;
-  const options = {
-    color: isDark ? '#0f0f0f' : '#ffffff',
-    symbolColor: isDark ? '#ffffff' : '#000000',
-    height: 39
-  };
-
-  try {
-    window.setTitleBarOverlay(options);
-  } catch (err) {
-    console.warn('Failed to update titlebar:', err);
-  }
+const updateAllWindowsTheme = (theme) => {
+  BrowserWindow.getAllWindows().forEach(win => {
+    if (!win.isDestroyed()) {
+      try {
+        win.setTitleBarOverlay({
+          color: theme === 'dark' ? '#0f0f0f' : '#f0eee6',
+          symbolColor: theme === 'dark' ? '#f0eee6' : '#000000',
+          height: 39
+        });
+      } catch (err) {
+        console.error('Failed to update window theme:', err);
+      }
+    }
+  });
 };
 
-nativeTheme.on('updated', () => {
-  BrowserWindow.getAllWindows().forEach(window => {
-    updateTitlebarTheme(window);
-  });
-});
-
-ipcMain.on('update-titlebar-theme', (event) => {
-  const window = BrowserWindow.fromWebContents(event.sender);
-  updateTitlebarTheme(window);
+ipcMain.on('titlebar-theme-change', (event, theme) => {
+  updateAllWindowsTheme(theme);
 });
