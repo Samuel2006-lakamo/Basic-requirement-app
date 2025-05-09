@@ -25,7 +25,7 @@ window.addEventListener('dragend', (event) => {
 });
 
 document.getElementById('KeepONtop').addEventListener('click', () => {
-    ipcRenderer.send('Keepontop', 'Hello from the button!');
+    ipcRenderer.send('Keepontop', 'Keep on top featured!');
 });
 
 // Runtime & OS Detection

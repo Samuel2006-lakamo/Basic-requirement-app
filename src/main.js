@@ -284,11 +284,9 @@ const BASE_WINDOW_CONFIG = {
   common: {
     frame: false,
     title: Essential.name,
-    titleBarOverlay: {
-      color: '#0f0f0f',
-      symbolColor: '#FFFFFF',
-      height: 39
-    },
+    // titleBarOverlay: {
+    //   height: 39
+    // },
     fullscreenable: true,
     fullscreen: false,
     maximizable: true,
@@ -1024,12 +1022,12 @@ const DialogWindows_Config = {
   title: Essential.name,
   frame: false,
   titleBarStyle: 'hidden',
-  titleBarOverlay: {
-    color: '#0f0f0f',
-    symbolColor: '#FFFFFF',
-    height: 39,
-    buttons: ['close']
-  },
+  // titleBarOverlay: {
+  //   // color: '#0f0f0f',
+  //   // symbolColor: '#FFFFFF',
+  //   height: 39,
+  //   buttons: ['close']
+  // },
   width: 320,
   height: 400,
   maximizable: false,

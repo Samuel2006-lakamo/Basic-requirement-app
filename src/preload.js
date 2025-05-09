@@ -1,13 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Settings window title management
-const settingsTitleChannels = {
-  'theme-section': 'theme-rename-current-windows',
-  'alwaysontop-section': 'alwaysontops-rename-current-windows',
-  'navigation-section': 'navigation-rename-current-windows',
-  'restore-title': 'restore-current-name'
-};
-
 contextBridge.exposeInMainWorld(
     'electronAPI', {
     showContextMenu: (pos) => ipcRenderer.invoke('show-context-menu', pos),
@@ -47,12 +39,6 @@ contextBridge.exposeInMainWorld(
     createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url),
     openAboutWindow: () => ipcRenderer.invoke('open-about-window'),
     openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
-    settingsTitle: {
-        changeToTheme: () => ipcRenderer.invoke('theme-section'),
-        changeToAlwaysOnTop: () => ipcRenderer.invoke('alwaysontop-section'),
-        changeToNavigation: () => ipcRenderer.invoke('navigation-section'),
-        restore: () => ipcRenderer.invoke('restore-title')
-    }
 }
 );
 

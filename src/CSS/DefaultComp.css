@@ -78,15 +78,45 @@
 }
 
 :root[data-theme="light"] {
-    --theme-bg: #f8f8f8;
+    --theme-bg: #FFF;
     --theme-fg: #000000;
-    --theme-primary: #ffffff;
-    --theme-card: #ffffff;
+    --theme-primary: #F5F7FA;
+    --theme-card: #F5F7FA;
     --theme-titlebar: #f0f0f0;
     --theme-border: #e0e0e0;
     --HoverColor: #c2c2c2;
     --SoftHoverColor: #eeeeee;
     color-scheme: light;
+}
+
+html.dark, body.dark {
+    --theme-bg: #0f0f0f;
+    --theme-fg: #fff;
+    --theme-primary: #080808;
+    --theme-accent: #b4f5c7;
+    --theme-border: #3f3f3f;
+    --theme-card: #141414;
+    --theme-titlebar: #0f0f0f;
+    --theme-links: #C4C4C4;
+    --HoverColor: #313131;
+    --SoftHoverColor: #1e1e1e;
+    color-scheme: dark;
+    background: var(--theme-bg);
+    color: var(--theme-fg);
+}
+
+html.light, body.light {
+    --theme-bg: #fff;
+    --theme-fg: #0f0f0f;
+    --theme-primary: #F5F7FA;
+    --theme-card: #F5F7FA;
+    --theme-titlebar: #f0f0f0;
+    --theme-border: #e0e0e0;
+    --HoverColor: #c2c2c2;
+    --SoftHoverColor: #eeeeee;
+    color-scheme: light;
+    background: var(--theme-bg);
+    color: var(--theme-fg);
 }
 
 /* Base styles */

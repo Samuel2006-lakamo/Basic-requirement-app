@@ -190,9 +190,14 @@
     <script src="./frontendJS/PUBLICscripts.js" type="module" defer></script>
     <script src="renderer.js"></script>
     <script src="./frontendJS/Getstart.js"></script>
+    <script type="module">
+        import { initTheme, listenThemeSync } from './Essential_Pages/Settings_Config/theme.js';
+        initTheme();
+        listenThemeSync();
+    </script>
     <script>
         // Typing animation
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const text = "Recommendations Apps";
             const typingText = document.querySelector('#TextCards .typing-text');
             let index = 0;

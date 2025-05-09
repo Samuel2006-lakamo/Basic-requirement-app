@@ -90,27 +90,20 @@ document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
 });
 
 // colors
-
 const themeColorSets = {
-    light: [
-        // Blue shades - darker
-        '#4B9BFF', '#1E88E5', '#1976D2', '#1565C0', '#0D47A1',
-        // Green shades - darker
-        '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#1A4D1A',
-        // Yellow/Orange shades - darker
-        '#FFB300', '#FFA000', '#FF8F00', '#FF6F00', '#E65100',
-        // Brown shades - darker
-        '#795548', '#6D4C41', '#5D4037', '#4E342E', '#3E2723',
-        // Red shades - darker
-        '#E53935', '#D32F2F', '#C62828', '#B71C1C', '#891515',
-    ],
     dark: [
-        // Original light colors...
         '#E7F1FF', '#B9DCFC', '#8AC5FF', '#5EB0FF', '#2E96FF',
         '#E2F7DF', '#C3EAC6', '#9DDCA1', '#75CD7E', '#53BD63',
         '#FFF8E6', '#FFF0C0', '#FFE699', '#FFDC73', '#FFD34D',
         '#F2EADF', '#E5D6C3', '#D8C2A6', '#CBAE8A', '#BF9B6E',
         '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
+    ],
+    light: [
+        '#4B9BFF', '#1E88E5', '#1976D2', '#1565C0', '#0D47A1',
+        '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#1A4D1A',
+        '#FFB300', '#FFA000', '#FF8F00', '#FF6F00', '#E65100',
+        '#795548', '#6D4C41', '#5D4037', '#4E342E', '#3E2723',
+        '#E53935', '#D32F2F', '#C62828', '#B71C1C', '#891515',
     ]
 };
 
@@ -128,8 +121,8 @@ function updateAccentColor(color) {
 // Update color picker based on theme
 function updateColorPicker() {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    // Switcher color
     const colors = themeColorSets[currentTheme];
-    
     picker.innerHTML = ''; // Clear existing swatches
     colors.forEach(color => {
         const swatch = document.createElement('div');
