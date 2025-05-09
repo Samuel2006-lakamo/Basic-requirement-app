@@ -4,7 +4,7 @@ const THEME_KEY = 'app_theme';
 export async function applyTheme(theme) {
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
-    root.style.setProperty('--theme-bg', theme === 'light' ? '#FFF' : '#0f0f0f');
+    root.style.setProperty('--theme-bg', theme === 'light' ? '#faf9f5' : '#0f0f0f');
 }
 
 export function setTheme(theme) {

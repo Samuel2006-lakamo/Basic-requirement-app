@@ -99,11 +99,35 @@ const themeColorSets = {
         '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
     ],
     light: [
-        '#B5D6FA', '#A1CCF5', '#8BBEF0', '#77B2EA', '#639FE0',
-        '#B6E5C2', '#9FDAAE', '#88CF9B', '#70C488', '#5CAF76',
-        '#FFF2B3', '#FFE580', '#FFD555', '#FFC634', '#E6A62B',
-        '#E6CFC7', '#D4BFB6', '#C2AFA5', '#B0A093', '#98897D',
-        '#FFC2BE', '#FFA29E', '#F78683', '#EE6A67', '#D85754',
+        '#C5D9E5', 
+        '#94B9DA', 
+        '#70A0DC', 
+        '#4B8ECC', 
+        '#2978C2', 
+
+        '#C2D9C2', 
+        '#A1C6AD', 
+        '#7CB98B', 
+        '#5DA672', 
+        '#42905D', 
+
+        '#E9DFC7', 
+        '#DDC894', 
+        '#D5BA77', 
+        '#CEAD5D', 
+        '#C69F45', 
+
+        '#D6CCC1', 
+        '#C9B69D', 
+        '#BC9F7E', 
+        '#AF8B65', 
+        '#A2784E', 
+
+        '#E6CDCD',
+        '#CAAFAF', 
+        '#AC9393', 
+        '#8F7979', 
+        '#745E5E'
     ]
 };
 
