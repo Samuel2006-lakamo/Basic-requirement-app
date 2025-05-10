@@ -1,25 +1,38 @@
-function loadScript(url) {
+function loadScript(url, id) {
     return new Promise((resolve, reject) => {
+        if (document.getElementById(id)) {
+            resolve();
+            return;
+        }
         const script = document.createElement('script');
+        script.id = id;
         script.src = url;
+        script.crossOrigin = 'anonymous';
         script.onload = resolve;
-        script.onerror = reject;
+        script.onerror = (e) => reject(new Error(`Script load error for ${url}`));
         document.head.appendChild(script);
     });
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Load GSAP 3.13.0
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js', 'gsap-core');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js', 'gsap-scrolltrigger');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollSmoother.min.js', 'gsap-scrollsmoother');
 
-document.addEventListener('DOMContentLoaded', () => {
-    Promise.all([
-        loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js'),
-        loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js')
-    ]).then(() => {
+        if (window.gsap) {
+            gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+            createLandingPage();
+            setTimeout(() => {
+                initScrollSmoother();
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Failed to load GSAP:', error.message);
         createLandingPage();
-    }).catch(error => {
-        console.error('Error loading scripts:', error);
-    });
+    }
 });
-
 
 const titleEssentialApp = () => {
     return `
@@ -115,6 +128,9 @@ const stylePageProperties = () => {
                 width: 100%;
                 height: var(--NavbarMaskDepth);
                 background-color: var(--PrimaryBackgroundcolor);
+                top: 0;
+                left: 0;
+                z-index: 1000;
                 -webkit-mask-image: linear-gradient(
                     to bottom,
                     black 60%,
@@ -211,6 +227,16 @@ const stylePageProperties = () => {
                 background-color: var(--PrimaryButtonsColorsHover);
                 color: var(--PrimaryInvertButtonsColorText);
             }
+
+            .smooth-wrapper {
+                overflow: hidden;
+                position: relative;
+            }
+
+            .smooth-content {
+                min-height: 100vh;
+                padding-top: var(--NavbarMaskDepth);
+            }
     </style>
     `
 }
@@ -250,6 +276,11 @@ function createLandingPage() {
         </head>
         <body>
             ${createNavigation()}
+            <div class="smooth-wrapper">
+                <div class="smooth-content">
+                    <!-- Your content here -->
+                </div>
+            </div>
         </body>
     `;
 
@@ -273,5 +304,25 @@ function createLandingPage() {
 
     if (window.gsap && window.ScrollTrigger) {
         gsap.registerPlugin(ScrollTrigger);
+    }
+}
+
+function initScrollSmoother() {
+    if (!window.ScrollSmoother) {
+        console.warn('ScrollSmoother not available - falling back to normal scroll');
+        return;
+    }
+
+    try {
+        ScrollSmoother.create({
+            wrapper: '.smooth-wrapper',
+            content: '.smooth-content',
+            smooth: 1.5,
+            effects: true,
+            normalizeScroll: true,
+            ignoreMobileResize: true
+        });
+    } catch (error) {
+        console.error('Error initializing ScrollSmoother:', error);
     }
 }
