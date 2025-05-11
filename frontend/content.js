@@ -71,6 +71,9 @@ const ContentData = {
     },
     Featured: {
         FeatureName: "Featured",
+        FrameFeaContent: {
+            FrameCon1: ""
+        }
     }
 };
 
@@ -188,6 +191,7 @@ const PublicVariable = () => {
                 --PrivateMintLebal: ${ButtonsTheme.default.ButtonsLebal.background};
                 --PrivateMintLebalTextColor: ${ButtonsTheme.default.ButtonsLebal.text};
                 --PrivateMintHeaderHighlightColor: #96b0c096;
+                --PrivateFeaturedBorder: solid 1px #C1C1C1;
 
                 /* Text & Logo colors */
                 --PrimaryTextColor: #050505;
@@ -515,7 +519,7 @@ const createFeaturedSection = () => {
         <style>
             .Featured {
                 width: 100%;
-                height: 600px;
+                height: 800px;
                 background-color: var(--PrimaryFullyContractColor);'
             }
 
@@ -525,10 +529,11 @@ const createFeaturedSection = () => {
             }
 
             .FeaturedText {
-                padding-top: 6rem;
+                padding-top: 5rem;
             }
 
             .FeaturedText h1 {
+                margin-bottom: 1.5rem;
                 font-size: 42px;
             }
 
@@ -545,10 +550,19 @@ const createFeaturedSection = () => {
             .FeaturedContentBox {
                 flex: 0 0 auto;
                 width: 800px;
-                height: 350px;
-                border: var(--PublicBorder);
+                height: 500px;
+                border: var(--PrivateFeaturedBorder);
                 border-radius: var(--RoundedSurfaceConners);
                 scroll-snap-align: start;
+                position: relative;
+            }
+
+            .FrameIntroduce {
+                width: fit-content;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
             }
 
             @media (max-width: 768px) {
@@ -568,7 +582,9 @@ const createFeaturedSection = () => {
                 </div>
                 <div class="FeaturedWrapperBOX">
                     <div class="FeaturedContentBox">
-                    <!-- Content ของ box 1 -->
+                        <div class="FrameIntroduce">
+                            <iframe src="./IntroduceContent/VideoInject1.html" name="EssentialIntroducevideo1" style="pointer-events: none" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="777.6px" height="477.6px" allowfullscreen></iframe>
+                        </div>
                     </div>
                     <div class="FeaturedContentBox">
                     <!-- Content ของ box 2 -->
