@@ -1,5 +1,8 @@
 const GetTitle = document.getElementById("GetTitle");
 
+// Language Env
+let selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
 function loadScript(url, id) {
     return new Promise((resolve, reject) => {
         if (document.getElementById(id)) {
@@ -16,9 +19,12 @@ function loadScript(url, id) {
     });
 }
 
+
 document.addEventListener('DOMContentLoaded', async () => {
+    document.documentElement.lang = selectedLanguage;
+
+    // Set contentLoaded styling
     try {
-        // Hide content initially
         document.body.classList.remove('js-loaded');
 
         // Load GSAP and plugins
@@ -30,20 +36,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (window.gsap) {
             gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrambleTextPlugin, SplitText);
-            createLandingPage();
-            // Import Cursor
-            const { initCursor } = await import('./cursor.js');
-            initCursor();
 
-            // Show content when everything is ready
+            createLandingPage();
+
+            const { initCursor } = await import('./Control/cursor.js');
+            initCursor();
+            const { initDropdown } = await import('./Control/Dropdown.js');
+            initDropdown();
+
+            applyCustomButtonLogic();
+
+            document.querySelectorAll('.language-btn').forEach(btn => btn.classList.remove('active'));
+            const initialActiveButton = document.querySelector(`.language-btn[data-lang="${selectedLanguage}"]`);
+            if (initialActiveButton) initialActiveButton.classList.add('active');
+
             setTimeout(() => {
                 document.body.classList.add('js-loaded');
                 initScrollSmoother();
             }, 100);
         }
     } catch (error) {
-        console.error('Failed to load GSAP:', error.message);
+        console.error('Failed to load GSAP or initialize page:', error.message);
+        // Fallback rendering
         createLandingPage();
+        applyCustomButtonLogic();
+        // Attempt to load dropdown in fallback as well, though it might fail if createLandingPage didn't complete
+        try {
+            const { initDropdown } = await import('./Control/Dropdown.js');
+            initDropdown();
+        } catch (dropdownError) {
+            console.warn("Could not initialize dropdown in fallback:", dropdownError);
+        }
+        document.documentElement.lang = selectedLanguage;
+        document.querySelectorAll('.language-btn').forEach(btn => btn.classList.remove('active'));
+        const initialActiveButtonFallback = document.querySelector(`.language-btn[data-lang="${selectedLanguage}"]`);
+        if (initialActiveButtonFallback) initialActiveButtonFallback.classList.add('active');
     }
 });
 
@@ -54,44 +81,253 @@ const titleEssentialApp = () => {
 }
 
 const ContentData = {
-    Title: {
-        PageTitle: "Essential App — All-in-one Utility Toolkit",
-        Name: "Essential app"
-    },
-    Heading: {
-        HeadingIntroduce: {
-            HeadersIntroduceContent1: "Essential app, made for you",
-            HeadersIntroduceContent2: "All-in-one, built to help."
+    en: {
+        Title: {
+            PageTitle: "Essential App — All-in-one Utility Toolkit",
+            Name: "Essential app"
         },
-        HeadingExplain: {
-            HeadersExplainContent1: "All-in-one utility application that make you life",
-            HeadersExplainContent2: "And you work better combining the core tools you need into one compact.",
+        Heading: {
+            HeadingIntroduce: {
+                HeadersIntroduceContent1: "Essential app, made for you",
+                HeadersIntroduceContent2: "All-in-one, built to help."
+            },
+            HeadingExplain: {
+                HeadersExplainContent1: "All-in-one utility application that make you life",
+                HeadersExplainContent2: "And you work better combining the core tools you need into one compact.",
+            },
+            PrivateMintIntroduce: 'From Mint teams'
         },
-        PrivateMintIntroduce: 'From Mint teams'
+        Featured: {
+            FeatureName: "Featured",
+            FrameFeaContent: {
+                FrameCon1: ""
+            },
+        },
+        Navigation: {
+            Featured: "Featured",
+            HowItWorks: "How it works",
+            About: "About",
+            Contact: "Contact"
+        },
+        CTA: {
+            Download: "Download",
+            CTAicon: '<span class="material-symbols-outlined">density_medium</span>'
+        },
+        HighlightAnimationWidth: "360px"
     },
-    Featured: {
-        FeatureName: "Featured",
-        FrameFeaContent: {
-            FrameCon1: ""
-        }
+    th: {
+        Title: {
+            PageTitle: "Essential App — แอปพลิเคชันที่ทำให้งานของคุณง่ายขึ้น",
+            Name: "Essential app"
+        },
+        Heading: {
+            HeadingIntroduce: {
+                HeadersIntroduceContent1: "Essential app ออกแบบมา",
+                HeadersIntroduceContent2: "เพื่อตอบโจทย์ชีวิตคุณ"
+            },
+            HeadingExplain: {
+                HeadersExplainContent1: "แอพที่ถูกสร้างมาเพื่อรวมแอพที่จำเป็นให้คุณได้ใช้แบบ All-in-one",
+                HeadersExplainContent2: "และคุณจะทำงานได้ดีขึ้นด้วยการรวมเครื่องมือหลักที่คุณต้องการไว้ในหนึ่งเดียว",
+            },
+            PrivateMintIntroduce: 'จาก Mint teams'
+        },
+        Featured: {
+            FeatureName: "คุณสมบัติ",
+            FrameFeaContent: {
+                FrameCon1: ""
+            },
+        },
+        Navigation: {
+            Featured: "คุณสมบัติ",
+            HowItWorks: "มันทำงานอย่างไร",
+            About: "เกี่ยวกับ",
+            Contact: "ติดต่อ"
+        },
+        CTA: {
+            Download: "ดาวน์โหลด",
+            CTAicon: '<span class="material-symbols-outlined">density_medium</span>'
+        },
+        HighlightAnimationWidth: "432px"
     }
 };
 
-GetTitle.title = ContentData.Title.Name;
+function applyCustomButtonLogic() {
+    const navLinks = document.querySelectorAll('.Navigation a');
+    const HeaderIntroduceTitle = document.querySelectorAll('.HeaderText h1');
+    const HeaderTextHighLight = document.getElementById('PrivateHeaderTextHighLight');
 
-if (GetTitle) {
-    if ('title' in GetTitle) {
-        GetTitle.title = ContentData.Title.Name;
-    } else {
-        document.title = ContentData.Title.Name;
+    function configElements() {
+        if (!navLinks.length) {
+            return;
+        }
+        if (!HeaderIntroduceTitle.length) {
+            return;
+        }
+    }
+
+    configElements();
+
+    function ClearProperty() {
+        navLinks.forEach(link => {
+            link.style.lineHeight = '';
+        });
+        HeaderIntroduceTitle.forEach(title => {
+            title.style.fontFamily = '';
+        })
+    }
+
+    ClearProperty();
+
+    const currentLangData = ContentData[selectedLanguage];
+    if (!currentLangData || !HeaderTextHighLight) {
+        console.warn("applyCustomButtonLogic: Missing currentLangData or HeaderTextHighLight element.");
+        return;
+    }
+
+    if (selectedLanguage === 'th') {
+        HeaderIntroduceTitle.forEach(title => {
+            title.style.fontFamily = '"Anuphan", sans-serif';
+        });
+        HeaderTextHighLight.style.left = "42.1%";
+        gsap.to(HeaderTextHighLight, {
+            width: currentLangData.HighlightAnimationWidth,
+            duration: 0.3, 
+            ease: "power1.out"
+        });
+    } else if (selectedLanguage === 'en') {
+        HeaderIntroduceTitle.forEach(title => {
+            title.style.fontFamily = '"Manrope", sans-serif';
+        });
+        HeaderTextHighLight.style.left = "48.75%";
+        gsap.to(HeaderTextHighLight, {
+            width: currentLangData.HighlightAnimationWidth,
+            duration: 0.3,
+            ease: "power1.out"
+        });
+    }
+}
+
+let headerExplainSplit = null;
+
+function setupHeaderExplainAnimation(isInitialLoad = false) {
+    if (typeof gsap === 'undefined' || typeof SplitText === 'undefined') {
+        return;
+    }
+
+    const element = document.getElementById("HeaderExplainContent");
+    if (!element) {
+        return;
+    }
+
+    if (headerExplainSplit && typeof headerExplainSplit.revert === 'function') {
+        headerExplainSplit.revert();
+        headerExplainSplit = null; // Clear the reference
+    }
+
+    if (!element.textContent || !element.textContent.trim()) {
+        return;
+    }
+
+    headerExplainSplit = new SplitText(element, { type: "lines" });
+
+    if (!headerExplainSplit.lines || headerExplainSplit.lines.length === 0) {
+        gsap.set(element, { visibility: "visible", opacity: 1, y: "0%" });
+        return;
+    }
+
+    gsap.set(headerExplainSplit.lines, { visibility: "hidden", y: "50%" });
+
+    const animationDelay = isInitialLoad ? 4.5 : 0.2;
+
+    gsap.to(headerExplainSplit.lines, {
+        visibility: "visible",
+        y: "0%",
+        duration: isInitialLoad ? 2 : 1.2,
+        ease: "back.out(0.7)",
+        stagger: 0.1,
+        delay: animationDelay,
+        overwrite: "auto"
+    });
+}
+
+window.changeLanguage = function (lang) {
+    if (selectedLanguage === lang) return;
+
+    selectedLanguage = lang;
+    localStorage.setItem('selectedLanguage', lang);
+    document.documentElement.lang = lang;
+
+    updateContentUI();
+    applyCustomButtonLogic();
+
+    const languageButtons = document.querySelectorAll('.language-btn');
+    languageButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+        }
+    });
+};
+
+function updateContentUI() {
+    const langData = ContentData[selectedLanguage];
+    if (!langData) {
+        console.error(`Language data for "${selectedLanguage}" not found.`);
+        return;
+    }
+
+    // Set Page Title
+    document.title = langData.Title.PageTitle;
+    if (GetTitle) {
+        GetTitle.setAttribute('title', langData.Title.Name);
+    }
+
+    navigation.forEach(navItem => {
+        const navLink = document.querySelector(`.Navigation a[data-nav-key="${navItem.key}"]`);
+        if (navLink && langData.Navigation && langData.Navigation[navItem.key]) {
+            navLink.textContent = langData.Navigation[navItem.key];
+        }
+    });
+
+    const ctaButton = document.getElementById('CTA_Navbar');
+    if (ctaButton && langData.CTA && langData.Title) {
+        ctaButton.textContent = `${langData.CTA.Download} ${langData.Title.Name}`;
+    }
+
+    const mintIntroText = document.querySelector('.MINT_HeaderText span');
+    if (mintIntroText && langData.Heading) {
+        mintIntroText.textContent = langData.Heading.PrivateMintIntroduce;
+    }
+
+    // Header => Main (ScrambleText animation won't re-run automatically)
+    const headerText1Elem = document.getElementById('HeaderTextContent1');
+    if (headerText1Elem && langData.Heading && langData.Heading.HeadingIntroduce) {
+        headerText1Elem.textContent = langData.Heading.HeadingIntroduce.HeadersIntroduceContent1;
+    }
+    const headerText2Elem = document.getElementById('HeaderTextContent2');
+    if (headerText2Elem && langData.Heading && langData.Heading.HeadingIntroduce) {
+        headerText2Elem.textContent = langData.Heading.HeadingIntroduce.HeadersIntroduceContent2;
+    }
+
+    const headerExplainElem = document.getElementById('HeaderExplainContent');
+    if (headerExplainElem && langData.Heading && langData.Heading.HeadingExplain) {
+        headerExplainElem.innerHTML = `${langData.Heading.HeadingExplain.HeadersExplainContent1} <br> ${langData.Heading.HeadingExplain.HeadersExplainContent2}`;
+    }
+
+    // Re-initialize SplitText
+    setupHeaderExplainAnimation(false);
+
+    const featuredTitleElem = document.querySelector('.FeaturedText h1');
+    if (featuredTitleElem && langData.Featured) {
+        featuredTitleElem.textContent = langData.Featured.FeatureName;
     }
 }
 
 const navigation = [
-    { name: "Featured", href: "#features" },
-    { name: "How it works", href: "#how-it-works" },
-    { name: "About", href: "#about" },
-    { name: "Contact", href: "#contact" }
+    { key: "Featured", href: "#features" },
+    { key: "HowItWorks", href: "#how-it-works" },
+    { key: "About", href: "#about" },
+    { key: "Contact", href: "#contact" }
 ];
 
 const DownloadEssentialApp = {
@@ -104,6 +340,7 @@ const DownloadEssentialApp = {
     font-family: "Merriweather", serif; 
     font-family: "Trirong", serif;
     font-family: "Anuphan", sans-serif;
+    font-family: "DM Sans", sans-serif;
 */
 
 const ButtonsTheme = {
@@ -120,8 +357,9 @@ const ButtonsTheme = {
 };
 
 const PublicVariable = () => {
+    const langData = ContentData[selectedLanguage]; // Use selected language
     const configHeadtag = () => {
-        return `<title>${ContentData.Title.PageTitle}</title>`;
+        return `<title>${langData.Title.PageTitle}</title>`;
     };
 
     const createStyles = () => {
@@ -149,7 +387,7 @@ const PublicVariable = () => {
             }
 
             ::selection {
-                background-color: #e5f4ff;
+                background-color: #e5f4ff !important;
             }
 
             /* Scrollbar Styling */
@@ -187,6 +425,8 @@ const PublicVariable = () => {
                 --PrimaryButtonsColorsHover: ${ButtonsTheme.default.backgroundHover};
                 --PrimaryButtonsColorText: ${ButtonsTheme.default.text};
                 --PrimaryInvertButtonsColorText: ${ButtonsTheme.default.textInvert};
+                --PrimaryAccentButtons: #ac9393;
+                --PrimaryButtonsHoverlabel: #f0eee6;
 
                 --PrivateMintLebal: ${ButtonsTheme.default.ButtonsLebal.background};
                 --PrivateMintLebalTextColor: ${ButtonsTheme.default.ButtonsLebal.text};
@@ -337,6 +577,50 @@ const StylePageNavbar = () => {
                 border-bottom: solid 2px #000;
             }
 
+            .call_in_action {
+                display: flex;
+                align-items: center;
+            }
+
+            .language-btn {
+                padding: 0.5rem 0.5rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-size: 14.5px;
+                width: 72.5px;
+                border-radius: var(--RoundedConners);
+                font-family: 'Manrope', 'Anuphan', sans-serif;
+            }
+                
+            .language-btn.active {
+                background-color: var(--PrimaryAccentButtons);
+                color: var(--PrimaryButtonsColorText);
+            }
+
+            .language-btn:not(.active) {
+                background-color: var(--PrimaryNavbarBackgroundColor, #fff);
+            }
+
+            .language-btn:not(.active):hover {
+                background-color: var(--PrimaryButtonsHoverlabel);
+            }
+
+            .language-switcher {
+                position: fixed;
+                top: calc(75px + 10px);
+                right: 20px; 
+                background: var(--PrimaryNavbarBackgroundColor, #fff);
+                border-radius: var(--RoundedConners);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(10px);
+                transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0s linear 0.2s;
+                z-index: 1000;
+                padding: 6px;
+            }
+            
             #CTA_Navbar {
                 padding: 0.7rem 1.35rem;
                 background-color: var(--PrimaryButtonsColors);
@@ -350,8 +634,80 @@ const StylePageNavbar = () => {
                 background-color: var(--PrimaryButtonsColorsHover);
                 color: var(--PrimaryInvertButtonsColorText);
             }
+
+            #CTA_Navbar .material-symbols-outlined {
+                vertical-align: middle; 
+                margin-right: 0.3em;   
+            }
+
+            .call_in_action { /* Make this a positioning context for the dropdown */
+                position: relative; 
+                display: flex;
+                align-items: center;
+            }
+
+            .LanguageToggle {
+                padding: 0.7rem;
+                background-color: var(--PrimaryButtonsColors);
+                border-radius: var(--RoundedConners);
+                margin-left: 1rem;
+                display: flex; /* To center icon if needed */
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+            }
+
+            .LanguageToggle:hover {
+                background-color: var(--PrimaryButtonsColorsHover);
+            }
+
+            .LanguageToggle:hover .material-symbols-outlined {
+                color: var(--PrimaryInvertButtonsColorText);
+            }
+
+            .LanguageToggle .material-symbols-outlined {
+                font-size: 24px; 
+                vertical-align: middle;
+                color: var(--PrimaryTextColor);
+            }
+
+            .language-switcher.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+                transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0s linear 0s;
+            }
         `
 }
+
+const createNavigation = () => {
+    const langData = ContentData[selectedLanguage]; // Selected language for initial text
+
+    return `
+        <nav>
+            <div class="navbarContent">
+                <div class="Title">
+                    ${titleEssentialApp()}
+                </div>
+                <ul class="Navigation">
+                    ${navigation.map(item => `
+                        <li><a href="${item.href}" data-nav-key="${item.key}">${langData.Navigation[item.key]}</a></li>
+                    `).join('')}
+                </ul>
+                <div class="call_in_action">
+                    <a href="${DownloadEssentialApp.href}" id="CTA_Navbar" class="hoverable">${langData.CTA.Download} ${langData.Title.Name}</a>
+                    <a href="javascript:void(0)" class="LanguageToggle">
+                        ${langData.CTA.CTAicon}
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <div class="language-switcher">
+            <button class="language-btn ${selectedLanguage === 'th' ? 'active' : ''}" data-lang="th" onclick="changeLanguage('th')" id="lang-btn-th">ภาษาไทย</button>
+            <button class="language-btn ${selectedLanguage === 'en' ? 'active' : ''}" data-lang="en" onclick="changeLanguage('en')" id="lang-btn-en">English</button>
+        </div>
+    `;
+};
 
 const createCursor = () => {
     return `
@@ -387,25 +743,9 @@ const createCursor = () => {
     `
 }
 
-const createNavigation = () => {
-    return `
-        <nav>
-            <div class="navbarContent">
-                <div class="Title">
-                    ${titleEssentialApp()}
-                </div>
-                <ul class="Navigation">
-                    ${navigation.map(item => `
-                        <li><a href="${item.href}">${item.name}</a></li>
-                    `).join('')}
-                </ul>
-                <a href="${DownloadEssentialApp.href}" id="CTA_Navbar" class="hoverable">Download ${ContentData.Title.Name}</a>
-            </div>
-        </nav>
-    `;
-};
-
 const createHeader = () => {
+    const langData = ContentData[selectedLanguage]; // Use selected language for initial text
+
     return `
         <style>
             .HeaderWrapper {
@@ -494,14 +834,14 @@ const createHeader = () => {
                     <div class="HeaderText">
                         <div class="MINT_HeaderText" id="MINT_HeaderText">
                             <img src="./MintTeamsLogoSVG.svg" rel="Mint teams logo introduce">
-                            <span>${ContentData.Heading.PrivateMintIntroduce}</span>
+                            <span>${langData.Heading.PrivateMintIntroduce}</span>
                         </div>
-                        <h1 id="HeaderTextContent1">${ContentData.Heading.HeadingIntroduce.HeadersIntroduceContent1}</h1>
-                        <h1 id="HeaderTextContent2">${ContentData.Heading.HeadingIntroduce.HeadersIntroduceContent2}</h1>
+                        <h1 id="HeaderTextContent1">${langData.Heading.HeadingIntroduce.HeadersIntroduceContent1}</h1>
+                        <h1 id="HeaderTextContent2">${langData.Heading.HeadingIntroduce.HeadersIntroduceContent2}</h1>
                         <br>
                         <p id="HeaderExplainContent">
-                            ${ContentData.Heading.HeadingExplain.HeadersExplainContent1} <br>
-                            ${ContentData.Heading.HeadingExplain.HeadersExplainContent2}
+                            ${langData.Heading.HeadingExplain.HeadersExplainContent1} <br>
+                            ${langData.Heading.HeadingExplain.HeadersExplainContent2}
                         </p>
                         <div id="PrivateHeaderTextHighLight"></div>
                     </div>
@@ -515,6 +855,8 @@ const createHeader = () => {
 }
 
 const createFeaturedSection = () => {
+    const langData = ContentData[selectedLanguage]; // Use selected language for initial text
+
     return `
         <style>
             .Featured {
@@ -567,7 +909,7 @@ const createFeaturedSection = () => {
 
             @media (max-width: 768px) {
                 .FeaturedContentBox {
-                    width: 90%;
+                    width: 90%; 
                 }
                 .FeaturedText,
                 .FeaturedWrapperBOX {
@@ -578,12 +920,12 @@ const createFeaturedSection = () => {
         <section class="Featured">
             <div class="FeaturedContent">
                 <div class="FeaturedText">
-                    <h1>${ContentData.Featured.FeatureName}</h1>
+                    <h1>${langData.Featured.FeatureName}</h1>
                 </div>
                 <div class="FeaturedWrapperBOX">
                     <div class="FeaturedContentBox">
                         <div class="FrameIntroduce">
-                            <iframe src="./IntroduceContent/VideoInject1.html" name="EssentialIntroducevideo1" style="pointer-events: none" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="777.6px" height="477.6px" allowfullscreen></iframe>
+                            <iframe src="./IntroduceContent/Video_EssentialSlide/LightmodeVideoEssential_English.html" name="EssentialIntroducevideo1" style="pointer-events: none" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" width="777.6px" height="477.6px" allowfullscreen></iframe>
                         </div>
                     </div>
                     <div class="FeaturedContentBox">
@@ -639,23 +981,30 @@ function createLandingPage() {
 
     const fontLink = document.createElement('link');
     fontLink.rel = 'stylesheet';
-    fontLink.href = 'https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap';
     head.appendChild(fontLink);
+
+    // (Icons)
+    const materialSymbolsLink = document.createElement('link');
+    materialSymbolsLink.rel = 'stylesheet';
+    materialSymbolsLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
+    head.appendChild(materialSymbolsLink);
 
     if (window.gsap && window.ScrollTrigger) {
         gsap.registerPlugin(ScrollTrigger);
 
         const headerText1 = document.getElementById('HeaderTextContent1');
         const headerText2 = document.getElementById('HeaderTextContent2');
-        const HeaderExplainContent = document.getElementById('HeaderExplainContent');
-        const HeaderExplainContentsplit = new SplitText("#HeaderExplainContent", { type: "lines" });
+        // const HeaderExplainContent = document.getElementById('HeaderExplainContent'); // Element will be fetched in setupHeaderExplainAnimation
 
-        headerText2.style.visibility = "hidden";
-        MINT_HeaderText.style.visibility = "hidden";
-        HeaderExplainContent.style.visibility = "hidden";
-        gsap.set(HeaderExplainContentsplit.lines, { visibility: "hidden", y: "50%" });
+        if(headerText2) headerText2.style.visibility = "hidden";
+        
+        const mintHeaderTextElement = document.getElementById('MINT_HeaderText');
+        if(mintHeaderTextElement) mintHeaderTextElement.style.visibility = "hidden";
 
         if (headerText1 && headerText2) {
+            const langDataForAnimation = ContentData[selectedLanguage]; // Get current language data for animation
+
             // Set initial state
             gsap.set(headerText2, { visibility: 'hidden' });
             gsap.set('#PrivateHeaderTextHighLight', {
@@ -668,7 +1017,7 @@ function createLandingPage() {
             Texts.to(headerText1, {
                 duration: 1.5,
                 scrambleText: {
-                    text: headerText1.innerHTML,
+                    text: langDataForAnimation.Heading.HeadingIntroduce.HeadersIntroduceContent1, // Use text from langData
                     chars: "lowerCase",
                     revealDelay: 0.5,
                     tweenLength: false
@@ -678,7 +1027,7 @@ function createLandingPage() {
                     duration: 1.5,
                     visibility: 'visible',
                     scrambleText: {
-                        text: headerText2.innerHTML,
+                        text: langDataForAnimation.Heading.HeadingIntroduce.HeadersIntroduceContent2, // Use text from langData
                         chars: "lowerCase",
                         revealDelay: 0.5,
                         tweenLength: false
@@ -689,28 +1038,19 @@ function createLandingPage() {
                     duration: 0.3
                 })
                 .to('#PrivateHeaderTextHighLight', {
-                    width: 360,
+                    width: langDataForAnimation.HighlightAnimationWidth,
                     duration: 0.8,
                     ease: "power1.out"
                 })
                 .to('#MINT_HeaderText', {
                     filter: "blur(0px)",
-                    y: 0,
+                    y: "0%", // Using string "0%" for consistency with other y transforms
                     visibility: 'visible',
                     duration: 0.8,
                     ease: "back.out(1.4)"
                 });
+            setupHeaderExplainAnimation(true); // Call for initial load
         }
-
-        setTimeout(() => {
-            gsap.to(HeaderExplainContentsplit.lines, {
-                visibility: "visible",
-                y: "0%",
-                duration: 2,
-                ease: "back.out(0.7)",
-                stagger: 0.1
-            });
-        }, 4500);
 
     }
 }
