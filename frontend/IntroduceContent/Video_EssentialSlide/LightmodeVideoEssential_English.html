@@ -16,7 +16,7 @@
     }
 
     body {
-        background-color: #fff;
+        background-color: #f0ede3;
     }
 
     #EssentialLogo {
@@ -33,7 +33,7 @@
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-8%, -55%) scale(3);
+        transform: translate(42%, -65%) scale(8);
         transform-origin: center center;
         will-change: transform;
         color: #ac9393;
@@ -78,21 +78,11 @@
     const Aletters = document.getElementById("Aletters");
 
     setTimeout(() => {
-        Aletters.style.opacity = "0";
-        Essential.style.opacity = "0";
-    }, 7000);
-
-    setTimeout(() => {
-        Aletters.style.opacity = "0";
-        Essential.style.opacity = "0";
-    }, 8500);
-
-    setTimeout(() => {
         Essential.style.opacity = "1";
     }, 1000);
 
     setTimeout(() => {
-        Essential.style.transform = "translate(-75%, -50%) scale(3)";
+        Essential.style.transform = "translate(-120%, -50%) scale(8)";
         setTimeout(() => {
             Aletters.style.visibility = "visible";
             setTimeout(() => {
@@ -113,8 +103,24 @@
         }, 1000);
     }, 1500);
 
+    function defineLoopTimeout() {
+        setTimeout(() => {
+            Aletters.style.opacity = "0";
+            Essential.style.opacity = "0";
+        }, 7000);
+
+        setTimeout(() => {
+            Aletters.style.opacity = "0";
+            Essential.style.opacity = "0";
+        }, 8500);
+
+        setTimeout(() => {
+            window.location.reload()
+        }, 9000);
+    }
+
     setInterval(() => {
-        window.location.reload();
-    }, 9000);
+        defineLoopTimeout();
+    }, 500);
 
 </script>

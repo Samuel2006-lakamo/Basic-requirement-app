@@ -30,7 +30,7 @@
     --theme-bg: #0F0F0F;
     --theme-fg: #ffffff;
     --theme-primary: #080808;
-    --theme-accent: #b4f5c7;
+    --theme-accent: #ac9393;
     --theme-border: #3f3f3f;
     --theme-card: #141414;
     --theme-titlebar: #0f0f0f;
@@ -86,6 +86,13 @@
     --ctx-menu-shadow: 0px 24px 38px rgba(0, 0, 0, 0.14),
         0px 9px 46px rgba(0, 0, 0, 0.12),
         0px 11px 15px rgba(0, 0, 0, 0.20);
+
+    /* Buttons */
+    --PrimaryButtonsColors: #222;
+    --PrimaryButtonsColors: var(--HoverColor);
+    /* Toggle Essential logo */
+    --LightmodeToggleButtons: none;
+    --DarkmodeToggleButtons: block;
 }
 
 /* (default) */
@@ -98,23 +105,23 @@
 }
 
 :root[data-theme="light"] {
-    --theme-bg: #faf9f5;
+    --theme-bg: #faf8f0;
     --theme-fg: #000000;
-    --theme-primary: #ffffff;
+    --theme-primary: #fffcf4;
     --theme-card: #FFFFFF;
     --theme-titlebar: #0f0f0f;
-    --theme-border: #e6e6e6;
+    --theme-border: #cfcfcf;
     --HoverColor: #eeeeee;
     --SoftHoverColor: #f2f1ef;
     --theme-links: #222;
     --NameColorSvg: #000;
-    --theme-accent: #6aacff;
+    --theme-accent: #ccaeae;
     --HRborder: solid 1px #e6e6e6;
     --RippleEffectColor: rgba(0, 0, 0, 0.27);
     /* Titlebar */
     --TitlebarColor: #f0eee6;
     --TitlebarColorButton: #303030;
-    --TitlebarColorBorder: solid 1px #d1d1d1;
+    --TitlebarColorBorder: solid 1px #cfcfcf;
     --TitlebarColorHover: #d1d1d1;
     /* Contextmenu color */
     --ctx-menu-bg: #f6f6f5;
@@ -126,6 +133,12 @@
     --ctx-menu-shadow: 0px 24px 38px rgba(0, 0, 0, 0.10),
         0px 9px 46px rgba(0, 0, 0, 0.08),
         0px 11px 15px rgba(0, 0, 0, 0.12);
+    /* Buttons */
+    --PrimaryButtonsColors: #cecdc6;
+    --PrimaryButtonsColors: var(--HoverColor);
+    /* Toggle Essential logo */
+    --LightmodeToggleButtons: block;
+    --DarkmodeToggleButtons: none;
     color-scheme: light;
 }
 
@@ -134,7 +147,7 @@ body.dark {
     --theme-bg: #0f0f0f;
     --theme-fg: #fff;
     --theme-primary: #080808;
-    --theme-accent: #b4f5c7;
+    --theme-accent: #ac9393;
     --theme-border: #3f3f3f;
     --theme-card: #141414;
     --theme-titlebar: #0f0f0f;
@@ -148,23 +161,23 @@ body.dark {
 
 html.light,
 body.light {
-    --theme-bg: #faf9f5;
+    --theme-bg: #faf8f0;
     --theme-fg: #0f0f0f;
-    --theme-primary: #ffffff;
+    --theme-primary: #fffcf4;
     --theme-card: #FFFFFF;
     --theme-titlebar: #f0f0f0;
-    --theme-border: #e6e6e6;
+    --theme-border: #cfcfcf;
     --HoverColor: #eeeeee;
     --SoftHoverColor: #f2f1ef;
     --theme-links: #222;
     --NameColorSvg: #000;
-    --theme-accent: #6aacff;
+    --theme-accent: #ccaeae;
     --HRborder: solid 1px #e6e6e6;
     --RippleEffectColor: rgba(0, 0, 0, 0.27);
     /* Titlebar */
     --TitlebarColor: #f0eee6;
     --TitlebarColorButton: #303030;
-    --TitlebarColorBorder: solid 1px #d1d1d1;
+    --TitlebarColorBorder: solid 1px #cfcfcf;
     --TitlebarColorHover: #d1d1d1;
     /* Contextmenu color */
     --ctx-menu-bg: #f6f6f5;
@@ -176,6 +189,12 @@ body.light {
     --ctx-menu-shadow: 0px 24px 38px rgba(0, 0, 0, 0.10),
         0px 9px 46px rgba(0, 0, 0, 0.08),
         0px 11px 15px rgba(0, 0, 0, 0.12);
+    /* Buttons */
+    --PrimaryButtonsColors: #cecdc6;
+    --PrimaryButtonsColorsHOVER: var(--HoverColor);
+    /* Toggle Essential logo */
+    --LightmodeToggleButtons: block;
+    --DarkmodeToggleButtons: none;
     color-scheme: light;
     background: var(--theme-bg);
     color: var(--theme-fg);

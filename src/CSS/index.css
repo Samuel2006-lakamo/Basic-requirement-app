@@ -29,8 +29,8 @@ html {
 }
 
 .contentTEXT h1 {
-    font-family: "Host Grotesk", "Segoe UI", sans-serif;
-    font-weight: 300;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 400;
     font-size: 18px;
 }
 
@@ -199,17 +199,29 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.Textintro img {
+.Textintro svg {
     display: block;
     width: 60px;
+    height: auto;
+}
+
+.TextIntroImageLogoLightmode_ThemeChenge {
+    display: var(--LightmodeToggleButtons);
+}
+
+.TextIntroImageLogoDarkmode_DefaultLogo {
+    display: var(--DarkmodeToggleButtons);
 }
 
 .Textintro h1 {
     display: flex;
     justify-content: center;
-    margin-top: 1.55rem;
+    margin-top: 7rem;
     pointer-events: none;
     user-select: none;
     font-size: 34px;
@@ -230,12 +242,12 @@ html {
 .TextintroBTN button {
     padding: 0.6rem 1.25rem;
     border-radius: 0.75rem;
-    --TimeButtons: #222;
-    background-color: var(--TimeButtons);
+    /* --TimeButtons: #222; */
+    background-color: var(--PrimaryButtonsColors);
     width: fit-content;
     display: inline-block;
     text-align: center;
-    border: none;
+    border: var(--border);
     font-size: 14px;
     /* Define hover Effect */
     background-image: linear-gradient(#3f3f3f, #3f3f3f);
@@ -246,7 +258,7 @@ html {
 }
 
 .TextintroBTN button:hover {
-    background-color: #2f2f2f;
+    filter: brightness(0.8);
 }
 
 .TextintroBTN button:focus,
@@ -316,8 +328,8 @@ html {
     border-radius: 0.75rem;
     margin: 0 auto;
     font-size: 14px;
-    --TimeButtons: #222;
-    background-color: var(--TimeButtons);
+    /* --TimeButtons: #222; */
+    background-color: var(--PrimaryButtonsColors);
     border: none;
     font-weight: 700;
     transition: all 0.3s ease;
@@ -328,7 +340,7 @@ html {
 }
 
 .send-button:hover {
-    background-color: #2f2f2f;
+    filter: brightness(0.8);
 }
 
 .send-button::before {
@@ -342,7 +354,7 @@ html {
     content: "Continue to this app";
     display: block;
     line-height: 38px;
-    color: #fbfbfb;
+    color: var(--color-fg);
     transition: all 0.3s ease;
     width: 100%;
     z-index: 1;
@@ -367,7 +379,7 @@ html {
 
 .send-button--pressed::after {
     content: "";
-    background-color: #b2e77c;
+    background-color: var(--theme-accent);
     height: 100%;
     width: 100%;
     opacity: 1;
@@ -505,8 +517,13 @@ html {
 }
 
 @keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
 }
 
 .AppcardsContent {
@@ -518,6 +535,15 @@ html {
     transform: translateY(20px);
     animation: fadeInUp 0.3s ease-out forwards;
     animation-delay: 0.2s;
+}
+
+@media screen and (min-width: 1400px) {
+    .AppcardsContent,
+    #TextCards {
+        padding: 2rem 0rem;
+        max-width: 1000px;
+        margin: auto;
+    }
 }
 
 .card {

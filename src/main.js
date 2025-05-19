@@ -399,8 +399,8 @@ app.on('browser-window-blur', () => {
 
 const getThemeIcon = () => {
   return nativeTheme.shouldUseDarkColors
-    ? path.join(__dirname, 'assets', 'icons', 'EssentialAPPIcons.png')
-    : path.join(__dirname, 'assets', 'icons', 'EssentialAPPIconsLight.png');
+    ? path.join(__dirname, 'assets', 'icons','WrapperEssentialAppLogo', 'EssentialAppSystemLogo.png')
+    : path.join(__dirname, 'assets', 'icons','WrapperEssentialAppLogo', 'EssentialAppSystemLogoLight.png');
 };
 
 const handleError = async (win, error, context = '') => {
@@ -577,7 +577,7 @@ app.whenReady().then(async () => {
       let height = Math.min(baseHeight, Math.floor(screenHeight * 0.7));
       width = Math.floor(width / 8) * 8;
       height = Math.floor(height / 8) * 8;
-      width = Math.max(width, 640);
+      width = Math.max(width, 670);
       height = Math.max(height, 480);
       return { width, height };
     };
@@ -586,8 +586,8 @@ app.whenReady().then(async () => {
     WINDOW_CONFIG = {
       ...BASE_WINDOW_CONFIG,
       min: {
-        width: Math.floor(optimal.width * 0.6),
-        height: Math.floor(optimal.height * 0.6)
+        width: Math.floor(optimal.width * 0.9),
+        height: Math.floor(optimal.height * 0.4)
       },
       default: {
         ...PLATFORM_CONFIG[process.platform]?.window || PLATFORM_CONFIG.win32.window,
@@ -1234,8 +1234,8 @@ const updateAllWindowsTheme = (theme) => {
     if (!win.isDestroyed()) {
       try {
         win.setTitleBarOverlay({
-          color: theme === 'dark' ? '#0f0f0f' : '#f0eee6',
-          symbolColor: theme === 'dark' ? '#f0eee6' : '#000000',
+          color: theme === 'dark' ? '#0f0f0f' : '#e8e7e3',
+          symbolColor: theme === 'dark' ? '#e8e7e3' : '#000000',
           height: 39
         });
       } catch (err) {

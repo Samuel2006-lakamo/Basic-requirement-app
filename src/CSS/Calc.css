@@ -8,9 +8,14 @@
 }
 
 .contentTEXT h1 {
-    font-family: "Host Grotesk", "Segoe UI", sans-serif;
-    font-weight: 300;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 400;
     font-size: 18px;
+}
+
+#GotoHomePage {
+    background-color: var(--TitlebarColor) !important;
+    border-right: none !important;
 }
 
 @media screen and (max-width: 720px) {

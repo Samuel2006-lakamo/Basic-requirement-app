@@ -81,7 +81,7 @@
   transition: opacity var(--ctx-menu-transition);
   position: relative;
   z-index: 1;
-  color: var(--accent);
+  color: var(--theme-fg);
 }
 
 .menu-item:hover .material-symbols-outlined {

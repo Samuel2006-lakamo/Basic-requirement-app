@@ -8,15 +8,15 @@
 }
 
 .contentTEXT h1 {
-    font-family: "Host Grotesk", "Segoe UI", sans-serif;
-    font-weight: 300;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 400;
     font-size: 18px;
 }
 
 #CurrentPage {
     border-left: none !important;
     border-right: var(--TitlebarColorBorder) !important;
-    background-color: var(--theme-bg) !important;
+    background-color: var(--color-primary) !important;
 }
 
 #GotoHomePage {
@@ -47,11 +47,9 @@
     position: fixed;
     right: 2rem;
     top: 110px;
-    background: #1a1a1a;
+    background: var(--ctx-menu-bg);
     border-radius: 4px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-        0 8px 10px 1px rgba(0, 0, 0, 0.14),
-        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--ctx-menu-shadow);
     display: none;
     z-index: 1000;
     padding: 0.25rem 0rem;
@@ -80,7 +78,7 @@
 
 .ripple {
     position: absolute;
-    background: rgba(255, 255, 255, 0.700);
+    background: var(--RippleEffectColor);
     border-radius: 50%;
     pointer-events: none;
     transform: translate(-50%, -50%);
@@ -104,7 +102,7 @@
 
 .rippleSidebar {
     position: absolute;
-    background: rgba(255, 255, 255, 0.300);
+    background: var(--RippleEffectColor);
     border-radius: 50%;
     pointer-events: none;
     transform: translate(-50%, -50%);
@@ -128,7 +126,7 @@
 
 .lang-option {
     padding: 8px 16px;
-    color: #e3e3e3;
+    color: var(--ctx-menu-text);
     cursor: pointer;
     transition: background 0.2s;
     min-width: 120px;

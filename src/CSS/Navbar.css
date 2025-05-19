@@ -168,7 +168,7 @@ nav ul li a:hover {
 }
 
 /* Navbar Responsive */
-
+    
 @media (max-width: 768px) {
     :root {
         --nav-padding: 1.15rem;
@@ -185,10 +185,6 @@ nav ul li a:hover {
 @media (max-width: 340px) {
     #KeepONtop {
         right: 90px;
-    }
-
-    #GotoHomePage span {
-        color: var(--accent);
     }
 }
 

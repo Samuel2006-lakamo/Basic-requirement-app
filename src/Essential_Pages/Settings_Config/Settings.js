@@ -91,44 +91,30 @@ document.querySelectorAll('.NavContent').forEach(SettingsLinks => {
 
 // colors
 const themeColorSets = {
-    dark: [
-        '#E7F1FF', '#B9DCFC', '#8AC5FF', '#5EB0FF', '#2E96FF',
-        '#E2F7DF', '#C3EAC6', '#9DDCA1', '#75CD7E', '#53BD63',
-        '#FFF8E6', '#FFF0C0', '#FFE699', '#FFDC73', '#FFD34D',
-        '#F2EADF', '#E5D6C3', '#D8C2A6', '#CBAE8A', '#BF9B6E',
-        '#FFE4E4', '#FFC6C6', '#FFA7A7', '#FF8989', '#FF6C6C',
-    ],
-    light: [
-        '#C5D9E5',
-        '#94B9DA',
-        '#70A0DC',
-        '#4B8ECC',
-        '#2978C2',
-
-        '#C2D9C2',
-        '#A1C6AD',
-        '#7CB98B',
-        '#5DA672',
-        '#42905D',
-
-        '#E9DFC7',
-        '#DDC894',
-        '#D5BA77',
-        '#CEAD5D',
-        '#C69F45',
-
-        '#D6CCC1',
-        '#C9B69D',
-        '#BC9F7E',
-        '#AF8B65',
-        '#A2784E',
-
-        '#E6CDCD',
-        '#CAAFAF',
-        '#AC9393',
-        '#8F7979',
-        '#745E5E'
-    ]
+  dark: [
+    // Blue (cool)
+    '#D6E8FF', '#A9CEFF', '#7BB5FF', '#4E9CFF', '#2B83F2',
+    // Green (success)
+    '#CFF2CB', '#AEE2AA', '#8CD38A', '#6AC56B', '#4AB84E',
+    // Yellow (warning)
+    '#FFF3C2', '#FFE28B', '#FFD155', '#FFC02A', '#FFAF00',
+    // Brown (earthy)
+    '#E8DED1', '#D3C1A5', '#BEA580', '#A98961', '#947048',
+    // Red (error)
+    '#FFD6D6', '#FFA8A8', '#FF7A7A', '#FF4D4D', '#FF2E2E',
+  ],
+  light: [
+    // Blue
+    '#BCD3E6', '#92B6DB', '#6B9CD1', '#4B86C4', '#2F70B7',
+    // Green
+    '#B7D8B3', '#93C69A', '#70B480', '#56A169', '#418D56',
+    // Yellow
+    '#E9D9AD', '#DFC17B', '#D7B259', '#CDA538', '#C19516',
+    // Brown
+    '#CBBFAB', '#B5A587', '#9F8B6B', '#8A7354', '#765D42',
+    // Red
+    '#E7BABA', '#CC9393', '#B36E6E', '#994B4B', '#802D2D',
+  ]
 };
 
 const picker = document.getElementById('picker');
