@@ -207,14 +207,6 @@ document.querySelectorAll('.card').forEach(card => {
     let ripple = null;
     let isPressed = false;
 
-    // Handle mouseleave cleanup outside AfterRipple
-    card.addEventListener('mouseleave', function() {
-        if (ripple) {
-            isPressed = false;
-            ripple.remove();
-        }
-    });
-
     card.addEventListener('mousedown', function(e) {
         isPressed = true;
         ripple = document.createElement('div');

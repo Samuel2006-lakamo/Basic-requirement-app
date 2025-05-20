@@ -233,7 +233,7 @@
                 </div>
                 <!-- To apply link use data-href="" -->
                 <div class="AppcardsContent">
-                    <div class="card">
+                    <div class="card" id="TodolistCard">
                         <div class="card-icon todolist">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                                 fill="var(--accent)">
@@ -244,7 +244,7 @@
                         <h3>Todo List</h3>
                         <p>Organize your tasks efficiently with our intuitive todo list manager</p>
                     </div>
-                    <div class="card">
+                    <div class="card" id="ClockCard">
                         <div class="card-icon timer">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                                 fill="var(--accent)">
@@ -270,9 +270,18 @@
             </div>
         </div>
 
+        <div class="Anim">
+            <div class="AnimationForTodolistCard" id="AnimationForTodolistCard">
+
+            </div>
+        </div>
+
+        <div class="AnimBackgroundBlur" id="AnimBackgroundBlur"></div>
+
     </div>
     <script src="./frontendJS/PUBLICscripts.js" type="module" defer></script>
     <script src="renderer.js"></script>
+    <script src="./frontendJS/Mainpage.js"></script>
     <script src="./frontendJS/Getstart.js"></script>
     <script type="module">
         import { initTheme, listenThemeSync } from './Essential_Pages/Settings_Config/theme.js';

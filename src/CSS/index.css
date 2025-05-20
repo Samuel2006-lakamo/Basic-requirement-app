@@ -551,7 +551,7 @@ html {
     backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 1.5rem;
-    transition: all 0.1s ease;
+    transition: var(--transitionEaseNormal);
     outline: var(--border);
     position: relative;
     overflow: hidden;
@@ -628,6 +628,35 @@ html {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Define Aniation when clicked */
+
+.AnimationForTodolistCard {
+    background-color: var(--CardMainColor);
+    width: 287px;
+    height: 200px;
+    border: var(--border);
+    position: absolute;
+    left: 30px;
+    top: 140px;
+    border-radius: 16px;
+    transition: var(--transitionEaseNormal);
+    opacity: 0;
+}
+
+.AnimBackgroundBlur {
+    width: 100%;
+    height: 100vh;
+    background-color: var(--BackgroundBlurColor);
+    backdrop-filter: blur(20px);
+    z-index: 9;
+    position: fixed;
+    top: 0;
+    transition: var(--MenuEaseTransition);
+    /* Set value */
+    display: none;
+    opacity: 0;
 }
 
 /* Test to define platform */
