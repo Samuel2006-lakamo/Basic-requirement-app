@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld(
     createNewWindow: (url) => ipcRenderer.invoke('create-new-window', url),
     openAboutWindow: () => ipcRenderer.invoke('open-about-window'),
     openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
+    toggleDevTools: () => ipcRenderer.send('toggle-devtools'),
 }
 );
 

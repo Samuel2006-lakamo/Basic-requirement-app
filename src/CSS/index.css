@@ -35,7 +35,7 @@ html {
 }
 
 .menu {
-    width: 280px;
+    width: 265px;
     height: calc(100vh - 40px);
     background-color: var(--color-primary);
     border-right: var(--border);
@@ -51,6 +51,17 @@ html {
     resize: none;
     min-width: var(--min-sidebar-width);
     max-width: var(--max-sidebar-width);
+    animation: MenuAnim 400ms cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes MenuAnim {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .resize-handle {
@@ -116,6 +127,7 @@ html {
     pointer-events: all;
     position: relative;
     z-index: 12;
+    font-size: 14.5px;
 }
 
 .menuLinks li a svg {
@@ -177,6 +189,7 @@ html {
     text-overflow: ellipsis;
     overflow: hidden;
     height: 37px;
+    font-size: 14.5px;
 }
 
 .content {
@@ -187,6 +200,65 @@ html {
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     margin-top: 40px;
     z-index: 5;
+}
+
+.AnimationMenuOptions {
+    background-color: var(--ctx-menu-bg);
+    width: 265px;
+    height: 45px;
+    position: absolute;
+    bottom: 50px;
+    transition: var(--transitionEaseNormal);
+    z-index: 9;
+    opacity: 0;
+    filter: brightness(2.5);
+    border-radius: 6px;
+    box-shadow: var(--ctx-menu-shadow);
+}
+
+.AnimationMenuContent {
+    display: none;
+}
+
+.AnimationMenuContent h4 {
+    font-size: 24px;
+    font-family: var(--font-text);
+    padding: 0.65rem 1rem;
+    padding-top: 1rem;
+    letter-spacing: -0.5px;
+}
+
+.AnimationMenuContent li {
+    padding: 0.7rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.AnimationMenuContent li a,
+.AnimationMenuContent li span {
+    color: var(--theme-fg);
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+.AnimationMenuContent li span {
+    filter: brightness(1.2);
+    background-color: var(--HoverColor);
+    padding: 0.2rem 0.7rem;
+    border-radius: 2px;
+}
+
+.AnimationMenuContent li:hover {
+    background-color: var(--HoverColor);
+    cursor: pointer;
+}
+
+.AnimationMenuContent li:active {
+    background-color: var(--SoftHoverColor);
+    cursor: pointer;
 }
 
 .Textintro {
@@ -538,6 +610,7 @@ html {
 }
 
 @media screen and (min-width: 1400px) {
+
     .AppcardsContent,
     #TextCards {
         padding: 2rem 0rem;

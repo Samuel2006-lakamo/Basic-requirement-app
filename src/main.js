@@ -399,8 +399,8 @@ app.on('browser-window-blur', () => {
 
 const getThemeIcon = () => {
   return nativeTheme.shouldUseDarkColors
-    ? path.join(__dirname, 'assets', 'icons','WrapperEssentialAppLogo', 'EssentialAppSystemLogo.png')
-    : path.join(__dirname, 'assets', 'icons','WrapperEssentialAppLogo', 'EssentialAppSystemLogoLight.png');
+    ? path.join(__dirname, 'assets', 'icons', 'WrapperEssentialAppLogo', 'EssentialAppSystemLogo.png')
+    : path.join(__dirname, 'assets', 'icons', 'WrapperEssentialAppLogo', 'EssentialAppSystemLogoLight.png');
 };
 
 const handleError = async (win, error, context = '') => {
@@ -570,10 +570,10 @@ app.whenReady().then(async () => {
       const { width: screenWidth, height: screenHeight } = display.workAreaSize;
       const aspectRatio = 16 / 9;
 
-      // const baseWidth = 730;
-      // const baseHeight = 810;
-      const baseWidth = 1024;
+      const baseWidth = 730;
       const baseHeight = 810;
+      // const baseWidth = 1024;
+      // const baseHeight = 810;
       const scaleFactor = Math.min(screenWidth / 1280, screenHeight / 720);
       let width = Math.min(baseWidth, Math.floor(screenWidth * 0.7));
       let height = Math.min(baseHeight, Math.floor(screenHeight * 0.7));
@@ -609,7 +609,7 @@ app.whenReady().then(async () => {
       }
     });
 
-    globalShortcut.register('Control+Shift+N', async () => {
+    globalShortcut.register(process.platform === 'darwin' ? 'Command+Shift+N' : 'Control+Shift+N', async () => {
       if (!focusedWindow) return;
 
       try {
@@ -1215,7 +1215,7 @@ app.on('browser-window-created', (event, win) => {
     }
   };
 
-  globalShortcut.register('Control+Shift+I', devToolsShortcut);
+  globalShortcut.register('Control+Shift+I', devToolsShortcut); 
 
   win.once('closed', () => {
     globalShortcut.unregister('Control+Shift+I');
@@ -1228,7 +1228,18 @@ app.on('browser-window-created', (event, win) => {
             window.titlebarAPI.setTheme(savedTheme);
         }
     `);
-  });
+});
+
+ipcMain.on('toggle-devtools', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    if (win.webContents.isDevToolsOpened()) {
+      win.webContents.closeDevTools();
+    } else {
+      win.webContents.openDevTools({ mode: 'detach' });
+    }
+  }
+});
 });
 
 const updateAllWindowsTheme = (theme) => {
