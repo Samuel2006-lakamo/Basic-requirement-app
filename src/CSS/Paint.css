@@ -4,6 +4,10 @@
     border-right: none !important;
 }
 
+#CurrentPage {
+    border-bottom: var(--TitlebarColorBorder);
+}
+
 .contentTEXT {
     display: none;
     position: absolute;

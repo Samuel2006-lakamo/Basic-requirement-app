@@ -1,3 +1,62 @@
+.AnimationMenuOptions {
+    background-color: var(--ctx-menu-bg);
+    width: 265px;
+    height: 45px;
+    position: absolute;
+    bottom: 50px;
+    transition: var(--transitionEaseNormal);
+    z-index: 9;
+    opacity: 0;
+    filter: brightness(2.5);
+    border-radius: 6px;
+    box-shadow: var(--ctx-menu-shadow);
+}
+
+.AnimationMenuContent {
+    display: none;
+}
+
+.AnimationMenuContent h4 {
+    font-size: 24px;
+    font-family: var(--font-text);
+    padding: 0.65rem 1rem;
+    padding-top: 1rem;
+    letter-spacing: -0.5px;
+}
+
+.AnimationMenuContent li {
+    padding: 0.7rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.AnimationMenuContent li a,
+.AnimationMenuContent li span {
+    color: var(--theme-fg);
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+}
+
+.AnimationMenuContent li span {
+    filter: brightness(1.2);
+    background-color: var(--HoverColor);
+    padding: 0.2rem 0.7rem;
+    border-radius: 2px;
+}
+
+.AnimationMenuContent li:hover {
+    background-color: var(--HoverColor);
+    cursor: pointer;
+}
+
+.AnimationMenuContent li:active {
+    background-color: var(--SoftHoverColor);
+    cursor: pointer;
+}
+
 .MoreOptions {
     position: fixed;
     width: 100%;

@@ -4,8 +4,8 @@ const MenuOptionsKeys = {
         win: "CTRL + SHIFT + I",
     },
     reload: {
-        mac: "COMMAND + SHIFT + R",
-        win: "CTRL + SHIFT + R",
+        mac: "COMMAND + R",
+        win: "CTRL + R",
     },
     newWindow: {
         mac: "COMMAND + SHIFT + N",
@@ -45,6 +45,12 @@ if (userOS) {
 // Add event listeners for AnimationMenuOptions buttons
 window.addEventListener('DOMContentLoaded', () => {
     if (!window.electronAPI) return;
+    const menuAnim = document.getElementById('AnimationForMenuOptions');
+    if (menuAnim) {
+        menuAnim.style.transition = 'opacity 0.18s cubic-bezier(0.4,0,0.2,1), transform 0.18s cubic-bezier(0.4,0,0.2,1)';
+        menuAnim.style.willChange = 'opacity, transform';
+    }
+
     const devToolsBtn = document.querySelector('#AnimationForMenuOptions li:nth-child(2) a');
     if (devToolsBtn) {
         devToolsBtn.addEventListener('click', () => {

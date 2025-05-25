@@ -27,8 +27,8 @@ const AnimationCardElement = {
 const AnimDrawerMenuOptions = AnimationCardElement.Animation.MenuOptions_Anim;
 
 const ObjectContentVariable = {
-    width: '660px',
-    height: '480px'
+    width: '340px',
+    height: '340px'
 }
 
 const ObjectMenuOptions = {
@@ -106,7 +106,7 @@ function AnimMenuOptions() {
                     filter: brightness(1);
                 `;
                 CardElement.Navbar.style.display = "none"
-            }, 100);
+            }, 50);
         }, 100);
     }
     function InitialMenuInterface() {
@@ -139,13 +139,10 @@ function AnimMenuOptions() {
     CALL _SetSize
 */
 
-MenuOptions.addEventListener("click", () => {
-    AnimMenuOptions();
-});
-
-MenuClosing.addEventListener("click", () => {
-    resetMenuOptions();
-});
+MenuOptions.addEventListener("click", () => {  AnimMenuOptions(); });
+MenuClosing.addEventListener("click", () => { resetMenuOptions(); });
+BackgroundBlur.addEventListener("click", () => { resetMenuOptions(); });
+document.getElementById("MoreOptions").addEventListener("click", () => { resetMenuOptions(); });
 
 function resetMenuOptions() {
     // Reset Animation Drawer MenuOptions
@@ -154,6 +151,7 @@ function resetMenuOptions() {
     AnimDrawerMenuOptions.style.willChange = '';
     AnimDrawerMenuOptions.style.filter = '';
     AnimDrawerMenuOptions.style.display = '';
+    TodolistCardElement.style.opacity = '';
     // Reset MoreOptions interface
     CardElement.Option_interface_Element.InterfaceMoreOption.style.display = '';
     CardElement.Option_interface_Element.InterfaceMoreOption.style.opacity = '';
@@ -164,4 +162,21 @@ function resetMenuOptions() {
         animMenuContent.style.display = '';
     }
     CardElement.Navbar.style.display = '';
+    if (TodolistTimingElement) {
+        TodolistTimingElement.style.cssText = '';
+        TodolistTimingElement.style.opacity = '';
+        TodolistTimingElement.style.willChange = '';
+        TodolistTimingElement.style.left = '';
+        TodolistTimingElement.style.top = '';
+        TodolistTimingElement.style.transform = '';
+        TodolistTimingElement.style.zIndex = '';
+        TodolistTimingElement.style.width = '';
+        TodolistTimingElement.style.height = '';
+    }
+
+    // Reset BackgroundBlur
+    if (BackgroundBlur) {
+        BackgroundBlur.style.display = '';
+        BackgroundBlur.style.opacity = '';
+    }
 }

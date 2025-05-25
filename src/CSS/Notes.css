@@ -2,6 +2,7 @@
     border-bottom: var(--TitlebarColorBorder);
     background-color: var(--TitlebarColor) !important;
     border-right: none !important;
+    border-bottom: var(--TitlebarColorBorder);
 }
 
 .contentTEXT {

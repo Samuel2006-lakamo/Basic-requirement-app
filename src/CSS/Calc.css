@@ -16,6 +16,11 @@
 #GotoHomePage {
     background-color: var(--TitlebarColor) !important;
     border-right: none !important;
+    border-bottom: var(--TitlebarColorBorder);
+}
+
+#CurrentPage {
+    border-bottom: var(--TitlebarColorBorder);
 }
 
 @media screen and (max-width: 720px) {
