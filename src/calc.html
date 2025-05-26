@@ -158,6 +158,44 @@
         </div>
     </div>
 
+    <div class="content">
+
+        <div class="calcContainer">
+            <div class="calculator">
+                <div class="display">
+                    <div id="history" style="font-size:28px;color:#aaa;text-align:right;min-height:32px;"></div>
+                    <div id="current" style="min-height:58px;">0</div>
+                </div>
+                <div class="buttons">
+                    <button class="special" onclick="clearDisplay()">AC</button>
+                    <button class="special" onclick="toggleSign()">±</button>
+                    <button class="special" onclick="percentage()">%</button>
+                    <button class="operator" onclick="setOperator('÷')">÷</button>
+
+                    <button class="number" onclick="appendNumber(7)">7</button>
+                    <button class="number" onclick="appendNumber(8)">8</button>
+                    <button class="number" onclick="appendNumber(9)">9</button>
+                    <button class="operator" onclick="setOperator('×')">×</button>
+
+                    <button class="number" onclick="appendNumber(4)">4</button>
+                    <button class="number" onclick="appendNumber(5)">5</button>
+                    <button class="number" onclick="appendNumber(6)">6</button>
+                    <button class="operator" onclick="setOperator('-')">-</button>
+
+                    <button class="number" onclick="appendNumber(1)">1</button>
+                    <button class="number" onclick="appendNumber(2)">2</button>
+                    <button class="number" onclick="appendNumber(3)">3</button>
+                    <button class="operator" onclick="setOperator('+')">+</button>
+
+                    <button class="number zero" onclick="appendNumber(0)">0</button>
+                    <button class="number" onclick="appendDecimal()">.</button>
+                    <button class="operator" onclick="calculate()">=</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- BottomNavbar -->
     <div id="app"></div>
 
@@ -166,11 +204,58 @@
     <script src="./frontendJS/EssentialAPP_OptionsFeatured.js" defer></script>
     <script src="./frontendJS/EssentialAPP_MenuOptions.js" defer></script>
     <script src="./frontendJS/BottomNavbar.js" type="module" defer></script>
+    <script src="./Featured/calculator.js"></script>
     <script type="module">
         import { initTheme, listenThemeSync } from './Essential_Pages/Settings_Config/theme.js';
         initTheme();
         listenThemeSync();
     </script>
+
+    <script>
+        function updateDisplay() {
+            document.getElementById('current').textContent = currentNumber;
+            let historyText = '';
+            if (previousNumber && operation) {
+                historyText = previousNumber + ' ' + operation;
+            }
+            document.getElementById('history').textContent = historyText;
+        }
+
+        document.addEventListener('keydown', function (e) {
+            // Ctrl+C = AC
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+                clearDisplay();
+                e.preventDefault();
+                return;
+            }
+            if (e.key >= '0' && e.key <= '9') {
+                appendNumber(Number(e.key));
+            } else if (e.key === '.') {
+                appendDecimal();
+            } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                let op = e.key;
+                if (op === '*') op = '×';
+                if (op === '/') op = '÷';
+                setOperator(op);
+            } else if (e.key === 'Enter' || e.key === '=') {
+                calculate();
+            } else if (e.key === '%') {
+                percentage();
+            } else if (e.key === 'Escape') {
+                clearDisplay();
+            } else if (e.key.toLowerCase() === 'c') {
+                clearDisplay();
+            } else if (e.key === 'Backspace') {
+                if (currentNumber.length > 1) {
+                    currentNumber = currentNumber.slice(0, -1);
+                } else {
+                    currentNumber = '0';
+                }
+                updateDisplay();
+            }
+        });
+    </script>
+
 </body>
 
 </html>
