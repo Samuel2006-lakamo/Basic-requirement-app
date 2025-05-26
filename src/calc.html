@@ -58,7 +58,7 @@
 
     <!-- Import Sidebar (menu drawer) -->
 
-    <div class="menu">
+    <!-- <div class="menu">
         <div class="menuText">
             <h1>Calculator app</h1>
         </div>
@@ -123,7 +123,7 @@
                 </li>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Menu Animation drawer -->
     <div class="AnimationMenuOptions" id="AnimationForMenuOptions">
@@ -148,9 +148,9 @@
         <div class="MoreOptionsNavbar">
             <div class="MoreOptionsNavbarContent">
                 <div class="MoreOption_NavCon_Nav">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="var(--theme-fg)" id="MoreOptionsIcon">
-                        <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" fill="var(--theme-fg)"
+                        id="MoreOptionsIcon">
+                        <path d="M12 16.5l-4.5-4.5h3V3h3v9h3z" />
                     </svg>
                     <h4>App options</h4>
                 </div>
@@ -158,43 +158,56 @@
         </div>
     </div>
 
-    <div class="content">
+    <!-- <div class="content"> -->
 
         <div class="calcContainer">
             <div class="calculator">
                 <div class="display">
                     <div id="history" style="font-size:28px;color:#aaa;text-align:right;min-height:32px;"></div>
-                    <div id="current" style="min-height:58px;">0</div>
+                    <div id="current"
+                        style="min-height:58px; font-size:100px; transition:font-size 0.1s; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family: var(--font-text), sans-serif;">
+                        0
+                    </div>
                 </div>
                 <div class="buttons">
                     <button class="special" onclick="clearDisplay()">AC</button>
                     <button class="special" onclick="toggleSign()">±</button>
                     <button class="special" onclick="percentage()">%</button>
-                    <button class="operator" onclick="setOperator('÷')">÷</button>
+                    <button class="operator" onclick="setOperator('÷')">
+                        <h1>÷</h1>
+                    </button>
 
                     <button class="number" onclick="appendNumber(7)">7</button>
                     <button class="number" onclick="appendNumber(8)">8</button>
                     <button class="number" onclick="appendNumber(9)">9</button>
-                    <button class="operator" onclick="setOperator('×')">×</button>
+                    <button class="operator" onclick="setOperator('×')">
+                        <h1>×</h1>
+                    </button>
 
                     <button class="number" onclick="appendNumber(4)">4</button>
                     <button class="number" onclick="appendNumber(5)">5</button>
                     <button class="number" onclick="appendNumber(6)">6</button>
-                    <button class="operator" onclick="setOperator('-')">-</button>
+                    <button class="operator" onclick="setOperator('-')">
+                        <h1>-</h1>
+                    </button>
 
                     <button class="number" onclick="appendNumber(1)">1</button>
                     <button class="number" onclick="appendNumber(2)">2</button>
                     <button class="number" onclick="appendNumber(3)">3</button>
-                    <button class="operator" onclick="setOperator('+')">+</button>
+                    <button class="operator" onclick="setOperator('+')">
+                        <h1>+</h1>
+                    </button>
 
                     <button class="number zero" onclick="appendNumber(0)">0</button>
                     <button class="number" onclick="appendDecimal()">.</button>
-                    <button class="operator" onclick="calculate()">=</button>
+                    <button class="operator" onclick="calculate()">
+                        <h1>=</h1>
+                    </button>
                 </div>
             </div>
         </div>
 
-    </div>
+    <!-- </div> -->
 
     <!-- BottomNavbar -->
     <div id="app"></div>
@@ -212,13 +225,73 @@
     </script>
 
     <script>
+
+        function formatNumberWithCommas(numStr) {
+            // รองรับเลขติดลบและทศนิยม
+            if (numStr === '' || numStr === '-') return numStr;
+            let [intPart, decPart] = numStr.split('.');
+            let sign = '';
+            if (intPart.startsWith('-')) {
+                sign = '-';
+                intPart = intPart.slice(1);
+            }
+            intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return sign + intPart + (decPart !== undefined ? '.' + decPart : '');
+        }
+
+        function fitCurrentFont() {
+            const el = document.getElementById('current');
+            if (!el) return;
+
+            // Remove transition temporarily for accurate measurement
+            const originalTransition = el.style.transition;
+            el.style.transition = 'none';
+
+            // Get current font size or start from default
+            let fontSize = parseInt(el.style.fontSize) || 80;
+            const defaultFontSize = 100;
+            const minFontSize = 16;
+
+            // Set initial font size
+            el.style.fontSize = fontSize + 'px';
+
+            // If text is overflowing, reduce font size
+            if (el.scrollWidth > el.offsetWidth) {
+                while (el.scrollWidth > el.offsetWidth && fontSize > minFontSize) {
+                    fontSize -= 1;
+                    el.style.fontSize = fontSize + 'px';
+                }
+            }
+            // If text fits and current size is less than default, try to increase
+            else if (fontSize < defaultFontSize) {
+                // Try to increase font size
+                let testSize = fontSize;
+                while (testSize < defaultFontSize) {
+                    testSize += 1;
+                    el.style.fontSize = testSize + 'px';
+
+                    // If it overflows at this size, go back to previous size
+                    if (el.scrollWidth > el.offsetWidth) {
+                        fontSize = testSize - 1;
+                        el.style.fontSize = fontSize + 'px';
+                        break;
+                    }
+                    fontSize = testSize;
+                }
+            }
+
+            // Restore transition
+            el.style.transition = originalTransition;
+        }
+
         function updateDisplay() {
-            document.getElementById('current').textContent = currentNumber;
+            document.getElementById('current').textContent = formatNumberWithCommas(currentNumber);
             let historyText = '';
             if (previousNumber && operation) {
-                historyText = previousNumber + ' ' + operation;
+                historyText = formatNumberWithCommas(previousNumber) + ' ' + operation;
             }
             document.getElementById('history').textContent = historyText;
+            fitCurrentFont();
         }
 
         document.addEventListener('keydown', function (e) {

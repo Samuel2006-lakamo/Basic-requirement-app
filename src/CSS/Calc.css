@@ -27,17 +27,14 @@
 
 .calcContainer {
     margin: 0;
-    padding: 20px;
-    height: 100vh;
+    height: calc(100vh - 40px);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .calculator {
-    width: 100%;
     max-width: 400px;
-    background: #000;
     border-radius: 20px;
     padding: 20px;
 }
@@ -49,6 +46,7 @@
     margin-bottom: 20px;
     min-height: 90px;
     padding: 0 20px;
+    font-family: var(--font-text), sans-serif;
 }
 
 .buttons {
@@ -67,12 +65,27 @@ button {
     color: white;
 }
 
+button:hover {
+    filter: brightness(0.825);
+}
+
+button:active {
+    filter: brightness(0.5);
+}
+
 .number {
     background: #333;
 }
 
 .operator {
-    background: #f1a33c;
+    background-color: var(--ColorHighlight);
+    color: #000;
+}
+
+.operator h1 {
+    font-family: var(--font-text), sans-serif;
+    transform: translate(1.5px, -3px);
+    font-weight: 400;
 }
 
 .special {
