@@ -11,6 +11,7 @@
     font-family: var(--font-text), sans-serif;
     font-weight: 400;
     font-size: 18px;
+    transform: translate(0px, -1.5px);
 }
 
 #GotoHomePage {
@@ -37,6 +38,7 @@
     max-width: 400px;
     border-radius: 20px;
     padding: 20px;
+    transform: scale(0.85);
 }
 
 .display {
@@ -84,7 +86,7 @@ button:active {
 
 .operator h1 {
     font-family: var(--font-text), sans-serif;
-    transform: translate(1.5px, -3px);
+    transform: translate(0px, -4px);
     font-weight: 400;
 }
 

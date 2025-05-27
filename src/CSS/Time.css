@@ -3,7 +3,13 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    font-size: 18.5vw;
+    font-size: 15.25vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+#time-main,#time-ms {
     font-family: "Host Grotesk", "Segoe UI", sans-serif;
 }
 
@@ -54,6 +60,14 @@
     font-family: var(--font-text), sans-serif;
     font-weight: 400;
     font-size: 18px;
+    transform: translate(0px, -1.5px);
+}
+
+#laps {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 80px;
 }
 
 @media screen and (max-width: 720px) {
