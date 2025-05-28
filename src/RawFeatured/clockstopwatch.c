@@ -15,7 +15,6 @@ typedef struct {
 
 static Stopwatch *sw = NULL;
 
-// สร้าง/คืน pointer struct stopwatch ใหม่
 EMSCRIPTEN_KEEPALIVE
 Stopwatch* stopwatch_create() {
     if (sw) free(sw->laps), free(sw);
@@ -38,7 +37,6 @@ void stopwatch_destroy() {
     }
 }
 
-// เรียกจาก JS เพื่ออัปเดตเวลา (ควรเรียกทุก frame หรือทุก 10-30ms)
 EMSCRIPTEN_KEEPALIVE
 void stopwatch_tick(uint64_t now_ms) {
     if (sw && sw->running) {

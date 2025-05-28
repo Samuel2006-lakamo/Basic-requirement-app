@@ -21,6 +21,93 @@
     transform: translate(0px, -1.5px);
 }
 
+#NotesContent {
+    width: 100%;
+    height: calc(100vh - 40px);
+    resize: vertical;
+    font-size: 18px;
+    padding: 20px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    transform: translateY(40px);
+    /* Default fonts fallback */
+    font-family: var(--font-primary), "Anuphan", "Leelawadee UI", sans-serif;
+    line-height: 1.7;
+}
+
+/* Sorry for hard code */
+#NotesContent,
+#NotesContent * {
+    font-family: var(--font-primary), "Anuphan", "Leelawadee UI", sans-serif !important;
+}
+
+.fontsSelector {
+    position: absolute;
+    z-index: 11;
+    box-shadow: var(--ctx-menu-shadow);
+    background-color: var(--ctx-menu-bg);
+    border-radius: 6px;
+    width: fit-content;
+    height: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.fontsSelContent {
+    padding: 0.5rem 0.85rem;
+    display: flex;
+    justify-content: start;
+    align-items: baseline;
+}
+
+.FontsTools a span {
+    padding: 0.5rem 1.25rem;
+    border: solid 1px var(--theme-border);
+    background-color: var(--theme-card);
+    border-radius: 20px;
+    color: var(--ctx-menu-text);
+}
+
+.IconsTools {
+    margin-left: 0.35rem;
+}
+
+.IconsTools a {
+    padding: 0.5rem 1.25rem;
+    border-radius: 2.5px;
+    position: relative;
+    margin-right: 0.5rem;
+}
+
+.IconsTools a:hover {
+    background-color: var(--ctx-menu-hover);
+}
+
+.IconsTools a:hover,
+.IconsTools a svg:hover {
+    fill: var(--ctx-menu-text-hover);
+}
+
+.IconsTools a:focus {
+    background-color: var(--accent);
+}
+
+.IconsTools a:focus svg {
+    fill: #000;
+}
+
+.IconsTools a svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 @media screen and (max-width: 720px) {
 
     .contentTEXT {

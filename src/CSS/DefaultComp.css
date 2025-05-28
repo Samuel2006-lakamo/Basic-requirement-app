@@ -4,6 +4,8 @@
 /* Inter tight: for text fonts */
 @import url('https://fonts.googleapis.com/css2?family=Hind:wght@300&family=IBM+Plex+Sans+Thai:wght@300&family=Inter+Tight:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
 /* Date font for other lang that complatible with intertight */
+@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&display=swap');
+/* Default fonts fallback for Notes app: => font-family: "Anuphan", sans-serif; */
 
 :where(li, a) {
     text-decoration: none;
