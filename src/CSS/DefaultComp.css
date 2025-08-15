@@ -43,8 +43,8 @@
     --NameColorSvg: #fff;
 
     --font-primary: "Manrope", sans-serif;
-    --font-text: "Inter Tight", sans-serif;
-    --font-size-base: 16px;
+    --font-text: "Inter Tight", system-ui sans-serif;
+    --font-size-base: 14px;
     --font-scale: 1.2;
     --line-height: 1.5;
 

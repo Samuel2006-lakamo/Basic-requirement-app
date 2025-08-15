@@ -63,6 +63,11 @@
     transform: translate(0px, -1.5px);
 }
 
+.lapsContent {
+    height: 55px;
+    width: 450px;
+}
+
 #laps {
     position: absolute;
     left: 50%;

@@ -54,13 +54,13 @@
     display: none;
     z-index: 1000;
     padding: 0.25rem 0rem;
-    height: 175px;
+    height: 165px;
 }
 
 .lang-dropdown.show {
     display: block;
     animation: DropDownToggle 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    height: 175px;
+    height: 165px;
 }
 
 @keyframes DropDownToggle {
@@ -73,7 +73,7 @@
     100% {
         opacity: 1;
         transform: translate(0px);
-        height: 175px;
+        height: 165px;
     }
 }
 

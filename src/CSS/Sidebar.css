@@ -96,7 +96,6 @@
     pointer-events: all;
     position: relative;
     z-index: 12;
-    font-size: 14.5px;
 }
 
 .menuLinks li a svg {
@@ -157,7 +156,6 @@
     pointer-events: all;
     position: relative;
     z-index: 12;
-    font-size: 14.5px;
 }
 
 .content {

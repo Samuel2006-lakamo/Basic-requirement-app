@@ -29,14 +29,31 @@ function setNotesFontSize(size) {
 let notesFontSize = parseFloat(localStorage.getItem('notes_content_fontsize')) || 1.1;
 setNotesFontSize(notesFontSize);
 
-function applyFontSizeShortcut(e) {
-    if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
-        setNotesFontSize(Math.min(notesFontSize + 0.1, 5));
-        e.preventDefault();
+function applyFontZoomWithWheel(e) {
+    let zoomStep = 0.1;
+    let minFont = 0.5;
+    let maxFont = 5;
+
+    // Keyboard shortcut
+    if (e.type === 'keydown') {
+        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+            setNotesFontSize(Math.min(notesFontSize + zoomStep, maxFont));
+            e.preventDefault();
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === '-' || e.key === '_')) {
+            setNotesFontSize(Math.max(notesFontSize - zoomStep, minFont));
+            e.preventDefault();
+        }
     }
-    if ((e.ctrlKey || e.metaKey) && (e.key === '-' || e.key === '_')) {
-        setNotesFontSize(Math.max(notesFontSize - 0.1, 0.5));
-        e.preventDefault();
+
+    // Mouse wheel
+    if (e.type === 'wheel' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault(); // ป้องกัน browser zoom
+        if (e.deltaY < 0) {
+            setNotesFontSize(Math.min(notesFontSize + zoomStep, maxFont));
+        } else if (e.deltaY > 0) {
+            setNotesFontSize(Math.max(notesFontSize - zoomStep, minFont));
+        }
     }
 }
 
@@ -240,4 +257,5 @@ if (newTabButton) {
     newTabButton.addEventListener('click', createNewNotesArea);
 }
 
-// Tabs
+document.addEventListener('keydown', applyFontZoomWithWheel);
+document.addEventListener('wheel', applyFontZoomWithWheel, { passive: false });
