@@ -2,6 +2,7 @@
     --resize-handle-width: 8px;
     --min-sidebar-width: 170px;
     --max-sidebar-width: 350px;
+    --sidebar-width: 265px;
 }
 
 html {
@@ -31,8 +32,8 @@ html {
 .contentTEXT h1 {
     font-family: var(--font-text), sans-serif;
     font-weight: 400;
-    font-size: 18px;
-    transform: translate(0px, -1.5px);
+    font-size: 14.5px;
+    transform: translate(0px, 1.25px);
 }
 
 .menu {
@@ -90,7 +91,7 @@ html {
 }
 
 .menuText svg {
-    width: 120px;
+    width: 115px;
     height: auto;
     display: block;
 }
@@ -101,27 +102,21 @@ html {
 
 .menuLinks li {
     width: 100%;
-    height: 40px;
+    height: 38px;
     align-content: center;
-    background-image: linear-gradient(var(--SoftHoverColor), var(--SoftHoverColor));
-    background-repeat: no-repeat;
-    background-size: 0% 100%;
-    background-position-x: right;
-    transition: background-size 300ms;
     position: relative;
     z-index: 11;
 }
 
 .menuLinks li:hover {
-    background-size: 100% 100%;
-    background-position-x: left;
+    background-color: var(--SoftHoverColor);
 }
 
 .menuLinks li a {
-    padding: 0rem 1rem;
-    color: var(--theme-fg);
-    height: 40px;
-    line-height: 40px;
+    padding: 0rem 0.8rem;
+    color: var(--theme-links);
+    height: 38px;
+    line-height: 38px;
     width: 100%;
     display: block;
     font-weight: 450;
@@ -131,7 +126,7 @@ html {
 }
 
 .menuLinks li a svg {
-    transform: translateY(5.5px);
+    transform: translateY(6px) scale(90%);
     margin-right: 0.5rem;
 }
 
@@ -145,15 +140,20 @@ html {
 }
 
 #Current a {
-    color: #000;
+    color: var(--ColorHighlight);
+    font-weight: 550;
+    letter-spacing: -0.2px;
+    filter: brightness(0.3);
 }
 
 #Current a svg {
-    fill: #000;
+    color: var(--ColorHighlight);
+    filter: brightness(0.3);
 }
 
 .menu hr {
-    border: var(--HRborder);
+    /* border: var(--HRborder); */
+    border: transparent;
     margin-top: 0.5rem;
 }
 
@@ -171,7 +171,7 @@ html {
 .BottomLinks {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 38px;
     width: 100vw;
     /* Width as max wont metter */
     overflow: hidden;
@@ -179,7 +179,7 @@ html {
 
 .bottomCradit svg {
     height: auto;
-    transform: translateY(6px);
+    transform: translateY(6px) scale(90%);
     margin-right: 0.5rem;
 }
 
@@ -192,9 +192,9 @@ html {
 }
 
 .content {
-    width: calc(100vw - 280px);
+    width: calc(100vw - var(--sidebar-width));
     position: absolute;
-    right: 0;
+    margin-left: var(--sidebar-width);
     height: calc(100vh - 40px);
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     margin-top: 40px;
@@ -295,9 +295,12 @@ html {
     margin-top: 7rem;
     pointer-events: none;
     user-select: none;
-    font-size: 34px;
-    font-weight: 400;
-    font-family: "Host Grotesk", "Segoe UI", sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    /* font-family: "Host Grotesk", "Segoe UI", sans-serif; */
+    font-family: 'General Sans', "Segoe UI", sans-serif;
+    letter-spacing: -0.8px;
+    line-height: 1.25;
     margin-bottom: 1rem;
     text-align: center;
 }
@@ -367,6 +370,7 @@ html {
     display: inline-block;
     font-size: 20px;
     line-height: 1.5;
+    font-family: 'General Sans', "Segoe UI", sans-serif;
 }
 
 #ScrambledBTN {

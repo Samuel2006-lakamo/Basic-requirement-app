@@ -61,7 +61,7 @@
 }
 
 .menuText h1 {
-    font-size: 21.5px;
+    font-size: 18.5px;
     font-family: "Host Grotesk", "Segoe UI", sans-serif;
     font-weight: 370;
     line-height: 0.75;
@@ -69,37 +69,34 @@
 
 .menuLinks li {
     width: 100%;
-    height: 40px;
+    height: 38px;
     align-content: center;
-    background-image: linear-gradient(var(--SoftHoverColor), var(--SoftHoverColor));
-    background-repeat: no-repeat;
-    background-size: 0% 100%;
-    background-position-x: right;
-    transition: background-size 300ms;
     position: relative;
     z-index: 11;
 }
 
 .menuLinks li:hover {
-    background-size: 100% 100%;
-    background-position-x: left;
+    background-color: var(--SoftHoverColor);
 }
 
 .menuLinks li a {
-    padding: 0rem 1rem;
-    color: var(--theme-fg);
-    height: 40px;
-    line-height: 40px;
+    padding: 0rem 0.8rem;
+    color: var(--theme-links);
+    height: 38px;
+    line-height: 38px;
     width: 100%;
     display: block;
     font-weight: 450;
     pointer-events: all;
     position: relative;
     z-index: 12;
+    font-family: 'General Sans', "Segoe UI", sans-serif;
+    font-size: 14.5px;
+    line-height: 0;
 }
 
 .menuLinks li a svg {
-    transform: translateY(5.5px);
+    transform: translateY(6.25px) scale(90%);
     margin-right: 0.5rem;
 }
 
@@ -113,22 +110,27 @@
 }
 
 #Current a {
-    color: #000;
+    color: var(--ColorHighlight);
+    filter: brightness(0.3);
+    font-weight: 550;
+    letter-spacing: -0.2px;
 }
 
 #Current a svg {
-    fill: #000;
+    color: var(--ColorHighlight);
+    filter: brightness(0.3);
 }
 
 .menu hr {
-    border: var(--HRborder);
+    /* border: var(--HRborder); */
+    border: transparent;
     margin: 0.5rem 0rem;
     margin-bottom: 0.75rem;
 }
 
 .AllmenuLinks li {
     width: 100%;
-    height: 40px;
+    height: 38px;
     align-content: center;
     position: relative;
     z-index: 11;
@@ -141,15 +143,15 @@
 }
 
 .AllmenuLinks li a svg {
-    transform: translateY(5.5px);
+    transform: translateY(5.5px) scale(90%);
     margin-right: 0.5rem;
 }
 
 .AllmenuLinks a {
-    padding: 0rem 1rem;
-    color: var(--theme-fg);
-    height: 40px;
-    line-height: 40px;
+    padding: 0rem 0.8rem;
+    color: var(--theme-links);
+    height: 38px;
+    line-height: 38px;
     width: 100%;
     display: block;
     font-weight: 450;
@@ -176,13 +178,13 @@
 }
 
 .BottomLinks:hover {
-    background: #313131;
+    background: var(--SoftHoverColor);
 }
 
 .BottomLinks {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 38px;
     width: 100vw;
     /* Width as max wont metter */
     overflow: hidden;
@@ -190,7 +192,7 @@
 
 .bottomCradit svg {
     height: auto;
-    transform: translateY(6px);
+    transform: translateY(6px) scale(90%);
     margin-right: 0.5rem;
 }
 

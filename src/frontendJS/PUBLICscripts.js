@@ -13,11 +13,21 @@ document.getElementById('KeepONtop')?.addEventListener('click', () => {
   }
 });
 
+window.reload = async () => {
+  // Clear localStorage
+  localStorage.clear();
+
+  // Sync with main process if available
+  if (window.electronAPI?.syncClearStorage) {
+    await window.electronAPI.syncClearStorage();
+  }
+  // Force reload
+  window.location.reload(true);
+};
+
 // Rightclick ipc send to main process
 
 document.addEventListener('DOMContentLoaded', () => {
-  NProgress.start();
-
   if (window.electronAPI) {
     // For error heading
     document.addEventListener('contextmenu', async (e) => {
@@ -49,16 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check reset
     if (window.innerWidth <= 340) {
       menu.style.width = '';
-      content.style.width = '100%';
-      content.style.marginLeft = '0';
+      document.documentElement.style.setProperty('--sidebar-width', '0px');
       return;
     }
 
     // Normal width handling
     width = Math.max(170, Math.min(350, width));
     menu.style.width = `${width}px`;
-    content.style.width = `calc(100vw - ${width}px)`;
-    content.style.marginLeft = `${width}px`;
+    document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
     localStorage.setItem('EssentialApp.Electron.sidebar-width', width);
   };
 
@@ -118,11 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   resizeHandle.addEventListener('mousedown', startResizing);
 });
-
-window.addEventListener("load", () => {
-  NProgress.done();
-});
-
 
 // Set default new windows as bug set to featured.
 

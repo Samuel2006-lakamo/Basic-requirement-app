@@ -10,17 +10,13 @@
 .contentTEXT h1 {
     font-family: var(--font-text), sans-serif;
     font-weight: 400;
-    font-size: 18px;
-    transform: translate(0px, -1.5px);
+    font-size: 14.5px;
+    transform: translate(0px, 1.25px);
 }
 
 #GotoHomePage {
     background-color: var(--TitlebarColor) !important;
     border-right: none !important;
-    border-bottom: var(--TitlebarColorBorder);
-}
-
-#CurrentPage {
     border-bottom: var(--TitlebarColorBorder);
 }
 
@@ -32,6 +28,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 40px;
 }
 
 .calculator {

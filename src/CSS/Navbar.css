@@ -59,32 +59,16 @@ nav ul li a {
     pointer-events: all;
     position: relative;
     z-index: 1002;
+
+    border-left: solid 1px transparent;
+    border-right: solid 1px transparent;
 }
 
 /* click animation */
 
 nav ul li a:focus,
 nav ul li a:active {
-    animation: btn-color 0.25s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
-    background-size: 0% 100%;
-}
-
-@keyframes btn-color {
-    0% {
-        background-color: var(--nav-active);
-    }
-
-    30% {
-        background-color: var(--nav-active);
-    }
-
-    60% {
-        background-color: var(--nav-hover);
-    }
-
-    100% {
-        background-color: var(--nav-hover);
-    }
+    background-color: var(--nav-hover);
 }
 
 #MainLINKS {
@@ -168,7 +152,7 @@ nav ul li a:hover {
 }
 
 /* Navbar Responsive */
-    
+
 @media (max-width: 768px) {
     :root {
         --nav-padding: 1.15rem;

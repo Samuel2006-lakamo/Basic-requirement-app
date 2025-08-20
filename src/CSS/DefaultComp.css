@@ -32,8 +32,8 @@
     --theme-bg: #0F0F0F;
     --theme-fg: #ffffff;
     --theme-primary: #080808;
-    --theme-accent: #ac9393;
-    --theme-border: #3f3f3f;
+    --theme-accent: hsl(0, 13%, 68%);
+    --theme-border: hsl(0, 0%, 18%);
     --theme-card: #141414;
     --theme-titlebar: #0f0f0f;
     --theme-links: #C4C4C4;
@@ -75,7 +75,7 @@
     /* Titlebar color */
     --TitlebarColor: #0f0f0f;
     --TitlebarColorButton: #fff;
-    --TitlebarColorBorder: solid 1px #3f3f3f;
+    --TitlebarColorBorder: solid 1px var(--theme-border);
     --TitlebarColorHover: var(--SoftHoverColor);
 
     /* Contextmenu color */
@@ -116,8 +116,8 @@
     --theme-card: #FFFFFF;
     --theme-titlebar: #0f0f0f;
     --theme-border: #cfcfcf;
-    --HoverColor: #eeeeee;
-    --SoftHoverColor: #f2f1ef;
+    --HoverColor: hsl(40, 10%, 85%);
+    --SoftHoverColor: hsl(40, 10%, 88%);
     --theme-links: #222;
     --NameColorSvg: #000;
     --theme-accent: #ccaeae;
@@ -127,7 +127,7 @@
     --TitlebarColor: #f0eee6;
     --TitlebarColorButton: #303030;
     --TitlebarColorBorder: solid 1px #cfcfcf;
-    --TitlebarColorHover: #d1d1d1;
+    --TitlebarColorHover: hsl(40, 10%, 82.5%);
     /* Contextmenu color */
     --ctx-menu-bg: #f6f6f5;
     --ctx-menu-hover: #e4e4e4;
@@ -154,7 +154,7 @@ body.dark {
     --theme-bg: #0f0f0f;
     --theme-fg: #fff;
     --theme-primary: #080808;
-    --theme-accent: #ac9393;
+    --theme-accent: hsl(0, 13%, 68%);
     --theme-border: #3f3f3f;
     --theme-card: #141414;
     --theme-titlebar: #0f0f0f;
@@ -174,18 +174,18 @@ body.light {
     --theme-card: #FFFFFF;
     --theme-titlebar: #f0f0f0;
     --theme-border: #cfcfcf;
-    --HoverColor: #eeeeee;
-    --SoftHoverColor: #f2f1ef;
+    --HoverColor: hsl(40, 10%, 85%);
+    --SoftHoverColor: hsl(40, 10%, 88%);
     --theme-links: #222;
     --NameColorSvg: #000;
-    --theme-accent: #ccaeae;
+    --theme-accent: hsl(0, 18%, 70%);
     --HRborder: solid 1px #e6e6e6;
     --RippleEffectColor: rgba(0, 0, 0, 0.27);
     /* Titlebar */
     --TitlebarColor: #f0eee6;
     --TitlebarColorButton: #303030;
     --TitlebarColorBorder: solid 1px #cfcfcf;
-    --TitlebarColorHover: #d1d1d1;
+    --TitlebarColorHover: hsl(40, 10%, 82.5%);
     /* Contextmenu color */
     --ctx-menu-bg: #f6f6f5;
     --ctx-menu-hover: #e4e4e4;

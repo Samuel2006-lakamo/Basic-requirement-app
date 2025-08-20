@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="./CSS/CSS_MoreOptionsStyle/OptionsStyle.css" crossorigin="anonymous" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="../node_modules/nprogress/nprogress.css">
-    <script src="../node_modules/nprogress/nprogress.js" defer></script>
+
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@1,2&f[]=satoshi@1,2&display=swap" rel="stylesheet">
     <script>
         // Runtime detection
         (function () {
@@ -61,16 +61,19 @@
             </svg>
         </div>
         <div class="menuLinks electron-only">
-            <li id="Current"><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+            <li id="Current"><a href="javascript:void(0)" id="CurrentLinks">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#e3e3e3" id="CurrentLinksSvg">
                         <path
                             d="M240-160q-33 0-56.5-23.5T160-240q0-33 23.5-56.5T240-320q33 0 56.5 23.5T320-240q0 33-23.5 56.5T240-160Zm240 0q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm240 0q-33 0-56.5-23.5T640-240q0-33 23.5-56.5T720-320q33 0 56.5 23.5T800-240q0 33-23.5 56.5T720-160ZM240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400ZM240-640q-33 0-56.5-23.5T160-720q0-33 23.5-56.5T240-800q33 0 56.5 23.5T320-720q0 33-23.5 56.5T240-640Zm240 0q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Zm240 0q-33 0-56.5-23.5T640-720q0-33 23.5-56.5T720-800q33 0 56.5 23.5T800-720q0 33-23.5 56.5T720-640Z" />
-                    </svg>Dashboard</a></li>
-            <li><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 -960 960 960" width="24px" fill="var(--theme-fg)">
-                        <path
-                            d="M165-170q-30.94 0-52.97-22.03Q90-214.06 90-245v-470q0-30.94 22.03-52.97Q134.06-790 165-790h240l75 75h315q30.94 0 52.97 22.03Q870-670.94 870-640v395q0 30.94-22.03 52.97Q825.94-170 795-170H165Zm0-75h630v-395H449l-75-75H165v470Zm0 0v-470 470Z" />
-                    </svg>All page</a></li>
+                    </svg><span id="CurrentLinksText">Dashboard</span></a></li>
+            <div id="EssentialappLinks">
+                <li><a href="javascript:void(0)"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                            viewBox="0 -960 960 960" width="24px" fill="var(--theme-links)">
+                            <path
+                                d="M165-170q-30.94 0-52.97-22.03Q90-214.06 90-245v-470q0-30.94 22.03-52.97Q134.06-790 165-790h240l75 75h315q30.94 0 52.97 22.03Q870-670.94 870-640v395q0 30.94-22.03 52.97Q825.94-170 795-170H165Zm0-75h630v-395H449l-75-75H165v470Zm0 0v-470 470Z" />
+                        </svg>All page</a></li>
+            </div>
         </div>
         <!-- Making menulink for web -->
         <div class="menuLinks web-only">
@@ -143,7 +146,7 @@
             <div class="MoreOptionsNavbarContent">
                 <div class="MoreOption_NavCon_Nav">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="var(--theme-fg)" id="MoreOptionsIcon">
+                        fill="var(--theme-links)" id="MoreOptionsIcon">
                         <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
                     </svg>
                     <h4>App options</h4>
@@ -250,7 +253,7 @@
                         </div>
 
                     </div>
-                    <h1>Get started with <br>Essential app</h1>
+                    <h1>Get started with <br>EssentialAPP</h1>
                     <div class="TextintroBTN">
                         <button id="getStartedBTN">Continue</button>
                     </div>
@@ -348,16 +351,14 @@
             const typingText = document.querySelector('#TextCards .typing-text');
             let index = 0;
 
-            setTimeout(() => {
-                function typeText() {
-                    if (index < text.length) {
-                        typingText.textContent += text.charAt(index);
-                        index++;
-                        setTimeout(typeText, 40);
-                    }
+            function typeText() {
+                if (index < text.length) {
+                    typingText.textContent += text.charAt(index);
+                    index++;
+                    setTimeout(typeText, 50);
                 }
-                typeText();
-            }, 800);
+            }
+            typeText();
         });
     </script>
 </body>

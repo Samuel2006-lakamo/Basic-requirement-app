@@ -10,8 +10,8 @@
 .contentTEXT h1 {
     font-family: var(--font-text), sans-serif;
     font-weight: 400;
-    font-size: 18px;
-    transform: translate(0px, -1.5px);
+    font-size: 14.5px;
+    transform: translate(0px, 1.25px);
 }
 
 #CurrentPage {

@@ -571,7 +571,7 @@ app.whenReady().then(async () => {
       const aspectRatio = 16 / 9;
 
       const baseWidth = 730;
-      const baseHeight = 810;
+      const baseHeight = 840;
       // const baseWidth = 1024;
       // const baseHeight = 810;
       const scaleFactor = Math.min(screenWidth / 1280, screenHeight / 720);
@@ -1247,8 +1247,8 @@ const updateAllWindowsTheme = (theme) => {
     if (!win.isDestroyed()) {
       try {
         win.setTitleBarOverlay({
-          color: theme === 'dark' ? '#0f0f0f' : '#e8e7e3',
-          symbolColor: theme === 'dark' ? '#e8e7e3' : '#000000',
+          color: theme === 'dark' ? '#0f0f0f' : '#f0eee6',
+          symbolColor: theme === 'dark' ? '#f0eee6' : '#000000',
           height: 39
         });
       } catch (err) {

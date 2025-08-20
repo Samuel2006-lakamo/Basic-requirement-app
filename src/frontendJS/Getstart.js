@@ -15,9 +15,16 @@ const UI = {
     },
     APPcards: {
         unShow: "none",
-        toTop: "2rem"
+        toTop: "0.25rem"
     }
 };
+
+const keepOnTop = document.getElementById('KeepONtop');
+const currentLinks = document.getElementById('CurrentLinks');
+const essentialAppLinks = document.getElementById('EssentialappLinks');
+const appOptions = document.getElementById('AppOptions');
+const currentLinksSvg = document.getElementById('CurrentLinksSvg');
+const currentLinksText = document.getElementById('CurrentLinksText');
 
 const APPcardsSTYLE = () => {
     // Direct for element but it fine will no error
@@ -32,6 +39,7 @@ const APPcardsSTYLE = () => {
                     APPcards: UI.elements.APPcards
                 }
             );
+            alert('Required elements not found:','Try to reinstall to fix it');
             return;
         }
         UI.elements.content.style.display = UI.APPcards.unShow;
@@ -68,10 +76,44 @@ if (localStorage.getItem('hasSeenContent')) {
     UI.elements.getStartedContent.style.display = "none";
     document.documentElement.style.removeProperty('overflow-y');
     APPcardsSTYLE();
+
+    // Restore UI elements to their default state
+    if (keepOnTop) {
+        keepOnTop.style.display = '';
+    }
+    // if (currentLinksText) {
+    //     currentLinksText.textContent = '';
+    // }
+    // if (currentLinksSvg) {
+    //     currentLinksSvg.style.display = 'block';
+    // }
+    if (essentialAppLinks) {
+        essentialAppLinks.style.display = '';
+    }
+    if (appOptions) {
+        appOptions.style.display = '';
+    }
+
 } else {
-    console.log('First visit');
     document.documentElement.style.setProperty('overflow-y', 'hidden');
     usingGETSTARTED();
+
+    // Disable min screen toggle
+    if (keepOnTop) {
+        keepOnTop.style.display = 'none';
+    }
+    // if (currentLinksText) {
+    //     currentLinksText.textContent = 'Get Started';
+    // }
+    // if (currentLinksSvg) {
+    //     currentLinksSvg.style.display = 'none';
+    // }
+    if (essentialAppLinks) {
+        essentialAppLinks.style.display = 'none';
+    }
+    if (appOptions) {
+        appOptions.style.display = 'none';
+    }
 }
 
 // For who want to debug
@@ -89,6 +131,22 @@ function usingGETSTARTED() {
         rafTimeout(() => {
             localStorage.setItem('hasSeenContent', 'true');
         }, 200);
+
+        if (keepOnTop) {
+            keepOnTop.style.display = '';
+        }
+        // if (currentLinksText) {
+        //     currentLinksText.textContent = '';
+        // }
+        // if (currentLinksSvg) {
+        //     currentLinksSvg.style.display = 'block';
+        // }
+        if (essentialAppLinks) {
+            essentialAppLinks.style.display = '';
+        }
+        if (appOptions) {
+            appOptions.style.display = '';
+        }
 
         // Using Effect
         MenuBar_Initial();
@@ -144,12 +202,12 @@ function usingGETSTARTED() {
         function APPcard_Toggle() {
             // Remove direct style manipulation
             document.documentElement.style.removeProperty('overflow-y');
-            
+
             const appCards = document.querySelector('.app-cards');
             if (appCards) {
                 appCards.style.display = 'grid';
                 appCards.style.opacity = UI.opacity.in;
-                
+
                 // Smooth scroll with delay for animation
                 setTimeout(() => {
                     appCards.scrollIntoView({
@@ -207,7 +265,7 @@ document.querySelectorAll('.card').forEach(card => {
     let ripple = null;
     let isPressed = false;
 
-    card.addEventListener('mousedown', function(e) {
+    card.addEventListener('mousedown', function (e) {
         isPressed = true;
         ripple = document.createElement('div');
         ripple.className = 'ripple ripple-quick';
@@ -216,7 +274,7 @@ document.querySelectorAll('.card').forEach(card => {
         this.appendChild(ripple);
     });
 
-    card.addEventListener('mouseup', function() {
+    card.addEventListener('mouseup', function () {
         if (ripple) {
             isPressed = false;
             const href = this.getAttribute('data-href');
