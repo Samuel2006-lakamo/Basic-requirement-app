@@ -8,7 +8,7 @@
 
 ---
 
-<img src="https://drive.google.com/uc?id=1iYd1xMj6fUBwMRak97nDXviTODyDQDry" alt="App Thumbnail" width="100%">
+<img src="https://drive.google.com/uc?id=1ZIHizLWlvj8Mlj-0yTzh3YF5eOU5I0li" alt="App Thumbnail" width="100%">
 
 ---
 
